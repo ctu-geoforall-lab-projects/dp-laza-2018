@@ -1,0 +1,51 @@
+\begin{center}
+%napisy
+\newcommand{\napisCVUT}{České vysoké učení technické v Praze}
+\newcommand{\napisFS}{Fakulta stavební}
+\newcommand{\napisProgram}{Studijní program Geodézie a kartografie}
+\newcommand{\napisObor}{Obor Geomatika}
+\newcommand{\napisKatedra}{Katedra geomatiky}
+\newcommand{\napisVedouci}{Vedoucí práce: Ing. Martin Landa, Ph.D.}
+\newcommand{\napisAutor}{Adam Laža}
+\newcommand{\napisDatum}{Praha 2018}
+\newcommand{\napisNazevI}{Nazev}
+\newcommand{\napisNazevAjI}{Name}
+\newcommand{\napisDiplomka}{Diplomová práce}
+\newcommand{\napisPraha}{Praha 2018}
+%
+% prikazy
+%\newcommand{\velka}[1]{\uppercase{#1}}
+\newcommand{\velka}[1]{\textsc{#1}}
+%
+% 
+\newif\ifpatitul
+\patitultrue
+
+\ifpatitul
+{\Large\velka{\napisCVUT}}\\
+\velka{\Large\napisFS}\\
+\vfill
+{\LARGE\velka{\napisDiplomka}}
+\vfill
+{\large\napisPraha\hfill\napisAutor}
+\newpage
+\fi%patitul
+
+
+{\Large\velka{\napisCVUT}}\\
+{\Large\velka{\napisFS}}\\
+{\Large\velka{\napisProgram}}\\
+{\Large\velka{\napisObor}}
+\vfill
+\includegraphics[width=3cm]{logo_cvut_cb} %~
+\vfill
+{\Large\velka{\napisDiplomka}}\\
+\Large\velka{\napisNazevI}\\
+\large\velka{\napisNazevAjI}
+\vfill
+{\large%
+\napisVedouci\\
+\napisKatedra\\
+\bigskip
+\napisDatum\hfill\napisAutor}
+\end{center}
