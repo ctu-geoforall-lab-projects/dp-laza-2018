@@ -1,0 +1,7 @@
+text/*.log
+text/*.aux
+text/*.dvi
+text/*.toc
+text/*.out
+text/*.synctex.gz
+text/adam-laza-dp-2018.pdf
