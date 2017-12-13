@@ -480,31 +480,168 @@ across the platforms or programming languages.
 \newpage
 \section{PyWPS}
 PyWPS is server-side implementation of the OGC WPS Standard. It is written in Python. It is currently supporting WPS 1.0.0.
+\todo[inline]{Doplnit}
 
 \newpage
 \section{Docker}
-Docker is a Linux container technology that allows package and ship applications and everything it needs to execute into a standard
+\paragraph{Containerization} is a lightweight alternative to full machine virtualization. It involves encapsulating an application 
+into a container with its own operating environment. It helps to run containerized application on any physical machine without any
+worries about dependencies. The origin of containerization lies in the \textit{LinuX Containers {LXC}} format. Containerization
+works only in Linux environments and can run only Linux applications.
+
+Docker is not the only one technology for containerization. Other alternatives exist, it is \textit{Kubernets}, \textit{CoreOS rkt}, 
+\textit{Open Contrainer Initiative (OCI)}, \textit{Canonical's LXD}, \textit{Apache Mesos and Mesosphere} and many others. 
+However Docker is a leader on the field of contanerization and with most public traction is de facto considered as a container standard.
+That's why the Docker was choosen for this thesis as a container technology. So from this point on any term \textit{container} refers to
+Docker container.
+
+\begin{figure}[h!]
+\centering
+\begin{floatrow}
+\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_kubernetes.png}}{\caption{Kubernetes}}{\label{fig:Dicker_kubernetes}}
+\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_rkt.png}}{\caption{CoreOS rkt}}{\label{fig:Docker_rkt}}
+\end{floatrow}
+\end{figure}
+
+\bigskip
+
+\begin{figure}[h!]
+\centering
+\begin{floatrow}
+\ffigbox{\includegraphics[width=0.24\textwidth]{img/Docker_lxd.png}}{\caption{Canonical's LXD}}{\label{fig:Docker_lxd}}
+\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_mesos.jpg}}{\caption{Apache mesos}}{\label{fig:Docker_mesos}}
+\end{floatrow}
+\end{figure}
+
+\newpage
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{img/Docker_logo}
+\caption{Docker logo}
+\label{fig:Docker_logo}
+\end{figure}
+
+\paragraph{Docker} is a Linux container technology that allows package and ship applications and everything it needs to execute into a standard
 format, and run them on any infractructure.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{img/Docker_VM.png}
+\caption{Virtual machine architecture, source \cite{Docker_docs}}
+\label{fig:Docker_VM}
+\end{figure}
 
 \paragraph{Docker container vs. Virtual machine}
 Both virtual machines and docker containers are two ways how to deploy multiple, isolated applications on a single platform. They
 both offer a way to isolate an application and its dependencies into a self-contained unit that can run anywhere. They both offer
-some kind of virtualization. They differ in architecture, see Fig. \ref{fig:Docker_container} and \ref{fig:Docker_VM}.
+some kind of virtualization. They differ in architecture, see Fig. \ref{fig:Docker_VM}, \ref{fig:Docker_container}.
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.9\textwidth]{img/Docker_compare}
-\caption{Container vs VM differences, source \url{https://blogs.msdn.microsoft.com/uk_faculty_connection/2016/09/23}}
-\label{fig:Docker_compare}
-\end{figure}
-
-%\url{https://blogs.msdn.microsoft.com/uk_faculty_connection/2016/09/23}
-Let's start with virtual machine Fig. \ref{fig:Docker_VM} and its layers description from bottom up:
+\noindent
+Let's start with virtual machine (Fig. \ref{fig:Docker_VM}) and its layers description from bottom up:
 \begin{itemize}
 \item \textit{Infrastructure} - It can be a PC, developer's laptop, a physical server in datacenter but as well a virtual private
 server in the cloud as Microsoft Azure or Amazon EC2.
-\item \textit{Host OS}
+\item \textit{Host OS} - Host operating system. In case of native hypervisor this layer is missing. In case of hosted hypervisor
+it is probably some distibution of Linux, Windows or MacOS.
+\item \textit{Hypervisor} - Also called virtual machine monitor (VMM). It allows to host several different virtual machines
+on a single hardware. There are two types of hypervisors:
+\begin{itemize}
+\item Type 1 -  Also called \textit{bare metal} or \textit{native}. This type is run on the host's hardware to control it as well as manage 
+the virtual machines on it. It is much faster and more efficient. This type hypervisors are KVM, Hyper-V or HyperKit.
+\item Type 2 - So called \textit{embedded} or \textit{hosted} hypervisors. There hypervisors are run on a host OS as a software. They are slower
+and less efficient on the other hand they are much easier to set up. It includes VirtualBox or VMWare Workstation.
 \end{itemize}
+\item \textit{Guest OS} - Guest operating system. Each VM require own guest operating system which is controlled by hypervisor. Each 
+guest OS needs its own CPU and memory resources and starts on hundreds megabytes in size.
+\item \textit{Bins/Libs} - Each guest OS needs various binaries and libraries for running the application. It can be \textit{python-dev} or \textit{default-jdk} packages as well as personal packages to run the application.
+\item \textit{Application} - The application source code that is desired to be run isolated. Therefore each application or each version of application has to be run inside of its own guest OS with own copy of bins and libs. 
+\end{itemize}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{img/Docker_container}
+\caption{Containers architecture, source \cite{Docker_docs}}
+\label{fig:Docker_container}
+\end{figure}
+
+\noindent
+Now, what is different regarding containers (Fig. \ref{fig:Docker_container})
+\begin{itemize}
+\item \textit{Infrastructure} - PC, laptop, physical or virtual server.
+\item \textit{Host OS with container support} - Any OS capable of run Docker. All major distributions of Linux are supported and there are ways
+to run Docker even on MacOs and Windows too.
+\item \textit{Docker engine} - Also called Docker daemon. It is a service that runs in the beckground on host operating system. It manages all
+interaction with containers.
+\item \textit{Bins/Libs} - Binaries and libraries required by the application. They get built into special packages called \textit{Docker images}.
+The Docker daemon runs those images.
+\item \textit{Application} - Each application and its library dependencies get packed into the same Docker image. It is managed independently by the Docker daemon. 
+\end{itemize}
+
+\noindent
+But the architecture is not the only one difference:
+\begin{itemize}
+\item Docker use Docker daemon to manage containers, hypervisor manages virtual machines.
+\item The Docker daemon communicates directly with host OS and manage resources for each container.
+\item VMs usually boot up in minute and more, containers start in seconds.
+\item Docker virtualizes operating systems, using VMs is hardware virtualization.
+\item VM and container vary in size. VMs start at hundreds of megabytes. Container can be smaller then one megabyte.
+\item Containers share the kernel altough they are isolated. VMs are monolitic and stand-alone.
+\end{itemize}
+
+\paragraph{Dockerfile}
+Dockerfile is a core file that contains instruction to be performed when an image is built. It usually consists from commands to install
+packages, calls to other scripts, setting environmental variable, adding files or setting permissions. In Dockerfile there is also defined 
+what image is to be used as base image for the build.
+
+\paragraph{Dockerfile instructions}
+\begin{itemize}
+\item \textit{FROM} - The FROM instruction defines the base image for next instructions and initializes a new build stage. Every Dockerfile
+has to start with FROM command. The only exception is ARG command which can be before FROM command.
+\item \textit{ARG} - The ARG instruction defines a variable that users can pass at build-time to the builder.
+\item \textit{ENV <key>=<value>} - The ENV instruction sets the environment variables. It is key-par value. 
+\item \textit{LABEL} - The LABEL instruction adds metadata to an image. A LABEL is a key-value pair. It can be anything from version number to description.
+\item \textit{ADD <src> <dest>} - The ADD instruction copies files or directories from source and adds them at the destination path. It also
+unzip or untar files when added.
+\item \textit{COPY <src> <dest>} - Similar to the ADD instruction it copies files or directories from source and adds them at the destination path. This command doesn't provide any kind of decompression.
+\item \textit{RUN <command>} - The RUN instruction will execute any defined command and commit the results.
+\item \textit{CMD ["executable","param1","param2"]} - The CMD instruction provides defaults for an executing container. It can include an
+executable. In case the executable is ommited the CMD instruction must be used together with the ENTRYPOINT instruction. There can be only
+one CMD instruction in Dockerfile. In case there is more CMD the last one will be used.
+\item \textit{ENTRYPOINT} - The ENTRYPOINT defines a configuration of container that will run as executable.
+\item \textit{WORKDIR /path/to/dir} - The WORKDIR instruction sets the working directory for any RUN, CMD, COPY and ADD instruction that follow
+in Dockerfile.
+\item \textit{EXPOSE} - The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime.
+\item \textit{VOLUME} - The VOLUME instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers.
+\end{itemize}
+
+Except the FROM instruction, all the instructions can be defined from command line when starting docker container. There are more Dockerfile instructions however they are not relevant for this thesis as there are never used in practical part.
+
+\newpage
+\begin{lstlisting}[basicstyle=\small,caption={Dockerfile example}]
+ARG VERSION=0.9.22
+FROM phusion/baseimage:${VERSION}
+LABEL maintainer="devs@pywps.example.net"
+
+RUN apt-get update -y && apt-get install -y \
+	git \
+	python3 \
+	python3-dev
+
+RUN git clone https://github.com/geopython/pywps-flask.git
+ 
+WORKDIR /pywps-flask
+RUN pip3 install -r requirements.txt
+
+RUN mkdir /etc/service/pywps4
+COPY pywps4_service.sh /etc/service/pywps4/run
+RUN chmod +x /etc/service/pywps4/run
+
+EXPOSE 5000
+ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
+\end{lstlisting}
+
+
+
 
 \newpage
 \part{Practical part}
@@ -517,7 +654,8 @@ server in the cloud as Microsoft Azure or Amazon EC2.
 \textbf{KVP}& Key Value Pair\\
 \textbf{OGC}& Open Geospatial Consortium\\
 \textbf{URL}& Uniform Resource Locator\\
-\textbf{VM}& Virtual machine\\
+\textbf{VM}& Virtual Machine\\
+\textbf{VMM}& Virtual Machine Monitor\\
 \textbf{WPS}& Web Processing Service\\
 \textbf{WMS}& Web Map Service\\
 \textbf{WFS}& Web Feature Service\\
