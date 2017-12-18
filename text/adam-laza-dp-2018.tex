@@ -78,6 +78,7 @@ bottom=35mm]
 \selectlanguage{english}
 \begin{abstract}
 \bigskip
+\todo[inline]{Upravit abstract, aby odpovidal skutec strukture}
 This master thesis is dedicated to isolation of PyWPS processes as one of the OGC WPS implementation. OGC WPS is Web Processing Service
 Standard defined by Open Geospatial Consorcium. The practical part contains an introductory research where various solutions how 
 to reach the process isolation are considered and described. Based on the research the Docker technology has been chosen for the 
@@ -140,10 +141,188 @@ In Prague .................
 \pagestyle{fancy}
 
 \necislovana{Introduction} 
-Mame hromadu dat, ktere je potreba zpracovat. Hodne to ulehci, kdyz to budem moct nejak standardizovat a pak pouzivat na cloudu.
+There are data all around us. As the society is becoming more and more digitalized the amount of the data is getting
+bigger and bigger. A lot of enterprises, institutions and organizations realize that these data hide a huge potential
+they can profit from. However the data themself in their raw form are not usually sufficient to make an 
+conclusion from them. More often the data need to be processed and used as an inputs data for some kind of analises. 
+With the increasing number of gathered data a manual processing is almost unconceivable. Data are processed in an automatized way. 
 
-https://pdfs.semanticscholar.org/bb17/7b12791d5ea58811955555be2d48226fd5ae.pdf
-\todo[inline]{Uvod}
+Therefore, in order to be able to process the data independently of the type of acquisition, format or platform, 
+it is necessary to define standards. Regarding spatial data, these standards are made by the Open Geospatial Consortium. 
+Besides quite famous and used standards as WMS and WFS there also exists the WPS standard. The WPS standard defines an 
+interface that facilitates the publishing of geospatial processes. It also provides rules how inputs and outputs are handled.
+The WPS is only a standard and there are several implementations. This work is primarily focused on the \textit{PyWPS} framework.
+
+\bigskip
+The main topic of this thesis is process isolation. Process is just some geospatial operation which has its defined
+inputs and outputs and which is deployed on the server. Server  is able to execute multiple 
+processes at the same time. This thesis deals with the isolation of individual processes especially for security and 
+performance reasons. With every process fully isolated so they cannot interact with each other the higher security level
+is assured.
+
+The thesis is composed of several parts. The introductory research discusses the current state of the PyWPS and the
+other projects that implement the WPS standard, namely \textit{ZOO-Project} and \textit{52$^{\circ}$North}. Then the
+introducing research offers possible soloutions to achieve process isolation. Various projects and technologies are
+described and finally the Docker has been selected as the technology we try to implement in the practical part. Docker
+has been selected as one of the most used technology for containerization. It puts every process into seperate
+container so the isolation is ensured. Moreover Docker provides mechanism to pause, stop and start a container so it
+looks like a possible solution for the future WPS 2.0.0 standard implementation which requires this funcionality. Using
+Docker it also opens new posibilities like being able to deploy running job to cloud.
+
+The technological background is covered in the second part. There is the WPS standard described, especially its operations
+- \textit{GetCapabilities}, \textit{DesribeProcess} and \textit{Execute} - and inputs and outputs strucutres. There are also
+\textit{PyPWS} and \textit{Docker} described.
+
+Last part consists of the implementation description.
+\todo[inline]{Doplnit uvod o implementaci}
+
+I have choosen this topic to get in touch with another OGC standard. I also appreciate I can dive more into Docker technology
+as it is a leader in containerization at the world.
+
+\newpage
+\part{Introductory research}
+
+\newpage
+\section{Current state}
+
+
+\newpage
+\section{Process isolation in PyWPS}
+\subsection{Asynchonous requests}
+Right now in PyWPS 4.0 version a PyWPS server instance is able to run multiple
+concurrent processes in parallel. The server is configured for maximal amounts of concurrently running processes at
+the same time and for maximal amount of waiting processes in a queue, to later start their execution once new
+slots are available. If the new Execute request is received and the maximal amount is exceeded, the request is rejected
+and user is informed in response (see Lst. \ref{lst:Isolation_rejected}).
+
+\begin{lstlisting}[basicstyle=\small,caption={Resource exceeded exception},language=XML,label={lst:Isolation_rejected}]
+<?xml version="1.0" encoding="UTF-8"?>
+<ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" version="1.0.0">
+    <ows:Exception exceptionCode="ServerBusy">
+        <ows:ExceptionText>
+            Maximum number of parallel running processes reached. Please try later.
+        </ows:ExceptionText>
+    </ows:Exception>
+</ows:ExceptionReport>
+\end{lstlisting}
+
+To facilitate the management of  concurrent processes, process metadata are stored into a local database. This database is used
+for logging , saving waiting Execute requests in the queue and invoking them later on.
+This database will also enable the implementation of pausing, releasing and deleting running process. These features will
+allow PyWPS to comply with WPS version 2.0.0.
+
+\subsection{Current state}
+At the beginning of every process execution its own temporary directory \textit{workdir} is created. During the execution
+temporary files and continous outputs are stored in this folder. After successful execution final outputs are
+moved to \textit{outputs} directory. Both directories \textit{outputs} and \textit{workdir} are configurable and user can
+change path to them.
+
+\bigskip
+\begin{lstlisting}[basicstyle=\small,caption={pywps.cfg - mode parameter}]
+[processing]
+mode=multiprocessing
+\end{lstlisting}
+
+Current version of PyWPS offers two solutions for running parallel processes:
+\begin{itemize}
+\item Multiprocessing
+\item Job Scheduler Extension\footnote{Job Scheduler Extension is currently only in develop branch of PyWPS.}
+\end{itemize}
+
+If the execute request is sent asynchronously the type of process constructor is choosen depending on configuration
+parameter \textit{mode} in section \textit{processing} which is by default \textit{multiprocessing} or can be changed 
+to \textit{scheduler}.
+
+\bigskip
+\begin{lstlisting}[basicstyle=\small,caption={processing.\_\_init\_\_.py},label={lst:Process_init},language=python]
+def Process(process, wps_request, wps_response):
+    """
+    Factory method (looking like a class) to return the
+    configured processing class.
+
+    :return: instance of :class:`pywps.processing.Processing`
+    """
+    mode = config.get_config_value("processing", "mode")
+    LOGGER.info("Processing mode: %s", mode)
+    if mode == SCHEDULER:
+        process = Scheduler(process, wps_request, wps_response)
+    else:
+        process = MultiProcessing(process, wps_request, wps_response)
+    return process
+\end{lstlisting}
+\bigskip
+\bigskip
+
+\paragraph{Multiprocessing}
+By default for   processes   running   in   the   background,   the   Python multiprocessing module is used – 
+this makes it possible to use PyWPS on the Windows operating system too.
+
+\paragraph{Job Scheduler Extension}
+PyWPS scheduler extension offers possibilities to execute asynchronous processes out of the WPS server machine.
+This extension enables to delegate execution of processes to a scheduler system like \textit{Slurm}, \textit{Grid Engine} 
+and \textit{TORQUE} from Adaptive Computing. These schedular systems are usually located at High Performance Compute (HPC)
+centers.
+
+\begin{figure}[h!]
+\centering
+\begin{floatrow}
+\ffigbox{\includegraphics[width=0.33\textwidth]{img/Isolation_grid.jpg}}{\caption{Grid Engine}}{\label{fig:Isolation_grid}}
+\ffigbox{\includegraphics[width=0.33\textwidth]{img/Isolation_slurm.png}}{\caption{Slurm}}{\label{fig:Isolation_slurm}}
+\end{floatrow}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{img/Isolation_torque.png}
+\caption{TORQUE}
+\label{fig:Isolation_torque}
+\end{figure}
+
+The PyWPS scheduler extension uses the Python \textit{dill} library to dump and load the processing job to/from filesystem. The batch script executed on the scheduler system calls the PyWPS \textit{joblauncher} script with the dumped job status and executes the job (no WPS service running on scheduler). The job status is updated on the filesystem. Both the PyWPS service and the joblauncher script use the same PyWPS configuration. The scheduler assumes that the PyWPS server has a shared filesystem with the scheduler system so that XML status documents and WPS outputs can be found at the same file location. The interaction diagram how the communication between PyWPS and the scheduler works is displayed at
+Fig. \ref{fig:Isolation_interaction}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{img/Isolation_interaction.png}
+\caption{Communication between PyWPS and scheduler, source: \cite{PyWPS_docs}}
+\label{fig:Isolation_interaction}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{img/Isolation_slurm_usage.png}
+\caption{Example of PyWPS scheduler extension usage with Slurm, source: \cite{PyWPS_docs}}
+\label{fig:Isolation_slurm_usage}
+\end{figure}
+
+\subsection{Possible solutions}
+In previous section there were described two mechanisms for running parallel processes. Nevertheless in case of Python module
+\textit{Multiprocessing} the processes are not really isolated. They run concurrently but they can share resources and there are 
+even methods like \textit{Pipe()} that enables comunication between processes.
+
+On the otherhand \textit{Job Scheduler Extension} is dependent on \textit{dill} library as well as on some external scheduler
+systems like Slurm, Grid Engine or TORQUE.
+
+In this section there are described some other solutions. Some of them were suggested by PyPWS developers with encouragment to
+make a feasible study. Some of them were discovered during research on the internet forums like StackOverflow, some of them
+were referenced in documentation of other projects. During the research two requirements were considered.
+
+\begin{itemize}
+\item Solution provides mechanism for full isolation. This is a must-have requirements.
+\item Solution provides mechanism for start/pause/stop process execution. This is a nice-to-have requirements as this funcionality
+will be required to comply WPS 2.0.0 standard.
+\end{itemize}
+
+Finnaly these solutions were considered:
+\begin{itemize}
+\item Docker
+\item VM
+\item SandboxedPython
+\item Celery
+\item Multiprocessing
+\item psutil
+\end{itemize}
+
 
 \newpage
 \part{Technological background}
@@ -167,9 +346,12 @@ Currently two major versions of WPS Standard exist. The WPS version 1.0.0 is cur
 If not explicitly said this thesis is dedicated to the version 1.0.0. The WPS version 2.0.0 was
 released in 2015 \cite{WPS_second}.
 
+\subsection{OGC}
+\todo[inline]Doplnit kratky odstavec o OGC
+
 \bigskip
 \subsection{Web Processing Service}
-The OpenGIS® Web Processing Service (WPS) Interface Standard defines a standardized interface
+The OGC Web -Processing Service (WPS) Interface Standard defines a standardized interface
 that facilitates the publishing of geospatil processes. Also provides rules how to standardize
 requests and responses for geospatial processing services. 
 
@@ -492,8 +674,41 @@ across the platforms or programming languages.
 
 \newpage
 \section{PyWPS}
-PyWPS is server-side implementation of the OGC WPS Standard. It is written in Python. It is currently supporting WPS 1.0.0.
-\todo[inline]{Doplnit}
+\todo[inline]{Doplnit a prepsat}
+PyWPS is a server side implementation of the OGC WPS standard in the Python programming language.
+The first version of PyWPS started in 2006 as a student project. In 2007 PyWPS 2.0.0 was released supporting WPS 0.4.0.
+Next year in 2008 PyWPS 3.0.0 was released with support for WPS 1.0.0. It was possible to run multiple WPS instances
+with one PyWPS istallation. This version had simple code structure and contained examples of processes. The newest version 
+is PyWPS 4.0.0 from September 2017.\cite{PyWPS_presentation}.
+
+PyWPS itself is just interface implementation. It is not an analytic tool or engine so it does not perform any kind of
+geospatil calculation nor provide any processing funcionality. PyWPS handles inputs, process execution and produces outputs
+but it is up to user (typically developer or scientist) to provide own code that is deployed on the PyWPS server
+instance and the server afterwards gets input data, evaluates them and calls the execute method.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{img/pywps_logo.png}
+\caption{PyWPS project logo}
+\label{fig:pywps_logo}
+\end{figure}
+
+\subsection{PyWPS 4.0}
+PyWPS-4 is the most current version of PyWPS. Rewritting from scratch involved this major changes:
+\begin{itemize}
+\item It is written in \textit{Python 3} with backwards support for Python 2.7.
+\item It utilizes native Python bindings to existing projects (GRASS GIS).
+\item New popular formats like \textit{GeoJSON}, \textit{KML} or \textit{TopoJSON} are reflected and their support is provided.
+\item PyWPS project has changed the licence from \textit{GNU/GPL} to \textit{MIT}.
+\item PyWPS 4.0 is implemented using the \textit{Flask} framework.
+\item A C-based XML parser \textit{Lxml} is used to handle XML files.
+\item \textit{OWSLib} structures are used for some data types.
+\end{itemize}
+
+\subsection{PyWPS-demo}
+\todo[inline]{Doplnit info o demu a jeho pouziti}
+PyWPS-demo is a small side project distributed with PyWPS. It is a simple demo instance of PyWPS server running on Flask with
+several demo processes.
 
 \newpage
 \section{Docker}
@@ -511,13 +726,12 @@ Docker container.
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_kubernetes.png}}{\caption{Kubernetes}}{\label{fig:Dicker_kubernetes}}
+\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_kubernetes.png}}{\caption{Kubernetes}}{\label{fig:Docker_kubernetes}}
 \ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_rkt.png}}{\caption{CoreOS rkt}}{\label{fig:Docker_rkt}}
 \end{floatrow}
 \end{figure}
 
 \bigskip
-
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
@@ -653,17 +867,14 @@ EXPOSE 5000
 ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
 \end{lstlisting}
 
-
-
-
-\newpage
-\part{Practical part}
-
+\part{Implementation}
+\todo[inline]{Popsat implementaci}
 
 \newpage
 \necislovana{Seznam použitých zkratek}
 
 \begin{tabular}{ll}
+\textbf{HPC}& High Performance Compute\\
 \textbf{KVP}& Key Value Pair\\
 \textbf{OGC}& Open Geospatial Consortium\\
 \textbf{URL}& Uniform Resource Locator\\
@@ -705,6 +916,17 @@ URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=20040}\t
 Docker \textit{Docker documentation} [online].
 URL: \textless\url{https://docs.docker.com/}\textgreater
 
+\bibitem{PyWPS_paper}
+Jáchym Čepický, Luís Moreira de Sousa \textit{New implementation of OGC Web Processing Service in Python programming language.} [online].
+URL: \textless\url{https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLI-B7/927/2016/isprs-archives-XLI-B7-927-2016.pdf}\textgreater
+
+\bibitem{PyWPS_presentation}
+Jorge de Jesus, Luca Casagrande, Jáchym Čepický \textit{PyWPS a tutorial for beginners and developers} [online].
+URL: \textless\url{https://www.slideshare.net/JorgeMendesdeJesus/pywps-a-tutorial-for-beginners-and-developers}\textgreater
+
+\bibitem{PyWPS_docs}
+PyWPS developers \textit{PyWPS documentation} [online].
+URL: \textless\url{http://pywps.readthedocs.io/}\textgreater
 \end{thebibliography}
 
 \end{document}
