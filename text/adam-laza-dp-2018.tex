@@ -93,7 +93,7 @@ OGC WPS, PyWPS, Docker container, Python, process izolation, Web Processing Serv
 \selectlanguage{czech}
 \begin{abstract}
 \bigskip
-\todo[inline]{Překlad WPS - Webová Procesingová??? Služba, OG??}
+\todo[inline]{Překlad WPS - Webová Procesingová??? Služba, OGC??}
 Tato diplomová práce se věnuje možnostem izolace procesů v rámci frameworku PyWPS jako jedné z implementací OGC WPS. Webová Procesingová 
 Služba je standard vydaný a dále rozšiřovaný Open Geospatial Consorciem. Praktická část obsahuje úvodní rešerši, ve které jsou popsány
 různé možnosti, jak izolace jednotlivých procesů dosáhnout. Na základě rešerše byla pro implementaci vybraná technologie Docker.
@@ -260,7 +260,7 @@ this makes it possible to use PyWPS on the Windows operating system too.
 \paragraph{Job Scheduler Extension}
 PyWPS scheduler extension offers possibilities to execute asynchronous processes out of the WPS server machine.
 This extension enables to delegate execution of processes to a scheduler system like \textit{Slurm}, \textit{Grid Engine} 
-and \textit{TORQUE} from Adaptive Computing. These schedular systems are usually located at High Performance Compute (HPC)
+and \textit{TORQUE} from Adaptive Computing. These schedular systems are usually located at \textit{High Performance Compute (HPC)}
 centers.
 
 \begin{figure}[h!]
@@ -301,8 +301,9 @@ In previous section there were described two mechanisms for running parallel pro
 even methods like \textit{Pipe()} that enables comunication between processes.
 
 On the otherhand \textit{Job Scheduler Extension} is dependent on \textit{dill} library as well as on some external scheduler
-systems like Slurm, Grid Engine or TORQUE.
+systems like \textit{Slurm}, \textit{Grid Engine} or \textit{TORQUE}.
 
+\bigskip
 In this section there are described some other solutions. Some of them were suggested by PyPWS developers with encouragment to
 make a feasible study. Some of them were discovered during research on the internet forums like StackOverflow, some of them
 were referenced in documentation of other projects. During the research two requirements were considered.
@@ -313,16 +314,100 @@ were referenced in documentation of other projects. During the research two requ
 will be required to comply WPS 2.0.0 standard.
 \end{itemize}
 
+\noindent
 Finnaly these solutions were considered:
 \begin{itemize}
-\item Docker
-\item VM
-\item SandboxedPython
 \item Celery
-\item Multiprocessing
+\item Docker
 \item psutil
+\item SandboxedPython
+\item VM
 \end{itemize}
 
+\subsubsection{Celery}
+\textit{Celery} is a task queue system written in Python. It helps distribute work across threads and even machines. Basic term is \textit{task}.
+Task is an unit of work and it is an input into the task queue. The task queue is constantly monitored for new work to perform.
+
+To communicate between client and workers Celery uses a \textit{broker}. The communication is via messages. To initiate a task the
+client adds a message to the queue and the broker then delivers the message to a worker. Multiple workers and brokers can be added
+so there is assured high availability and horizontal scaling.
+
+Celery provide worker remote control client in class \textit{celery.app.control.Control(app=None)}. The class offers these functions:
+\begin{itemize}
+\item\textbf{revoke} - Tell all (or specific) workers to revoke a task by id. If a task is revoked, the workers will ignore the task and not execute it after all.
+\item\textbf{shutdown} - Shutdown worker(s).
+\item\textbf{terminate} - Tell all (or specific) workers to terminate a task by id.
+\end{itemize}
+
+\subsubsection{Docker}
+\textit{Docker} is one of the most used technology regarding containerization. This technology is described in depth in later chapter.
+
+\subsubsection{psutil}
+\textit{psutil} is Python library for process and system management. It handles system monitoring, limiting process resources
+and the management of running processes. Its implementation is based on UNIX command line tools. psutil offers functions applied
+to these sections:
+\begin{itemize}
+\item CPU - functions for CPU statistics such as CPU utilization percentage, frequency and others. 
+\item Memory - functions for system memory usage and swap memory statistics.
+\item Disks - functions for disk statistics such as disk usage or disk IO operations counter.
+\item Network - functions for network IO operations or network connection statistics.
+\item Sensors - functions for statistics about fans, battery or hardware temperature.
+\item Others - functions for boot time and users statistics.
+\item Processes - functions will be described in detail later.
+\end{itemize}
+
+\paragraph{Processes} - Class \textit{psutil.Process(pid=None)} represents an OS process with given pid. The class is
+bound with a process via its PID. The \textit{Process} class offers these methods for starting/pausing:
+\begin{itemize}
+\item suspend() - Method suspends process using SIGSTOP signal.
+\item resume() - Method resumes process using SIGCONT signal.
+\item terminate() - Method terminates process using SIGTERM signal.
+\item kill() - Method kills process using SIGKILL signal.
+\end{itemize}
+
+\subsubsection{Sandboxed Python}
+The general goal of sandbox is to run applications securely inside isolated environment they cannot escape from and so
+affect other parts of the system. Developers use them to run untrusted code inside. It is quite difficult to develope
+fully sandboxed solution due to Python complexity. The basic problem is that Python introspection allows several ways
+to excape out of the sandbox. True security requires an overall design with many security considerations included. Some
+of the projects that can run Python code in sandbox are:
+\begin{itemize}
+\item PyPy
+\item Jython
+\end{itemize}
+
+\paragraph{PyPy} PyPy is Python interpreter written in RPython that implements full Python language and very closely 
+emulates the behavior of CPython. PyPy offers fully portable sandboxing feature similar to OS-level sandboxing (e. g. SECCOMP).
+It is not sandboxing at the Python language level so it does not put any restriction on any Python funcionality.
+
+Untrusted Python code that is intended to be sandboxed is launched in a subprocess, that is a special sandboxed version of PyPy.
+All its inputs/outputs are not directly performed but are serialized to a stdin/stdout pipe. The outer process reads the pipe 
+and afterwards decides which commands are allowed.
+
+\paragraph{Jython} Jython is Python language interpreter for Java. Java offers strong sandboxing mechanisms. The security 
+facility in Java that supports sandboxing is the \textit{java.lang.SecurityManager}. By default, Java runs without a 
+SecurityManager.
+
+\paragraph{pysandbox} A prove, that it is very difficult to develop some kind of sandbox with all security holes considered, could be a project call \textit{pysandbox}\footnote{\url{https://github.com/vstinner/pysandbox}}. After working on it for 3 years, during which
+the project was used on various production servers by other developers, its author declared that the project is broken by
+design. In his post to the python-dev mailing list \cite{PyDev_ML} the author explained that with every vulnerability founded
+it became more difficult to actually write a real code:
+
+\textit{
+"To protect the untrusted namespace, pysandbox installs a lot of
+different protections. Because of all these protections, it becomes
+hard to write Python code. Basic features like "del dict[key]" are
+denied. Passing an object to a sandbox is not possible to sandbox,
+pysandbox is unable to proxify arbitary objects.}
+
+\textit{
+For something more complex than evaluating "1+(2*3)", pysandbox cannot
+be used in practice, because of all these protections. Individual
+protections cannot be disabled, all protections are required to get a
+secure sandbox."}
+
+
+\subsubsection{VM}
 
 \newpage
 \part{Technological background}
@@ -867,7 +952,9 @@ EXPOSE 5000
 ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
 \end{lstlisting}
 
+\newpage
 \part{Implementation}
+\newpage
 \todo[inline]{Popsat implementaci}
 
 \newpage
@@ -877,6 +964,7 @@ ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
 \textbf{HPC}& High Performance Compute\\
 \textbf{KVP}& Key Value Pair\\
 \textbf{OGC}& Open Geospatial Consortium\\
+\textbf{PID}& Process identifier \\
 \textbf{URL}& Uniform Resource Locator\\
 \textbf{VM}& Virtual Machine\\
 \textbf{VMM}& Virtual Machine Monitor\\
@@ -927,6 +1015,17 @@ URL: \textless\url{https://www.slideshare.net/JorgeMendesdeJesus/pywps-a-tutoria
 \bibitem{PyWPS_docs}
 PyWPS developers \textit{PyWPS documentation} [online].
 URL: \textless\url{http://pywps.readthedocs.io/}\textgreater
+
+\bibitem{PyDev_ML}
+Victor Stinner \textit{The pysandbox project is broken} [online].
+URL: \textless\url{https://lwn.net/Articles/574323/}\textgreater
+
 \end{thebibliography}
+
+\newpage
+\section{Seznam tabulek a obrázků}
+\listoftables
+
+\listoffigures
 
 \end{document}

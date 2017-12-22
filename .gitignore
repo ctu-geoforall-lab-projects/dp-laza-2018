@@ -4,4 +4,6 @@ text/*.dvi
 text/*.toc
 text/*.out
 text/*.synctex.gz
+text/*.lof
+text/*.lot
 text/adam-laza-dp-2018.pdf
