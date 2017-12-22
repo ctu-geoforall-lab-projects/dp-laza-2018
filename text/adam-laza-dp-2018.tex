@@ -79,8 +79,8 @@ bottom=35mm]
 \begin{abstract}
 \bigskip
 \todo[inline]{Upravit abstract, aby odpovidal skutec strukture}
-This master thesis is dedicated to isolation of PyWPS processes as one of the OGC WPS implementation. OGC WPS is Web Processing Service
-Standard defined by Open Geospatial Consorcium. The practical part contains an introductory research where various solutions how 
+This master thesis is dedicated to an isolation of PyWPS processes as one of the OGC WPS implementation. OGC WPS is Web Processing Service
+Standard defined by Open Geospatial Consortium. The practical part contains an introductory research where various solutions how 
 to reach the process isolation are considered and described. Based on the research the Docker technology has been chosen for the 
 implementation of process isolation.  In the theoretical part Docker technology is described as well as the OGC WPS standard and 
 its PyWPS implementation written in Python.
@@ -143,9 +143,9 @@ In Prague .................
 \necislovana{Introduction} 
 There are data all around us. As the society is becoming more and more digitalized the amount of the data is getting
 bigger and bigger. A lot of enterprises, institutions and organizations realize that these data hide a huge potential
-they can profit from. However the data themself in their raw form are not usually sufficient to make an 
-conclusion from them. More often the data need to be processed and used as an inputs data for some kind of analises. 
-With the increasing number of gathered data a manual processing is almost unconceivable. Data are processed in an automatized way. 
+they can profit from. However the data themselves in their raw form are not usually sufficient to make a
+conclusion from them. More often the data need to be processed and used as an inputs data for some kind of analyses. 
+With the increasing number of gathered data a manual processing is almost inconceivable. Data are processed in an automatized way. 
 
 Therefore, in order to be able to process the data independently of the type of acquisition, format or platform, 
 it is necessary to define standards. Regarding spatial data, these standards are made by the Open Geospatial Consortium. 
@@ -154,44 +154,44 @@ interface that facilitates the publishing of geospatial processes. It also provi
 The WPS is only a standard and there are several implementations. This work is primarily focused on the \textit{PyWPS} framework.
 
 \bigskip
-The main topic of this thesis is process isolation. Process is just some geospatial operation which has its defined
-inputs and outputs and which is deployed on the server. Server  is able to execute multiple 
+The main topic of this thesis is process isolation. A process is just some geospatial operation which has its defined
+inputs and outputs and which is deployed on a server. The server is able to execute multiple 
 processes at the same time. This thesis deals with the isolation of individual processes especially for security and 
 performance reasons. With every process fully isolated so they cannot interact with each other the higher security level
 is assured.
 
 The thesis is composed of several parts. The introductory research discusses the current state of the PyWPS and the
 other projects that implement the WPS standard, namely \textit{ZOO-Project} and \textit{52$^{\circ}$North}. Then the
-introducing research offers possible soloutions to achieve process isolation. Various projects and technologies are
+introducing research offers possible solutions to achieve process isolation. Various projects and technologies are
 described and finally the Docker has been selected as the technology we try to implement in the practical part. Docker
-has been selected as one of the most used technology for containerization. It puts every process into seperate
-container so the isolation is ensured. Moreover Docker provides mechanism to pause, stop and start a container so it
-looks like a possible solution for the future WPS 2.0.0 standard implementation which requires this funcionality. Using
-Docker it also opens new posibilities like being able to deploy running job to cloud.
+has been selected as one of the most used technology for containerization. It puts every process into a separate
+container so the isolation is ensured. Moreover Docker provides a mechanism to pause, stop and start a container so it
+looks like a possible solution for the future WPS 2.0.0 standard implementation which requires this functionality. Using
+Docker it also opens new possibilities, e. g. being able to deploy running job to cloud.
 
 The technological background is covered in the second part. There is the WPS standard described, especially its operations
-- \textit{GetCapabilities}, \textit{DesribeProcess} and \textit{Execute} - and inputs and outputs strucutres. There are also
+- \textit{GetCapabilities}, \textit{DesribeProcess} and \textit{Execute} - and inputs and outputs structures. There are also
 \textit{PyPWS} and \textit{Docker} described.
 
 Last part consists of the implementation description.
 \todo[inline]{Doplnit uvod o implementaci}
 
-I have choosen this topic to get in touch with another OGC standard. I also appreciate I can dive more into Docker technology
-as it is a leader in containerization at the world.
+I have chosen this topic to get in touch with another OGC standard. I also appreciate I can dive more into Docker technology
+as it is a leader in containerization in the world.
 
 \newpage
 \part{Introductory research}
 
 \newpage
 \section{Current state}
-
+\todo[inline]{Doplnit info o 52North a ZOO project a jejich implementacich}
 
 \newpage
 \section{Process isolation in PyWPS}
 \subsection{Asynchonous requests}
 Right now in PyWPS 4.0 version a PyWPS server instance is able to run multiple
 concurrent processes in parallel. The server is configured for maximal amounts of concurrently running processes at
-the same time and for maximal amount of waiting processes in a queue, to later start their execution once new
+the same time and for the maximal amount of waiting processes in a queue, to later start their execution once new
 slots are available. If the new Execute request is received and the maximal amount is exceeded, the request is rejected
 and user is informed in response (see Lst. \ref{lst:Isolation_rejected}).
 
@@ -206,14 +206,14 @@ and user is informed in response (see Lst. \ref{lst:Isolation_rejected}).
 </ows:ExceptionReport>
 \end{lstlisting}
 
-To facilitate the management of  concurrent processes, process metadata are stored into a local database. This database is used
-for logging , saving waiting Execute requests in the queue and invoking them later on.
+To facilitate the management of concurrent processes, process metadata are stored into a local database. This database is used
+for logging and saving waiting Execute requests in the queue and invoking them later on.
 This database will also enable the implementation of pausing, releasing and deleting running process. These features will
 allow PyWPS to comply with WPS version 2.0.0.
 
 \subsection{Current state}
 At the beginning of every process execution its own temporary directory \textit{workdir} is created. During the execution
-temporary files and continous outputs are stored in this folder. After successful execution final outputs are
+temporary files and continuous outputs are stored in this folder. After successful execution final outputs are
 moved to \textit{outputs} directory. Both directories \textit{outputs} and \textit{workdir} are configurable and user can
 change path to them.
 
@@ -229,7 +229,7 @@ Current version of PyWPS offers two solutions for running parallel processes:
 \item Job Scheduler Extension\footnote{Job Scheduler Extension is currently only in develop branch of PyWPS.}
 \end{itemize}
 
-If the execute request is sent asynchronously the type of process constructor is choosen depending on configuration
+If the execute request is sent asynchronously the type of process constructor is chosen depending on configuration
 parameter \textit{mode} in section \textit{processing} which is by default \textit{multiprocessing} or can be changed 
 to \textit{scheduler}.
 
@@ -278,8 +278,7 @@ centers.
 \label{fig:Isolation_torque}
 \end{figure}
 
-The PyWPS scheduler extension uses the Python \textit{dill} library to dump and load the processing job to/from filesystem. The batch script executed on the scheduler system calls the PyWPS \textit{joblauncher} script with the dumped job status and executes the job (no WPS service running on scheduler). The job status is updated on the filesystem. Both the PyWPS service and the joblauncher script use the same PyWPS configuration. The scheduler assumes that the PyWPS server has a shared filesystem with the scheduler system so that XML status documents and WPS outputs can be found at the same file location. The interaction diagram how the communication between PyWPS and the scheduler works is displayed at
-Fig. \ref{fig:Isolation_interaction}.
+The PyWPS scheduler extension uses the Python \textit{dill} library to dump and load the processing job to/from filesystem. The batch script executed on the scheduler system calls the PyWPS \textit{joblauncher} script with the dumped job status and executes the job (no WPS service running on scheduler). The job status is updated on the filesystem. Both the PyWPS service and the joblauncher script use the same PyWPS configuration. The scheduler assumes that the PyWPS server has a shared filesystem with the scheduler system so that XML status documents and WPS outputs can be found at the same file location. The interaction diagram how the communication between PyWPS and the scheduler works is displayed in Fig. \ref{fig:Isolation_interaction}.
 
 \begin{figure}[h!]
 \centering
@@ -298,19 +297,19 @@ Fig. \ref{fig:Isolation_interaction}.
 \subsection{Possible solutions}
 In previous section there were described two mechanisms for running parallel processes. Nevertheless in case of Python module
 \textit{Multiprocessing} the processes are not really isolated. They run concurrently but they can share resources and there are 
-even methods like \textit{Pipe()} that enables comunication between processes.
+even methods like \textit{Pipe()} that enables communication between processes.
 
 On the otherhand \textit{Job Scheduler Extension} is dependent on \textit{dill} library as well as on some external scheduler
 systems like \textit{Slurm}, \textit{Grid Engine} or \textit{TORQUE}.
 
 \bigskip
-In this section there are described some other solutions. Some of them were suggested by PyPWS developers with encouragment to
+In this section there are described some other solutions. Some of them were suggested by PyPWS developers with encouragement to
 make a feasible study. Some of them were discovered during research on the internet forums like StackOverflow, some of them
-were referenced in documentation of other projects. During the research two requirements were considered.
+were referenced in the documentation of other projects. During the research two requirements were considered.
 
 \begin{itemize}
-\item Solution provides mechanism for full isolation. This is a must-have requirements.
-\item Solution provides mechanism for start/pause/stop process execution. This is a nice-to-have requirements as this funcionality
+\item The solution provides a mechanism for full isolation. This is a must-have requirement.
+\item The solution provides a mechanism for start/pause/stop process execution. This is a nice-to-have requirement as this functionality
 will be required to comply WPS 2.0.0 standard.
 \end{itemize}
 
@@ -325,8 +324,9 @@ Finnaly these solutions were considered:
 \end{itemize}
 
 \subsubsection{Celery}
-\textit{Celery} is a task queue system written in Python. It helps distribute work across threads and even machines. Basic term is \textit{task}.
-Task is an unit of work and it is an input into the task queue. The task queue is constantly monitored for new work to perform.
+\textit{Celery} is a task queue system written in Python. It helps distribute work across threads and even machines. Basic term is
+a \textit{task}. A task is a unit of work and it is an input into the task queue. The task queue is constantly monitored for new 
+work to perform.
 
 To communicate between client and workers Celery uses a \textit{broker}. The communication is via messages. To initiate a task the
 client adds a message to the queue and the broker then delivers the message to a worker. Multiple workers and brokers can be added
@@ -340,7 +340,7 @@ Celery provide worker remote control client in class \textit{celery.app.control.
 \end{itemize}
 
 \subsubsection{Docker}
-\textit{Docker} is one of the most used technology regarding containerization. This technology is described in depth in later chapter.
+\textit{Docker} is one of the most used technology regarding containerization. This technology is described in depth in a later chapter.
 
 \subsubsection{psutil}
 \textit{psutil} is Python library for process and system management. It handles system monitoring, limiting process resources
@@ -359,18 +359,18 @@ to these sections:
 \paragraph{Processes} - Class \textit{psutil.Process(pid=None)} represents an OS process with given pid. The class is
 bound with a process via its PID. The \textit{Process} class offers these methods for starting/pausing:
 \begin{itemize}
-\item suspend() - Method suspends process using SIGSTOP signal.
-\item resume() - Method resumes process using SIGCONT signal.
-\item terminate() - Method terminates process using SIGTERM signal.
-\item kill() - Method kills process using SIGKILL signal.
+\item suspend() - The method suspends a process using SIGSTOP signal.
+\item resume() - The method resumes a process using SIGCONT signal.
+\item terminate() - The method terminates a process using SIGTERM signal.
+\item kill() - The method kills a process using SIGKILL signal.
 \end{itemize}
 
 \subsubsection{Sandboxed Python}
-The general goal of sandbox is to run applications securely inside isolated environment they cannot escape from and so
-affect other parts of the system. Developers use them to run untrusted code inside. It is quite difficult to develope
+The general goal of a sandbox is to run applications securely inside isolated environment they cannot escape from and
+affect other parts of the system. Developers use them to run untrusted code inside. It is quite difficult to develop
 fully sandboxed solution due to Python complexity. The basic problem is that Python introspection allows several ways
-to excape out of the sandbox. True security requires an overall design with many security considerations included. Some
-of the projects that can run Python code in sandbox are:
+to escape out of the sandbox. True security requires an overall design with many security considerations included. Some
+of the projects that can run Python code in a sandbox are:
 \begin{itemize}
 \item PyPy
 \item Jython
@@ -378,11 +378,11 @@ of the projects that can run Python code in sandbox are:
 
 \paragraph{PyPy} PyPy is Python interpreter written in RPython that implements full Python language and very closely 
 emulates the behavior of CPython. PyPy offers fully portable sandboxing feature similar to OS-level sandboxing (e. g. SECCOMP).
-It is not sandboxing at the Python language level so it does not put any restriction on any Python funcionality.
+It is not sandboxing at the Python language level so it does not put any restriction on any Python functionality.
 
 Untrusted Python code that is intended to be sandboxed is launched in a subprocess, that is a special sandboxed version of PyPy.
 All its inputs/outputs are not directly performed but are serialized to a stdin/stdout pipe. The outer process reads the pipe 
-and afterwards decides which commands are allowed.
+and afterward decides which commands are allowed.
 
 \paragraph{Jython} Jython is Python language interpreter for Java. Java offers strong sandboxing mechanisms. The security 
 facility in Java that supports sandboxing is the \textit{java.lang.SecurityManager}. By default, Java runs without a 
@@ -406,8 +406,16 @@ be used in practice, because of all these protections. Individual
 protections cannot be disabled, all protections are required to get a
 secure sandbox."}
 
+\subsubsection{Virtual Machine/Vagrant}
+Using full virtualization for process isolation is mentioned here but in fact it is hard to imagine this solution could work
+in practice. \textit{Vagrant} is a tool for managing and building virtual machines. It provides a way how to manage various virtual 
+machines in an automatized way e. g. using scripts. There also exists a Python package \textit{python-vagrant} that offers 
+Python bindings for interacting with Vagrant.
 
-\subsubsection{VM}
+However in our use-case using Vagrant would mean that for every process execution a separate virtual machine is created. Depending
+on the process algorithm complexity the process execution can last from milliseconds to hours or days. On the other hand building 
+a virtual machine and booting into it last at least few seconds. That is why it is hard to imagine using virtual machine, which takes
+few seconds to boot up, to isolate process, which execution lasts less than a second.
 
 \newpage
 \part{Technological background}
@@ -416,7 +424,7 @@ secure sandbox."}
 \section{Web Processing Service}
 
 \subsection{History}
-First mention of the Web Processing Service was in October 2004. Back then it
+The first mention of the Web Processing Service was in October 2004. Back then it
 was named Geoprocessing Service \cite{OGC_news}. The specification was first 
 implemented as a prototype in 2004 by Agriculture and Agri-Food Canada (AAFC).
 In its further development during a Geoprocessing Services Interoperability Experiment \cite{WPS_experiment} 
@@ -424,7 +432,7 @@ the name was changed to "Web Processing Service" to avoid the acronym GPS, since
 this would have caused confusion with the conventional use of this acronym for 
 Global Positioning System \cite{WPS_standart_1.0}. The first version of WPS was released in
 September 2005 \cite{WPS_first}. The experiment demonstrated that various clients
-could easily access and bind to services which were set up according the WPS Implementation
+could easily access and bind to services which were set up according to the WPS Implementation
 specification.
 
 Currently two major versions of WPS Standard exist. The WPS version 1.0.0 is currently used mostly.
@@ -432,47 +440,47 @@ If not explicitly said this thesis is dedicated to the version 1.0.0. The WPS ve
 released in 2015 \cite{WPS_second}.
 
 \subsection{OGC}
-\todo[inline]Doplnit kratky odstavec o OGC
+\todo[inline]{Doplnit kratky odstavec o OGC}
 
 \bigskip
 \subsection{Web Processing Service}
 The OGC Web -Processing Service (WPS) Interface Standard defines a standardized interface
-that facilitates the publishing of geospatil processes. Also provides rules how to standardize
+that facilitates the publishing of geospatial processes. Also provides rules how to standardize
 requests and responses for geospatial processing services. 
 
 \textit{Process} means any operation on spatial
 data from simple ones as maps overlay or buffering to highly complex as complicated global models. Any kind of GIS 
-funcionality can be offered to clients across network with correctly configured WPS. 
+functionality can be offered to clients across a network with correctly configured WPS. 
 
 \textit{Publishing} means
-creating human-readable metadata that allow user to discover and use service as well as making 
+creating human-readable metadata that allow users to discover and use service as well as making 
 available machine-readable binding information.
 
 \textit{Data} can be both vector or raster data and can be delivered across the network or be available
 at the server.
 
 The interface does not specify any specific processes that can be implemented by a WPS nor any specific
-data inputs or outputs. instead it specifies a generic mechanisms to describe any geospatial process and
+data inputs or outputs. Instead it specifies generic mechanisms to describe any geospatial process and
 data required and produced by the process. The interface does not only provide mechanisms for calculation
 but also to identify required data, initiate the calculation and manage output data so clients can access it. 
 
 \bigskip
-Web Processing Service as one of the OGC web services scpecifies three types of requests which can be requested
-by a client and performed by a WPS server. The implementation of these three requests is mandatory by by all servers:
+Web Processing Service as one of the OGC web services specifies three types of requests which can be requested
+by a client and performed by a WPS server. The implementation of these three requests is mandatory by all servers:
 \begin{itemize}
 \item{GetCapabilities}
 \item{DescribeProcess}
 \item{Execute}
 \end{itemize}
 
-\textit{GetCapabilities} - The request returns to client a Capabilities document that describes the abilities
+\textit{GetCapabilities} - The request returns to the client a Capabilities document that describes the abilities
 of the specific server implementation. It also returns the name and abstract of each of the processes that can
 be run on a WPS instance.
 
 \textit{DescribeProcess} - The request returns details about the processes offered by a WPS instance. Describes
-required inputs and produces outputs and their allowable formats.
+required inputs and produced outputs and their allowable formats.
 
-\textit{Execute} - The request allows a client to run a specified process with provided parameters and returns
+\textit{Execute} - The request allows the client to run a specified process with provided parameters and returns
 produced outputs.
 
 \begin{figure}[h!]
@@ -483,8 +491,8 @@ produced outputs.
 \end{figure}
 
 These operations are very similar to other OGC Web Services such as WMS, WFS, and WCS. Common interface aspects
-are defined in the OpenGIS ® Web Services Common Implementation Specification \cite{OGC_common}. As seen at 
-class diagram at Fig. \ref{fig:WPS_class_diagram} the WPS interface class inherits the GetCapabilities operation 
+are defined in the OpenGIS ® Web Services Common Implementation Specification \cite{OGC_common}. As seen in 
+the class diagram at Fig. \ref{fig:WPS_class_diagram} the WPS interface class inherits the GetCapabilities operation 
 from OGCWebService interface class. The operations Execute and DescribeProcess are specific for the WPS. The WPS
 operations are based on GET and POST requests.
 
@@ -509,8 +517,8 @@ POST with XML encoding. Summarized in Table \ref{tab:WPS_encoding}.
 
 \bigskip
 \subsubsection{GetCapabilities}
-The GetCapabilities operation is mandatory. The operation allows clients to retrieve capabilities document (metadata)
-from a server. The response XML document contains service metadata about server and all implemented processes description.
+The GetCapabilities operation is mandatory. The operation allows a client to retrieve capabilities document (metadata)
+from a server. The response XML document contains service metadata about the server and all implemented processes description.
 
 \todo[inline]{AcceptVersion vs version, AcceptFormats vs format}
 \paragraph{GetCapabilities request}
@@ -533,20 +541,20 @@ AcceptFormats=text/xml     & Optional            & \makecell{Comma-separated \\p
 \end{table}
 
 \begin{itemize}
-\item\textit{service} - Mandatory parameter, WPS is only possible value.
-\item\textit{request} - Mandatory parameter, GetCapabilities is only possible value.
-\item\textit{version} - Optional parameter, version number. Three non-negative integers separated by decimal point. Servers and
+\item\textit{service} - A mandatory parameter, WPS is only possible value.
+\item\textit{request} - A mandatory parameter, GetCapabilities is only possible value.
+\item\textit{version} - An optional parameter, version number. Three non-negative integers separated by a decimal point. Servers and
 their clients should support at least one defined version.
-\item\textit{sections} - Optional parameter that contains a list of section names. Possible values are: \textit{ServiceIdentification,
+\item\textit{sections} - An optional parameter that contains a list of section names. Possible values are: \textit{ServiceIdentification,
 ServiceProvider, OperationsMetadata, Contents, All}.
-\item\textit{updateSequence} - Optional parameter for maintaining the consistency of a client cache of the contents of a service
+\item\textit{updateSequence} - An optional parameter for maintaining the consistency of a client cache of the contents of a service
 metadata document. The parameter value can be an integer, a timestamp, or any other number or string.
-\item\textit{updateSequence} - Optional parameter for maintaining the consistency of a client cache of the contents of a service
+\item\textit{updateSequence} - An optional parameter for maintaining the consistency of a client cache of the contents of a service
 metadata document. The parameter value can be an integer, a timestamp, or any other number or string.
-\item\textit{format} - Optional parameter that defines response format.
+\item\textit{format} - An optional parameter that defines response format.
 \end{itemize}
 
-The GetCapabilities operation can be requested with parameters from table \ref{tab:WPS_GetCapabilities}. A corresponding
+The GetCapabilities operation can be requested with parameters from the table \ref{tab:WPS_GetCapabilities}. A corresponding
 request URL looks like:
 \url{http://localhost:5000/wps?service=WPS&request=GetCapabilities&Accept
 Version=1.0.0&Section=ServiceIdentification,OperationsMetadata&update
@@ -583,8 +591,8 @@ In case that WPS server encounters an error a client retrieve an exception repor
 
 \bigskip
 \subsubsection{DescribeProcess}
-The DescribeProcess operation is mandatory. The operation allows clients to retrieve a detailed description about one or more
-processes implemented by a WPS server. The detailed information describe both required inputs and produced outputs and allowed
+The DescribeProcess operation is mandatory. The operation allows clients to retrieve a detailed description of one or more
+processes implemented by a WPS server. The detailed information describes both required inputs and produced outputs and allowed
 format.
 
 \paragraph{DescribeProcess request}
@@ -620,8 +628,8 @@ request URL looks like: \url{http://localhost:5000/wps?request=DescribeProcess&s
 \subparagraph{Normal response}
 Normal response to DescribeProcess request contains or more process descriptions for requested process identifiers in 
 \textit{ProcessDescriptions} structure. Each
-process description contains detailed information about process in \textit{ProcessDescription} including process inputs and outputs description. Number
-of inputs or outputs is not limited. Three types of input or outpus exist:
+process description contains detailed information about process in \textit{ProcessDescription} including process inputs and outputs description. The number
+of inputs or outputs is not limited. Three types of input or outputs exist:
 \todo[inline]{Doplnit popisy dat}
 \begin{itemize}
 \item\textit{LiteralData} - 
@@ -668,7 +676,7 @@ statusSupported	           & Optional            & \makecell{Execute response ca
 \end{table}
 
 \subparagraph{DescribeProcess exceptions}
-In case that WPS server encounters an error a client retrieve an exception report message with one of there exception code:
+In case that WPS server encounters an error a client retrieves an exception report message with one of there exception code:
 
 \begin{itemize}
 \item\textit{MissingParameterValue} - GetCapabilities request does not contain a required parameter value.
@@ -679,14 +687,14 @@ In case that WPS server encounters an error a client retrieve an exception repor
 \bigskip
 \subsubsection{Execute}
 The Execute operation is mandatory. The operation allows clients to run a specified process implemented by a server.
-Inputs can be included directly in the request body or be referenced as web accesible resource. The outputs are returned
-in XML response document, either directly embedded within the response document or stored as resource accesible by
+Inputs can be included directly in the request body or be referenced as a web-accessible resource. The outputs are returned
+in XML response document, either directly embedded within the response document or stored as a resource accessible by
 returned URL.
 
-Ussualy the response document is returned right after the process execution is completed. However it is possible to get
-response document right after sending request. In this case, returned response document contains a URL link from which the
-final response document can be retrieved after completed process execution. Client can request execution status update to
-find out the amount of processing remaining if the execution is not completed. Shown at Fig. \ref{fig:WPS_activity}.
+Usualy the response document is returned right after the process execution is completed. However it is possible to get
+response document right after sending a request. In this case, returned response document contains a URL link from which the
+final response document can be retrieved after completed process execution. A client can request execution status update to
+find out the amount of processing remaining if the execution is not completed. Shown in Fig. \ref{fig:WPS_activity}.
 
 \begin{figure}[h!]
 \centering
@@ -715,7 +723,7 @@ language   		           & Optional            & Language identifier \\ \hline
 \end{table}
 
 \paragraph{Execute response}
-Ussualy the Execute operation response document is an XML document. Only exception is in case when a response form
+Usualy the Execute operation response document is an XML document. The only exception is in case when a response form
 of \textit{RawDataOutput} is requested, execution is successful and only one complex output is created, then directly
 the produced complex output is returned.
 
@@ -744,9 +752,7 @@ ProcessOutputs             & Optional            & \makecell{List of values of o
 \end{table}
 
 \subsection{WPS implementations}
-The OGS WPS is just interface standard that provides rules for standardizing requests and response. It also defines how clients can request
-the execution of defined processes and how the outputs are handled. There are several open-source projects that implement this standard 
-across the platforms or programming languages.
+The OGS WPS is just an interface standard that provides rules for standardizing requests and response. It also defines how clients can request the execution of defined processes and how the outputs are handled. There are several open-source projects that implement this standard across the platforms or programming languages.
 
 \begin{itemize}
 \item \textit{PyWPS} - Python implementation. This thesis is dedicated to this implementation.
@@ -760,16 +766,16 @@ across the platforms or programming languages.
 \newpage
 \section{PyWPS}
 \todo[inline]{Doplnit a prepsat}
-PyWPS is a server side implementation of the OGC WPS standard in the Python programming language.
+PyWPS is a server-side implementation of the OGC WPS standard in the Python programming language.
 The first version of PyWPS started in 2006 as a student project. In 2007 PyWPS 2.0.0 was released supporting WPS 0.4.0.
 Next year in 2008 PyWPS 3.0.0 was released with support for WPS 1.0.0. It was possible to run multiple WPS instances
-with one PyWPS istallation. This version had simple code structure and contained examples of processes. The newest version 
+with one PyWPS installation. This version had simple code structure and contained examples of processes. The newest version 
 is PyWPS 4.0.0 from September 2017.\cite{PyWPS_presentation}.
 
 PyWPS itself is just interface implementation. It is not an analytic tool or engine so it does not perform any kind of
-geospatil calculation nor provide any processing funcionality. PyWPS handles inputs, process execution and produces outputs
-but it is up to user (typically developer or scientist) to provide own code that is deployed on the PyWPS server
-instance and the server afterwards gets input data, evaluates them and calls the execute method.
+geospatial calculation nor provide any processing functionality. PyWPS handles inputs, process execution and produces outputs
+but it is up to the user (typically developer or scientist) to provide own code that is deployed on the PyWPS server
+instance and the server afterward gets input data, evaluates it and calls the execute method.
 
 \begin{figure}[h!]
 \centering
@@ -779,12 +785,12 @@ instance and the server afterwards gets input data, evaluates them and calls the
 \end{figure}
 
 \subsection{PyWPS 4.0}
-PyWPS-4 is the most current version of PyWPS. Rewritting from scratch involved this major changes:
+PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved this major changes:
 \begin{itemize}
-\item It is written in \textit{Python 3} with backwards support for Python 2.7.
+\item It is written in \textit{Python 3} with backward support for Python 2.7.
 \item It utilizes native Python bindings to existing projects (GRASS GIS).
 \item New popular formats like \textit{GeoJSON}, \textit{KML} or \textit{TopoJSON} are reflected and their support is provided.
-\item PyWPS project has changed the licence from \textit{GNU/GPL} to \textit{MIT}.
+\item PyWPS project has changed the license from \textit{GNU/GPL} to \textit{MIT}.
 \item PyWPS 4.0 is implemented using the \textit{Flask} framework.
 \item A C-based XML parser \textit{Lxml} is used to handle XML files.
 \item \textit{OWSLib} structures are used for some data types.
@@ -798,14 +804,14 @@ several demo processes.
 \newpage
 \section{Docker}
 \paragraph{Containerization} is a lightweight alternative to full machine virtualization. It involves encapsulating an application 
-into a container with its own operating environment. It helps to run containerized application on any physical machine without any
+into a container with its own operating environment. It helps to run a containerized application on any physical machine without any
 worries about dependencies. The origin of containerization lies in the \textit{LinuX Containers {LXC}} format. Containerization
 works only in Linux environments and can run only Linux applications.
 
 Docker is not the only one technology for containerization. Other alternatives exist, it is \textit{Kubernets}, \textit{CoreOS rkt}, 
-\textit{Open Contrainer Initiative (OCI)}, \textit{Canonical's LXD}, \textit{Apache Mesos and Mesosphere} and many others. 
-However Docker is a leader on the field of contanerization and with most public traction is de facto considered as a container standard.
-That's why the Docker was choosen for this thesis as a container technology. So from this point on any term \textit{container} refers to
+\textit{Open Container Initiative (OCI)}, \textit{Canonical's LXD}, \textit{Apache Mesos and Mesosphere} and many others. 
+However Docker is a leader on the field of containerization and with most public traction is de facto considered as a container standard.
+That's why the Docker was chosen for this thesis as a container technology. So from this point on any term \textit{container} refers to
 Docker container.
 
 \begin{figure}[h!]
@@ -834,7 +840,7 @@ Docker container.
 \end{figure}
 
 \paragraph{Docker} is a Linux container technology that allows package and ship applications and everything it needs to execute into a standard
-format, and run them on any infractructure.
+format, and run them on any infrastructure.
 
 \begin{figure}[h!]
 \centering
@@ -844,29 +850,29 @@ format, and run them on any infractructure.
 \end{figure}
 
 \paragraph{Docker container vs. Virtual machine}
-Both virtual machines and docker containers are two ways how to deploy multiple, isolated applications on a single platform. They
+Both virtual machines and Docker containers are two ways how to deploy multiple, isolated applications on a single platform. They
 both offer a way to isolate an application and its dependencies into a self-contained unit that can run anywhere. They both offer
 some kind of virtualization. They differ in architecture, see Fig. \ref{fig:Docker_VM}, \ref{fig:Docker_container}.
 
 \noindent
-Let's start with virtual machine (Fig. \ref{fig:Docker_VM}) and its layers description from bottom up:
+Let's start with a virtual machine (Fig. \ref{fig:Docker_VM}) and its layers description from the bottom up:
 \begin{itemize}
 \item \textit{Infrastructure} - It can be a PC, developer's laptop, a physical server in datacenter but as well a virtual private
 server in the cloud as Microsoft Azure or Amazon EC2.
 \item \textit{Host OS} - Host operating system. In case of native hypervisor this layer is missing. In case of hosted hypervisor
-it is probably some distibution of Linux, Windows or MacOS.
-\item \textit{Hypervisor} - Also called virtual machine monitor (VMM). It allows to host several different virtual machines
+it is probably some distribution of Linux, Windows or MacOS.
+\item \textit{Hypervisor} - Also called virtual machine monitor (VMM). It allows hosting several different virtual machines
 on a single hardware. There are two types of hypervisors:
 \begin{itemize}
 \item Type 1 -  Also called \textit{bare metal} or \textit{native}. This type is run on the host's hardware to control it as well as manage 
 the virtual machines on it. It is much faster and more efficient. This type hypervisors are KVM, Hyper-V or HyperKit.
-\item Type 2 - So called \textit{embedded} or \textit{hosted} hypervisors. There hypervisors are run on a host OS as a software. They are slower
+\item Type 2 - So called \textit{embedded} or \textit{hosted} hypervisors. These hypervisors are run on a host OS as a software. They are slower
 and less efficient on the other hand they are much easier to set up. It includes VirtualBox or VMWare Workstation.
 \end{itemize}
-\item \textit{Guest OS} - Guest operating system. Each VM require own guest operating system which is controlled by hypervisor. Each 
-guest OS needs its own CPU and memory resources and starts on hundreds megabytes in size.
+\item \textit{Guest OS} - Guest operating system. Each VM requires own guest operating system which is controlled by the hypervisor. Each 
+guest OS needs its own CPU and memory resources and starts on hundreds of megabytes in size.
 \item \textit{Bins/Libs} - Each guest OS needs various binaries and libraries for running the application. It can be \textit{python-dev} or \textit{default-jdk} packages as well as personal packages to run the application.
-\item \textit{Application} - The application source code that is desired to be run isolated. Therefore each application or each version of application has to be run inside of its own guest OS with own copy of bins and libs. 
+\item \textit{Application} - The application source code that is desired to be run isolated. Therefore each application or each version of the application has to be run inside of its own guest OS with own copy of bins and libs. 
 \end{itemize}
 
 \begin{figure}[h!]
@@ -882,8 +888,7 @@ Now, what is different regarding containers (Fig. \ref{fig:Docker_container})
 \item \textit{Infrastructure} - PC, laptop, physical or virtual server.
 \item \textit{Host OS with container support} - Any OS capable of run Docker. All major distributions of Linux are supported and there are ways
 to run Docker even on MacOs and Windows too.
-\item \textit{Docker engine} - Also called Docker daemon. It is a service that runs in the beckground on host operating system. It manages all
-interaction with containers.
+\item \textit{Docker engine} - Also called Docker daemon. It is a service that runs in the background on host operating system. It manages all interaction with containers.
 \item \textit{Bins/Libs} - Binaries and libraries required by the application. They get built into special packages called \textit{Docker images}.
 The Docker daemon runs those images.
 \item \textit{Application} - Each application and its library dependencies get packed into the same Docker image. It is managed independently by the Docker daemon. 
@@ -892,41 +897,37 @@ The Docker daemon runs those images.
 \noindent
 But the architecture is not the only one difference:
 \begin{itemize}
-\item Docker use Docker daemon to manage containers, hypervisor manages virtual machines.
+\item Docker uses Docker daemon to manage containers, hypervisor manages virtual machines.
 \item The Docker daemon communicates directly with host OS and manage resources for each container.
-\item VMs usually boot up in minute and more, containers start in seconds.
+\item VMs usually boot up in a minute and more, containers start in seconds.
 \item Docker virtualizes operating systems, using VMs is hardware virtualization.
-\item VM and container vary in size. VMs start at hundreds of megabytes. Container can be smaller then one megabyte.
-\item Containers share the kernel altough they are isolated. VMs are monolitic and stand-alone.
+\item VM and container vary in size. VMs start at hundreds of megabytes. A container can be smaller than one megabyte.
+\item Containers share the kernel although they are isolated. VMs are monolithic and stand-alone.
 \end{itemize}
 
 \paragraph{Dockerfile}
-Dockerfile is a core file that contains instruction to be performed when an image is built. It usually consists from commands to install
-packages, calls to other scripts, setting environmental variable, adding files or setting permissions. In Dockerfile there is also defined 
-what image is to be used as base image for the build.
+Dockerfile is a core file that contains the instruction to be performed when an image is built. It usually consists of commands to install packages, calls to other scripts, setting environmental variables, adding files or setting permissions. In Dockerfile there is also defined what image is to be used as a base image for the build.
 
 \paragraph{Dockerfile instructions}
 \begin{itemize}
 \item \textit{FROM} - The FROM instruction defines the base image for next instructions and initializes a new build stage. Every Dockerfile
 has to start with FROM command. The only exception is ARG command which can be before FROM command.
 \item \textit{ARG} - The ARG instruction defines a variable that users can pass at build-time to the builder.
-\item \textit{ENV <key>=<value>} - The ENV instruction sets the environment variables. It is key-par value. 
-\item \textit{LABEL} - The LABEL instruction adds metadata to an image. A LABEL is a key-value pair. It can be anything from version number to description.
-\item \textit{ADD <src> <dest>} - The ADD instruction copies files or directories from source and adds them at the destination path. It also
-unzip or untar files when added.
-\item \textit{COPY <src> <dest>} - Similar to the ADD instruction it copies files or directories from source and adds them at the destination path. This command doesn't provide any kind of decompression.
+\item \textit{ENV <key>=<value>} - The ENV instruction sets the environment variables. It is key-pair value. 
+\item \textit{LABEL} - The LABEL instruction adds metadata to an image. A LABEL is a key-value pair. It can be anything from version number to a description.
+\item \textit{ADD <src> <dest>} - The ADD instruction copies files or directories from source and adds them at the destination path. It also unzips or untars files when added.
+\item \textit{COPY <src> <dest>} - Similar to the ADD instruction it copies files or directories from source and adds them to the destination path. This command doesn't provide any kind of decompression.
 \item \textit{RUN <command>} - The RUN instruction will execute any defined command and commit the results.
 \item \textit{CMD ["executable","param1","param2"]} - The CMD instruction provides defaults for an executing container. It can include an
-executable. In case the executable is ommited the CMD instruction must be used together with the ENTRYPOINT instruction. There can be only
+executable. In case the executable is omitted the CMD instruction must be used together with the ENTRYPOINT instruction. There can be only
 one CMD instruction in Dockerfile. In case there is more CMD the last one will be used.
-\item \textit{ENTRYPOINT} - The ENTRYPOINT defines a configuration of container that will run as executable.
-\item \textit{WORKDIR /path/to/dir} - The WORKDIR instruction sets the working directory for any RUN, CMD, COPY and ADD instruction that follow
-in Dockerfile.
+\item \textit{ENTRYPOINT} - The ENTRYPOINT defines a container configuration that will run as executable.
+\item \textit{WORKDIR /path/to/dir} - The WORKDIR instruction sets the working directory for any RUN, CMD, COPY and ADD instruction that follows in Dockerfile.
 \item \textit{EXPOSE} - The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime.
-\item \textit{VOLUME} - The VOLUME instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers.
+\item \textit{VOLUME} - The VOLUME instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from the native host or other containers.
 \end{itemize}
 
-Except the FROM instruction, all the instructions can be defined from command line when starting docker container. There are more Dockerfile instructions however they are not relevant for this thesis as there are never used in practical part.
+Except for the FROM instruction, all the instructions can be defined from the command line when starting docker container. There are more Dockerfile instructions however they are not relevant to this thesis as there are never used in practical part.
 
 \newpage
 \begin{lstlisting}[basicstyle=\small,caption={Dockerfile example}]
