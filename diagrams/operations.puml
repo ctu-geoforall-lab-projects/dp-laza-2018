@@ -1,0 +1,31 @@
+@startuml
+(*)  -> "@Request.application._call_(http_request)"
+--> "WPSRequest(http_request)"
+--> if ""
+ note right
+  if WPSRequest.operation in
+  [GetCapabilities,
+   DescribeProces,
+   Execute]
+ end note
+ -->[true]if ""
+  note left
+   switch operation
+  end note
+  --> [GetCapabilities] "get_capabilities()"
+  --> ==BEFORE_RESPONSE==
+ else
+  -->[Describe] "describe()"
+  --> ==BEFORE_RESPONSE==
+ else
+  -->[Execute] "execute()"
+  --> ==BEFORE_RESPONSE==
+ Endif
+else
+ -left-> [false] "raise RuntimeError('Unknown operation')"
+ --> ==BEFORE_RESPONSE==
+Endif
+
+--> "update_response()"
+--> (*)
+@enduml

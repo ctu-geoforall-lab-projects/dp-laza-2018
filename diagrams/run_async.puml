@@ -1,0 +1,19 @@
+@startuml
+(*)  --> Process()
+--> mode = get_config_value()
+if ""
+note left
+switch mode
+end note
+ -->[SCHEDULER] Scheduler()
+ --> ===BEFORE_RETURN===
+else
+ -->[DOCKER] Container()
+ --> ===BEFORE_RETURN===
+else
+ -->[MULTIPROCESSING (default)] MultiProcessing()
+ --> ===BEFORE_RETURN===
+endif
+--> return process
+-->(*)
+@enduml

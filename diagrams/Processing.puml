@@ -1,0 +1,42 @@
+@startuml
+
+class Object
+
+interface Processing{
+job
+__init__()
+start()
+cancel()
+}
+
+class MultiProcessing{
+start()
+}
+
+class Container{
+job
+port
+client
+cntnr
+__init__()
+_create()
+_assign_port()
+_execute()
+_parse_outputs()
+start()
+stop()
+cancel()
+pause()
+unpause()
+}
+
+class Scheduler{
+start()
+run_job()
+}
+
+Object<|-- Processing
+Processing<|-- MultiProcessing
+Processing<|-- Container
+Processing<|-- Scheduler
+@enduml

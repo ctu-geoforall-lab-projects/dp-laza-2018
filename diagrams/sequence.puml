@@ -1,0 +1,62 @@
+@startuml
+participant Client
+box "Host" #Orange
+	participant PyWPS_Server
+	participant Job
+	participant Container
+end box
+box "Docker" #LightBLue
+	participant Pywps_Server
+	participant job
+	participant Process
+end box
+
+Client -> PyWPS_Server: executeRequest
+activate PyWPS_Server
+PyWPS_Server --> Client: executeResponse
+deactivate PyWPS_Server
+
+Client -> PyWPS_Server: getStatus
+activate PyWPS_Server
+PyWPS_Server --> Client: accepted
+deactivate PyWPS_Server
+
+PyWPS_Server -> Job: execute
+activate Job
+Job -> Container: create
+activate Container
+
+
+Job -> Container: start
+activate Container
+Container -> Pywps_Server: executeRequest
+activate Pywps_Server
+Pywps_Server --> Container: executeResponse
+deactivate Pywps_Server
+Container --> Job
+deactivate Container
+
+Pywps_Server -> job: execute
+activate job
+job -> Process: start
+activate Process
+
+Client -> PyWPS_Server: getStatus
+PyWPS_Server -> Pywps_Server: getStatus
+Pywps_Server -> job: getStatus
+job --> Pywps_Server: status
+Pywps_Server --> PyWPS_Server: status
+PyWPS_Server --> Client: status
+
+Process --> job
+deactivate Process
+job --> Pywps_Server
+deactivate job
+Container --> Job
+deactivate Container
+Job --> PyWPS_Server
+deactivate Job
+
+Client -> PyWPS_Server: getStatus
+PyWPS_Server --> Client: result
+@enduml
