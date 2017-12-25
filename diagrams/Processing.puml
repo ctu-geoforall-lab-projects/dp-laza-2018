@@ -2,6 +2,16 @@
 
 class Object
 
+'class Job{
+'process
+'method
+'wps_request
+'wps_response
+'dump()
+'load()
+'run()
+'}
+
 interface Processing{
 job
 __init__()
@@ -9,12 +19,17 @@ start()
 cancel()
 }
 
+class Scheduler{
+start()
+run_job()
+}
+
+
 class MultiProcessing{
 start()
 }
 
 class Container{
-job
 port
 client
 cntnr
@@ -28,11 +43,6 @@ stop()
 cancel()
 pause()
 unpause()
-}
-
-class Scheduler{
-start()
-run_job()
 }
 
 Object<|-- Processing

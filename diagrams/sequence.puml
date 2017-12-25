@@ -44,7 +44,9 @@ activate Process
 Client -> PyWPS_Server: getStatus
 PyWPS_Server -> Pywps_Server: getStatus
 Pywps_Server -> job: getStatus
+activate job
 job --> Pywps_Server: status
+deactivate job
 Pywps_Server --> PyWPS_Server: status
 PyWPS_Server --> Client: status
 

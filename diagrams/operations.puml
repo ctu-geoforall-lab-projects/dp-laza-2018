@@ -1,31 +1,21 @@
 @startuml
-(*)  -> "@Request.application._call_(http_request)"
---> "WPSRequest(http_request)"
---> if ""
- note right
-  if WPSRequest.operation in
-  [GetCapabilities,
-   DescribeProces,
-   Execute]
- end note
- -->[true]if ""
-  note left
-   switch operation
-  end note
-  --> [GetCapabilities] "get_capabilities()"
-  --> ==BEFORE_RESPONSE==
- else
-  -->[Describe] "describe()"
-  --> ==BEFORE_RESPONSE==
- else
-  -->[Execute] "execute()"
-  --> ==BEFORE_RESPONSE==
- Endif
-else
- -left-> [false] "raise RuntimeError('Unknown operation')"
- --> ==BEFORE_RESPONSE==
-Endif
-
---> "update_response()"
---> (*)
+start
+:@Request.application._call_(http_request);
+:WPSRequest(http_request);
+:WPSRequest.operation;
+if (is Getcapabilities) then (true)
+ :get_capabilities();
+else (false)
+  if (is DescribeProcess) then (true)
+   :describe();
+  else (false)
+    if (is Execute) then (true)
+     :execute();
+    else (false)
+       :raise RuntimeError('Unknown operation');
+    endif
+  endif
+endif
+:update_response();
+stop
 @enduml

@@ -562,6 +562,7 @@ Sequence=XXX&AcceptFormats=text/xml}
 
 \bigskip
 \paragraph{GetCapabilities response}
+\label{para:GetCapa_response}
 \subparagraph{Normal response}
 When GetCapabilities operation requested a client retrieve service metadata document that contains sections specified in
 \textit{sections} parameter. If the parameter value is \textit{All} or is not specified all sections retrieved.
@@ -625,6 +626,7 @@ The DescribeProcess operation can be requested with parameters from table \ref{t
 request URL looks like: \url{http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0}
 
 \paragraph{DescribeProcess response}
+\label{para:DesribeProc_response}
 \subparagraph{Normal response}
 Normal response to DescribeProcess request contains or more process descriptions for requested process identifiers in 
 \textit{ProcessDescriptions} structure. Each
@@ -694,13 +696,13 @@ returned URL.
 Usualy the response document is returned right after the process execution is completed. However it is possible to get
 response document right after sending a request. In this case, returned response document contains a URL link from which the
 final response document can be retrieved after completed process execution. A client can request execution status update to
-find out the amount of processing remaining if the execution is not completed. Shown in Fig. \ref{fig:WPS_activity}.
+find out the amount of processing remaining if the execution is not completed. Shown in Fig. \ref{fig:WPS_sequence}.
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.9\textwidth]{img/WPS_activity}
-\caption{Activity diagram when client requests storage of results, source: \cite{WPS_standart_1.0}}
-\label{fig:WPS_activity}
+\includegraphics[width=0.9\textwidth]{img/WPS_sequence.png}
+\caption{Sequence diagram: a client requests storage of results, source: \cite{WPS_standart_1.0}}
+\label{fig:WPS_sequence}
 \end{figure}
 
 \paragraph{Execute request}
@@ -956,7 +958,86 @@ ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
 \newpage
 \part{Implementation}
 \newpage
-\todo[inline]{Popsat implementaci}
+\section{Operations overview}
+\label{sec:operations_ov}
+PyWPS in current version 4.0.0 implements all mandatory operations: \textit{Execute}, \textit{GetCapabilities}, \textit{DescribeProcess}.
+Operations are handled by corresponding methods \textit{execute()}, \textit{get\_capabilities()} and \textit{describe()} in \textit{Service.py} class. 
+
+However both \textit{GetCapabilities} and \textit{DescribeProcess} operations run in syncronous mode only. After sending a request,
+a client receives back GetCapabilities or DescribeProcess response (both detaily described in \ref{para:GetCapa_response} and \ref{para:DesribeProc_response}). Both operations return only information or description about process but do not trigger the
+execution of the process. It is supposed the response to GetCapabilities and DescribeProcess is returned almost immediately.
+During the GetCapabilities and the DescribeProcess operations a process execution is not started and therefore there is no
+starting process to be isolated. That is why from this point on this thesis is dedicated only to \textit{Execute} operation.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{img/Diag_operations.png}
+\caption{PyWPS operations activity diagram}
+\label{fig:Diag_operations}
+\end{figure}
+
+\section{Execute operation}
+\subsection{Service.execute()}
+As mentioned in previous section Sect. \ref{sec:operations_ov}, \textit{Execute} operation is handled by \textit{execute()} method.
+Inputs for the method are:
+\begin{itemize}
+\item \textit{identifier} (string) - a name of the process which execution is requested and which is supported by WPS server.
+\item \textit{wps\_request} (WPSRequest object) - an object containing original HTTP request.
+\item \textit{uuid} (integer) - unique identifier of process execution.
+\end{itemize}
+
+\begin{figure}[h!]
+\centering
+\begin{floatrow}
+\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_execute.png}}{\caption{Activity diagram: method \textit{Service.execute()}}}{\label{fig:DiagServiceExecute}}
+\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_parse_execute.png}}{\caption{Activity diagram: method \textit{Service.\_parse\_and\_execute()}}}{\label{fig:DiagServiceParseExecute}}
+\end{floatrow}
+\end{figure}
+
+The flowchart of the process execution is displayed at Fig. \ref{fig:DiagServiceExecute}. 
+At first a deepcopy of the process instance is created so that procesesses cannot override each other. Then a temporary working directory \textit{workdir} is created and set as a current workdir for the process execution. To the workdir all input files are
+copied as well as all temporary files and outputs are stored here. Then the method \textit{\_parse\_and\_execute()} is called (see
+Fig. \ref{fig:DiagServiceParseExecute}). Here the inputs are parsed, in case of web-referenced input, the data are downloaded to workdir, in case of directly in request sent data, the data are saved into a file in workdir. The process execution afterward runs in \textit{Process.execute()} method. This method returns a \textit{wps\_response} - an instance of \textit{WPSReponse} object.
+
+\subsection{Process.execute()}
+The method \textit{execute()} of class \textit{Process} contains crucial if-statement where is decided whether the process will be
+run in asyncronous or syncronous mode. Running in asyncronous mode can be enforced by setting both attributes \textit{status} and \textit{storeExecuteResponse} of the \textit{ResponseDocument} element in the ExecuteRequest XML to True.
+
+\bigskip
+\begin{lstlisting}[basicstyle=\small,caption={ReponseForm element of ExecuteRequest XML},language=XML,label={lst:Execute_ResponseForm}]
+<wps:ResponseForm>
+ <wps:ResponseDocument status="true" storeExecuteResponse="true">
+  <wps:Output asReference="true">
+   <ows:Identifier>buff_out</ows:Identifier>
+  </wps:Output>
+ </wps:ResponseDocument>
+</wps:ResponseForm>
+\end{lstlisting}
+\bigskip 
+
+No matter whether the process runs syncronously or asyncronously always there is a control how many parallel processes are currently
+running. The number of the maximum of concurrently running processes can be configured. If the process is asyncronous and the number of currently running processes exceeds the maximal number, the process is stored and its execution is started lately. In case of the syncronous process the \textit{ServerBusy} exception is raised. If the number of processes is smaller than the maximal number of 
+concurrent processes, the process can be executed. In syncronous mode the \textit{\_run\_process()} is called, in asyncronous mode the method \textit{\_run\_async()} is called. The activity diagram of the \textit{Process.execute()} is displayed in Fig.\ref{fig:Diag_process_execute}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{img/Diag_process_execute.png}
+\caption{\textit{Activity diagram: Process.execute()}}
+\label{fig:Diag_process_execute}
+\end{figure}
+
+\bigskip
+Until now the code described in this thesis was not modified. Requirements which have been considered during the implementation of
+Docker technology were that the source code will not be very modified, the process isolation will be easily inserted and the project structure will be kept the same. Keeping this in mind 
+
+\begin{figure}[h!]
+\centering
+\begin{floatrow}
+\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_run_async.png}}{\caption{Activity diagram: }}{\label{fig:Diag_run_async}}
+\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_class_processing.png}}{\caption{Class diagram}}{\label{fig:Diag_class_proc}}
+\end{floatrow}
+\end{figure}
+
 
 \newpage
 \necislovana{Seznam použitých zkratek}

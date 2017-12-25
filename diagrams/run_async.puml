@@ -1,19 +1,16 @@
 @startuml
-(*)  --> Process()
---> mode = get_config_value()
-if ""
-note left
-switch mode
-end note
- -->[SCHEDULER] Scheduler()
- --> ===BEFORE_RETURN===
-else
- -->[DOCKER] Container()
- --> ===BEFORE_RETURN===
-else
- -->[MULTIPROCESSING (default)] MultiProcessing()
- --> ===BEFORE_RETURN===
+start
+:process = Process();
+:mode= get_config_value('mode');
+if (is Scheduler) then (true)
+ -Scheduler();
+else (false)
+ if (is Docker) then (true)
+ -Container();
+ else (false)
+  -MultiProcessing();
+ endif
 endif
---> return process
--->(*)
+:process.start();
+stop
 @enduml
