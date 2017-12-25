@@ -1,0 +1,15 @@
+@startuml
+start
+partition execute(identifier,request) {
+:process=procesess[indetifier];
+:workdir=get_config_value('workdir');
+:tempdir=create_tempdir(dir=workdir);
+:process.set_workdir(tempdir);
+:olddir = os.curdir;
+:os.chdir = process.workdir;
+:response = _parse_and_execute(process, request);
+:os.chdir(olddir);
+:return response;
+}
+stop
+@enduml

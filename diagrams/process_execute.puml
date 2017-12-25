@@ -1,0 +1,23 @@
+@startuml
+start
+:execute(wps_request);
+:_execute_process(wps_request);
+if (async) then (true)
+ if (running<maxparallel) then (true)
+  :_run_async();
+  :pywps.processing.Process();
+  :Process.start();
+ else (false)
+  -_store_process()
+endif
+else (false)
+ if (running<maxparallel) then (true)
+  -_run_process()
+ else (false)
+  -raise ServerBusyException
+endif
+'===BEFORE_RETURN===-->return WPSResponse
+endif
+:return response;
+stop
+@enduml

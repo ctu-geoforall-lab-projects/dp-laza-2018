@@ -1,0 +1,12 @@
+@startuml
+@startuml
+start
+partition _parse_and_execute() {
+:data_inputs=parse_inputs(request.inputs);
+:wps_request.inputs=data_inputs;
+:wps_response = process.execute(wps_request);
+:return wps_response;
+}
+stop
+@enduml
+@enduml
