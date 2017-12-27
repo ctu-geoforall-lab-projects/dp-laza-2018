@@ -212,6 +212,7 @@ This database will also enable the implementation of pausing, releasing and dele
 allow PyWPS to comply with WPS version 2.0.0.
 
 \subsection{Current state}
+\label{subsec:current_state}
 At the beginning of every process execution its own temporary directory \textit{workdir} is created. During the execution
 temporary files and continuous outputs are stored in this folder. After successful execution final outputs are
 moved to \textit{outputs} directory. Both directories \textit{outputs} and \textit{workdir} are configurable and user can
@@ -1026,18 +1027,57 @@ concurrent processes, the process can be executed. In syncronous mode the \texti
 \label{fig:Diag_process_execute}
 \end{figure}
 
-\bigskip
+\subsection{Processing module}
 Until now the code described in this thesis was not modified. Requirements which have been considered during the implementation of
-Docker technology were that the source code will not be very modified, the process isolation will be easily inserted and the project structure will be kept the same. Keeping this in mind 
+Docker technology were that the source code will not be very modified, the process isolation will be easily inserted and the project structure will be kept the same. Keeping this in mind changes in source code were made only in \textit{processing} module.
+
+As mentioned in Sec. \ref{subsec:current_state}, PyWPS uses solely the Python package \textit{Multiprocessing} in production version.
+In develop branch there is also \textit{Scheduler} extension as one of the option for multiprocessing. In this thesis another option 
+\textit{Docker} for processing was added. The desired option for processing can be configured in configuration file via parameter \textit{mode} in section \textit{processing} (see Lst. \ref{lst:Mode_config}), possible values are:
+\begin{itemize}
+\item docker
+\item scheduler
+\item multiprocessing - default option
+\end{itemize}
+
+\bigskip
+\begin{lstlisting}[basicstyle=\small,caption={Processing mode configuration},language=XML,label={lst:Mode_config}]
+[processing]
+mode=docker/scheduler/multiprocessing
+\end{lstlisting}
 
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_run_async.png}}{\caption{Activity diagram: }}{\label{fig:Diag_run_async}}
-\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_class_processing.png}}{\caption{Class diagram}}{\label{fig:Diag_class_proc}}
+\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_run_async.png}}{\caption{Activity diagram: Method \textit{Process.\_run\_async() }}}{\label{fig:Diag_run_async}}
+\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_class_processing.png}}{\caption{Class diagram: \textit{Processing} class}}{\label{fig:Diag_class_proc}}
 \end{floatrow}
 \end{figure}
 
+\bigskip
+The whole Docker implementation is in \textit{Container.py}. The class \textit{Container} handles containers creation, interaction with
+server, file-system mounting and all container management.
+
+\newpage
+\subsection{Container class}
+The main idea of process isolation using Docker is quite simple. For every process execution one separate Docker container is created.
+Instead of starting process execution on the host PyWPS server after receiving ExecuteRequest from the client, the ExecuteRequest is
+forwarded to PyWPS server running inside Docker container. The process execution runs inside the container. After successful process
+execution the outputs are available at the host server. The host server and the container share the same process workdir at filesystem.
+
+\bigskip
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{img/Diag_sequence.png}
+\caption{Sequence diagram: Process execution using Docker}
+\label{fig:Diag_sequence}
+\end{figure}
+
+
+
+\newpage
+\necislovana{Závěr}
+\todo[inline]{Dopsat zaver}
 
 \newpage
 \necislovana{Seznam použitých zkratek}
