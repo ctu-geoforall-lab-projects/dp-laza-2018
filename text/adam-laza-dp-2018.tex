@@ -184,7 +184,55 @@ as it is a leader in containerization in the world.
 
 \newpage
 \section{Current state}
-\todo[inline]{Doplnit info o 52North a ZOO project a jejich implementacich}
+\subsection{52$^{\circ}$North WPS}
+The \textit{52$^{\circ}$North} is the open-source software initiative. It is an international network of skilled specialists from research,
+public administration or industry. They work on several project and develop new technologies. Among their various projects there is 
+the 52$^{\circ}$North WPS project.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.2\textwidth]{img/Intro_52north.png}
+\caption{52$^{\circ}$North project logo}
+\label{fig:Intro_52north}
+\end{figure}
+
+The  WPS project is full java-based open-source implementation of the WPS 1.0.0. The back-end side implements only version 1.0.0 and it
+does not seem there is any progress in implementation of version 2.0.0. On the other hand on the 52$^{\circ}$North GitHub there is a
+repository \textit{wps-js-client\footnote{\url{https://github.com/52North/wps-js-client}}} that is standalone Javascript WPS Client. 
+The client enables building and sending requests against both WPS 1.0.0 and WPS 2.0.0 instances as well as reading the responses.
+
+52$^{\circ}$North offers synchronous/asynchronous invocation with both HTTP-GET and HTTP-POST request. All results can be stored as
+a web-accessible resource, WMS, WFS or WCS layer. Raw data inputs/outputs are also supported. Various extensions for different
+computional backends exist: WPS4R (R Backend), GRASS extension, Sextante or ArcGIS Server Connector.
+
+\subsection{Deegree}
+\todo[inline]{Doplnit deegree}
+
+\subsection{ZOO-Project}
+\textit{ZOO-Project} is a WPS implementation writenn in C, Python and Javascript. It is an open-source project released under MIT licence.
+The platform is composed of several components:
+
+\begin{itemize}
+\item WPS Server - ZOO-kernel is a server-side implementation written in C.
+\item WPS Services - ZOO-services is a set of ready-to-use web services based on libraries such as \textit{GDAL}, \textit{GRASS GIS}
+or \textit{CGAL}.
+\item WPS API - ZOO-API is a server-side Javascript API for creating and chaining WPS web services.
+\item WPS Client - ZOO-client is a client-side Javascript library for interacting with WPS Services.
+\end{itemize}
+
+ZOO-Project is the first and in this time probably only one implementation of the WPS 2.0.0 standard. \textit{GetCapabilities},
+\textit{DescribeProcess} and \textit{Execute} operations from WPS 1.0.0 standard it also implements \textit{GetStatus}, \textit{GetResult}
+and \textit{Dismiss} operations from WPS 2.0.0.
+
+To comply WPS 2.0.0 ZOO-Project must support synchronous/asynchronous invocation with both HTTP-GET and HTTP-POST request. To store 
+results there is optional MapServer support. It is convenient to publish results directly as WMS, WFS or WCS resources.
+\todo[inline]{Doplnit ZOO-Project}
+
+\subsection{GeoServer}
+\todo[inline]{Doplnit geoserver}
+
+\subsection{ArcGIS}
+\todo[inline]{Doplnit ArcGIS}
 
 \newpage
 \section{Process isolation in PyWPS}
@@ -1083,6 +1131,8 @@ execution the outputs are available at the host server. The host server and the 
 \necislovana{Seznam použitých zkratek}
 
 \begin{tabular}{ll}
+\textbf{CGAL}& Computational Geometry Algorithms Library\\
+\textbf{GDAL}& Geospatial Data Abstraction Library\\
 \textbf{HPC}& High Performance Compute\\
 \textbf{KVP}& Key Value Pair\\
 \textbf{OGC}& Open Geospatial Consortium\\
@@ -1103,6 +1153,7 @@ execution the outputs are available at the host server. The host server and the 
 \bibitem{OGC_news}
 Mark Reichardt \textit{OGC Newsletter - October 2004, OGC document number 04-043} [online].
 URL: \textless\url{http://www.opengeospatial.org/pressroom/newsletters/200410}\textgreater
+
 \bibitem{WPS_experiment}
 Sam Bacharach \textit{OGC announces Web Processing Services Interoperability Experiment} [online].
 URL: \textless\url{http://www.opengeospatial.org/pressroom/pressreleases/414}\textgreater
@@ -1121,6 +1172,10 @@ URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=13149&ve
 \bibitem{OGC_common}
 Open Geospatial Consortium Inc. \textit{OGC Web Services Common Specification, OGC document number 14-065} [online].
 URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=20040}\textgreater
+
+\bibitem{ZOO_docs}
+ZOO-Project devs \textit{ZOO-Project documentation} [online].
+URL: \textless\url{http://zoo-project.org/docs}\textgreater
 
 \bibitem{Docker_docs}
 Docker \textit{Docker documentation} [online].
@@ -1141,6 +1196,10 @@ URL: \textless\url{http://pywps.readthedocs.io/}\textgreater
 \bibitem{PyDev_ML}
 Victor Stinner \textit{The pysandbox project is broken} [online].
 URL: \textless\url{https://lwn.net/Articles/574323/}\textgreater
+
+\bibitem{Korea}
+Victor Stinner \textit{Linkage of OGC WPS 2.0 to the e-Government Standard Framework in Korea: An Implementation Case for Geo-Spatial Image Processing} [online].
+URL: \textless\url{http://www.mdpi.com/2220-9964/6/1/25/pdf}\textgreater
 
 \end{thebibliography}
 
