@@ -186,7 +186,7 @@ as it is a leader in containerization in the world.
 \section{Current state}
 \subsection{52$^{\circ}$North WPS}
 The \textit{52$^{\circ}$North} is the open-source software initiative. It is an international network of skilled specialists from research,
-public administration or industry. They work on several project and develop new technologies. Among their various projects there is 
+public administration or industry. They work on several projects and develop new technologies. Among their various specialization there is 
 the 52$^{\circ}$North WPS project.
 
 \begin{figure}[h!]
@@ -196,7 +196,7 @@ the 52$^{\circ}$North WPS project.
 \label{fig:Intro_52north}
 \end{figure}
 
-The  WPS project is full java-based open-source implementation of the WPS 1.0.0. The back-end side implements only version 1.0.0 and it
+The  WPS project is full Java-based open-source implementation of the WPS 1.0.0. The back-end side implements only version 1.0.0 and it
 does not seem there is any progress in implementation of version 2.0.0. On the other hand on the 52$^{\circ}$North GitHub there is a
 repository \textit{wps-js-client\footnote{\url{https://github.com/52North/wps-js-client}}} that is standalone Javascript WPS Client. 
 The client enables building and sending requests against both WPS 1.0.0 and WPS 2.0.0 instances as well as reading the responses.
@@ -205,8 +205,38 @@ The client enables building and sending requests against both WPS 1.0.0 and WPS 
 a web-accessible resource, WMS, WFS or WCS layer. Raw data inputs/outputs are also supported. Various extensions for different
 computional backends exist: WPS4R (R Backend), GRASS extension, Sextante or ArcGIS Server Connector.
 
-\subsection{Deegree}
-\todo[inline]{Doplnit deegree}
+\subsection{deegree}
+\textit{deegree} is open-source community-driven project for spatial data infrastructure written in Java. Besides from the other OGC Web Services it implements also WPS standard 1.0.0. 
+
+\subsection{GeoServer}
+\textit{GeoServer} is Java-based server to store, view or edit geospatial data. Designed for interoperability, GeoServer conforms
+all OGC standards. More famous WMS, WFS and WCS services are part of GeoServer core, however WPS implementation is available as 
+extension.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{img/geoserver.jpg}
+\caption{GeoServer logo}
+\label{fig:geoserver_logo}
+\end{figure}
+
+The WPS extension is capable of direct reading and writing data from and to GeoServer. Therefore it is possible to create processes
+based on inputs served from GeoServer as well as storing the outputs in the catalog.
+
+Since GeoServer implements WPS standard 1.0.0, it must supports the \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute}
+operations. Apart of these, it implements also \textit{GetExecutionStatus} and \textit{Dismiss} operations. The \textit{Dismiss} operation
+serves for asyncronous requests to get progress report and eventually retrieve the result data. A client send in the GetExecutionStatus
+request a mandatory \textit{executionId} parameter to specify the process. The executionId is mandatory parameter for Dismiss operation
+either. The Dismiss operation cancels an execution of the process of given executionId. As seen in Fig. \ref{fig:geoserver_status},
+GeoServer offers \textit{Progress status page} where progress of all executions can be reviewed as well as dismissing of each execution
+can be done.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{img/geoserver_status.png}
+\caption{Process status page, source \cite{GS_docs}}
+\label{fig:geoserver_status}
+\end{figure}
 
 \subsection{ZOO-Project}
 \textit{ZOO-Project} is a WPS implementation writenn in C, Python and Javascript. It is an open-source project released under MIT licence.
@@ -220,16 +250,13 @@ or \textit{CGAL}.
 \item WPS Client - ZOO-client is a client-side Javascript library for interacting with WPS Services.
 \end{itemize}
 
-ZOO-Project is the first and in this time probably only one implementation of the WPS 2.0.0 standard. \textit{GetCapabilities},
+ZOO-Project is the first and in this time probably only one full implementation of the WPS 2.0.0 standard. Apart from \textit{GetCapabilities},
 \textit{DescribeProcess} and \textit{Execute} operations from WPS 1.0.0 standard it also implements \textit{GetStatus}, \textit{GetResult}
 and \textit{Dismiss} operations from WPS 2.0.0.
 
 To comply WPS 2.0.0 ZOO-Project must support synchronous/asynchronous invocation with both HTTP-GET and HTTP-POST request. To store 
 results there is optional MapServer support. It is convenient to publish results directly as WMS, WFS or WCS resources.
 \todo[inline]{Doplnit ZOO-Project}
-
-\subsection{GeoServer}
-\todo[inline]{Doplnit geoserver}
 
 \subsection{ArcGIS}
 \todo[inline]{Doplnit ArcGIS}
@@ -1172,6 +1199,10 @@ URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=13149&ve
 \bibitem{OGC_common}
 Open Geospatial Consortium Inc. \textit{OGC Web Services Common Specification, OGC document number 14-065} [online].
 URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=20040}\textgreater
+
+\bibitem{GS_docs}
+GeoServer devs \textit{GeoServer documentation} [online].
+URL: \textless\url{http://docs.geoserver.org/}\textgreater
 
 \bibitem{ZOO_docs}
 ZOO-Project devs \textit{ZOO-Project documentation} [online].
