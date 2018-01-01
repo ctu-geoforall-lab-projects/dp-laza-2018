@@ -1177,7 +1177,7 @@ The whole Docker implementation is in \textit{Container.py}. The class \textit{C
 server, file-system mounting and all container management.
 
 \newpage
-\subsection{Container class}
+\section{Container class}
 The main idea of process isolation using Docker is quite simple. For every process execution one separate Docker container is created.
 Instead of starting process execution on the host PyWPS server after receiving ExecuteRequest from the client, the ExecuteRequest is
 forwarded to PyWPS server running inside Docker container. The process execution runs inside the container. After successful process
@@ -1191,7 +1191,63 @@ execution the outputs are available at the host server. The host server and the 
 \label{fig:Diag_sequence}
 \end{figure}
 
+\subsection{Container class constructor}
+\textit{Container} class is initialized with standard Python method \textit{\_\_init\_\_()}. As an inheritor of \textit{Processing}
+class, at first the parent constructor is called with \textit{super().\_\_init\_\_()} method. Follows description of methods which are
+called inside the constructor method.
 
+\begin{lstlisting}[basicstyle=\small,caption={\textit{Container} class constructor},label={lst:Container_constructor}]
+def __init__(self, process, wps_request, wps_response):
+    super().__init__(process, wps_request, wps_response)
+    self.port = self._assign_port()
+    self.client = docker.from_env()
+    self.cntnr = self._create()
+\end{lstlisting}
+
+\paragraph{\textit{self.\_assign\_port()}} The method returns number of available port. The port is chosen from range <\textit{port\_min},
+\textit{port\_max}> which are both configurable values. If no port from the range is available, the method returns
+\textit{NoAvailablePortException}. 
+
+\paragraph{\textit{docker.from\_env()}} The \textit{docker} is a Python library for the Docker Engine API. \textit{from\_env} method
+returns an instance of \textit{DockerClient} class which is a client to communicate with the Docker daemon. The returned client is
+configured from the same variables as the Docker command-line client.
+
+\paragraph{\textit{self.\_create()}} The \textit{\_create} reads following values at the beginning:
+\begin{itemize}
+\item \textit{cntnr\_img} - Name of the image the container will be created from. The name of the image must be the same as the tag
+set by the \textit{-t} parameter in \textit{docker build} command when the image is built from Dockerfile.
+
+\begin{lstlisting}[basicstyle=\small,caption={Docker build command}]
+docker build -t image_name /path/to/dockerfile
+\end{lstlisting}
+
+\item \textit{prcs\_inp\_dir} - Path to process workdir from \textit{self.job.wps\_response.process.workdir}. It is a directory where the
+inputs for the process are stored.
+\item \textit{prcs\_out\_dir} - Path to server output directory where all outputs are stored. The path is taken from \textit{outputpath}
+parameter of section \textit{server} in the configuration file.
+\item \textit{dckr\_inp\_dir} - Path to input data directory of WPS instance running inside Docker container. It is taken from 
+\textit{dckr\_inp\_dir} of \textit{processing} section.
+\item \textit{dckr\_out\_dir} - Path to output directory of WPS instance running inside the container. It is taken from 
+\textit{dckr\_out\_dir} of \textit{processing} section.
+\end{itemize}
+
+The method returns an instance of \textit{Container} class from \textit{docker} module. The container is created by
+\textit{self.client.containers.create()} method. 
+
+The method takes optional parameter \textit{ports}. It is a dictionary to define ports to bind inside the container. The keys of the
+dictionary are the ports to bind inside the container. The values of the dictionary are the corresponding ports to open on the host.
+
+Another optional parameter is \textit{volumes}. It is a dictionary 
+to configure volumes mounted inside the container. The key is the host path and the value is a dictionary with the keys: \textit{bind}
+- the path to mount the volume inside the container, and \textit{mode} - either \textit{rw} to mount the volume read/write, or 
+\textit{ro} to mount it read-only.
+
+\begin{lstlisting}[basicstyle=\small,caption={\textit{create()} method}]
+self.client.containers.create(cntnr_img, detach=True,
+ports={"5000/tcp": self.port}, 
+volumes={prcs_out_dir: {'bind': dckr_out_dir, 'mode': 'rw'},
+         prcs_inp_dir: {'bind': dckr_inp_dir, 'mode': 'ro'}})
+\end{lstlisting}
 
 \newpage
 \necislovana{Závěr}
