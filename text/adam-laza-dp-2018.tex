@@ -279,8 +279,8 @@ service consist of one or more geoprocessing tasks which is ArcGIS geoprocessing
 
 All published services have specified the minimum and maximum number of available instances. These instances run on the container machines within processes. The isolation level determines whether these instances run in separate processes or shared processes. 
 \begin{itemize}
-\item \textit{High isolation}- Fig.  - each instance runs in its own process. If something causes the process to fail, it will only affect the single instance running in it.
-\item \textit{Low isolation} - allows multiple instances of a service configuration to share a single process, thus allowing one process to handle multiple concurrent, independent requests. This is often referred to as multithreading.
+\item \textit{High isolation}- Fig. \ref{fig:arcgis_isolation_low} - each instance runs in its own process. If something causes the process to fail, it will only affect the single instance running in it.
+\item \textit{Low isolation} - Fig. \ref{fig:arcgis_isolation_high} allows multiple instances of a service configuration to share a single process, thus allowing one process to handle multiple concurrent, independent requests. This is often referred to as multithreading.
 \end{itemize} 
 
 \begin{figure}[h!]
@@ -547,8 +547,19 @@ Currently two major versions of WPS Standard exist. The WPS version 1.0.0 is cur
 If not explicitly said this thesis is dedicated to the version 1.0.0. The WPS version 2.0.0 was
 released in 2015 \cite{WPS_second}.
 
-\subsection{OGC}
-\todo[inline]{Doplnit kratky odstavec o OGC}
+\subsection{Open Geospatial Consortium}
+The OGC \textit{Open Geospatial Consortium} is an international non-profit organization committed to making quality 
+open standards for the global geospatial community. These standards are made through a consensus process and are freely available for anyone to use to improve sharing of the world's geospatial data. The OGC members come from government, commercial organizations, NGOs, academic and research organizations.\cite{OGC}
+
+A predecessor organization, OGF, the Open GRASS Foundation, started in 1992. From 1994 the organization 
+used the name \textit{Open GIS Consortium}, in 2004 the Board changed the name to \textit{Open Geospatial Consortium}.\cite{OGC_history}
+
+Some of the widely-use OGC standards are:
+\begin{itemize}
+\item WCS, WMS, WFS, WMTS or WPS - standards for web services
+\item GML, KML - standards for XML-based languages
+\end{itemize}
+
 
 \bigskip
 \subsection{Web Processing Service}
@@ -628,7 +639,6 @@ POST with XML encoding. Summarized in Table \ref{tab:WPS_encoding}.
 The GetCapabilities operation is mandatory. The operation allows a client to retrieve capabilities document (metadata)
 from a server. The response XML document contains service metadata about the server and all implemented processes description.
 
-\todo[inline]{AcceptVersion vs version, AcceptFormats vs format}
 \paragraph{GetCapabilities request}
 \subparagraph{Request parameters}
 \begin{table}[h!]
@@ -664,11 +674,11 @@ metadata document. The parameter value can be an integer, a timestamp, or any ot
 
 The GetCapabilities operation can be requested with parameters from the table \ref{tab:WPS_GetCapabilities}. A corresponding
 request URL looks like:
-\url{http://localhost:5000/wps?service=WPS&request=GetCapabilities&Accept
-Version=1.0.0&Section=ServiceIdentification,OperationsMetadata&update
-Sequence=XXX&AcceptFormats=text/xml}
 
-\bigskip
+\url{http://localhost:5000/wps?service=WPS&request=GetCapabilities&Accept}
+\url{Version=1.0.0&Section=ServiceIdentification,OperationsMetadata&updateSe}
+\url{quence=XXX&AcceptFormats=text/xml}
+
 \paragraph{GetCapabilities response}
 \label{para:GetCapa_response}
 \subparagraph{Normal response}
@@ -738,13 +748,14 @@ request URL looks like: \url{http://localhost:5000/wps?request=DescribeProcess&s
 \subparagraph{Normal response}
 Normal response to DescribeProcess request contains or more process descriptions for requested process identifiers in 
 \textit{ProcessDescriptions} structure. Each
-process description contains detailed information about process in \textit{ProcessDescription} including process inputs and outputs description. The number
-of inputs or outputs is not limited. Three types of input or outputs exist:
-\todo[inline]{Doplnit popisy dat}
+process description contains detailed information about process in \textit{ProcessDescription} including process inputs and outputs description. The number of inputs or outputs is not limited. Three types of input or outputs exist
+
 \begin{itemize}
-\item\textit{LiteralData} - 
-\item\textit{ComplexData} - 
-\item\textit{BoundingBoxData} - 
+\item\textit{LiteralData} - any string. It is used for passing single parameters like numbers or text parameters. There can be set
+\textit{allowedValues} restriction. It can be a list of allowed values or input data type. Additional attributes such as \textit{units}
+or \textit{encoding} can be set as well. 
+\item\textit{ComplexData} - Complex data are usually raster or vector files, but basically any (usually file based) data, which are usually processed (or result of the process). The input can be specified more using mimeType, XML schema or encoding (such as base64 for raster data.
+\item\textit{BoundingBoxData} - BoundingBox data are specified in OGC OWS Common specification as two pairs of coordinate (for 2D and 3D space). They can either be encoded in WGS84 or EPSG code can be passed too. They are intended to be used as definition of the target region.
 \end{itemize}
 
 
@@ -866,10 +877,10 @@ The OGS WPS is just an interface standard that provides rules for standardizing 
 
 \begin{itemize}
 \item \textit{PyWPS} - Python implementation. This thesis is dedicated to this implementation.
+\item \textit{deegree} - Java implementation of many OGC standards including WPS.
+\item \textit{52$^{\circ}$North WPS} - Java implementation.
 \item \textit{Zoo Project} - WPS implementation written in C, Python and JavaScript.
 \item \textit{WPS.NET} - WPS implementation on .NET platform.
-\item \textit{52$^{\circ}$North WPS} - Java implementation.
-\item \textit{deegree} - Java implementation of many OGC standards including WPS.
 \item \textit{WPSint} - Java Spring implementation.
 \end{itemize}
 
@@ -889,7 +900,7 @@ instance and the server afterward gets input data, evaluates it and calls the ex
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.9\textwidth]{img/pywps_logo.png}
+\includegraphics[width=0.5\textwidth]{img/pywps_logo.png}
 \caption{PyWPS project logo}
 \label{fig:pywps_logo}
 \end{figure}
@@ -1223,6 +1234,14 @@ URL: \textless\url{http://www.opengeospatial.org/pressroom/pressreleases/414}\te
 \bibitem{WPS_first}
 Open Geospatial Consortium Inc. \textit{OpenGIS ® Web Processing Service, OGC document number 05-007r4, ver. 0.4.0} [online].
 URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=13149&version=1&format=doc}\textgreater
+
+\bibitem{OGC}
+Open Geospatil Consorcium \textit{OGC websites} [online].
+URL: \textless\url{http://www.opengeospatial.org/}\textgreater
+
+\bibitem{OGC_history}
+Open Geospatil Consorcium \textit{OGC History (detailed)} [online].
+URL: \textless\url{http://www.opengeospatial.org/ogc/historylong}\textgreater
 
 \bibitem{WPS_standart_1.0}
 http://www.opengeospatial.org/pressroom/newsletters/200410
