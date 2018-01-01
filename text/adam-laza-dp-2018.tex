@@ -184,6 +184,18 @@ as it is a leader in containerization in the world.
 
 \newpage
 \section{Current state}
+\subsection{deegree}
+\textit{deegree} is open-source community-driven project for spatial data infrastructure written in Java. Besides from the other OGC Web Services it implements also WPS standard 1.0.0. Their solution offers sending request with KVP, XML or SOAP encoding, asyncronous/syncronous execution and API for implementing processes in Java. On their website there is a WPS demo
+\footnote{\url{http://demo.deegree.org/wps-workspace/}} where all operations \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute} with various processes can be tested.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.2\textwidth]{img/deegree.png}
+\caption{deegree project logo}
+\label{fig:deegree}
+\end{figure}
+
+
 \subsection{52$^{\circ}$North WPS}
 The \textit{52$^{\circ}$North} is the open-source software initiative. It is an international network of skilled specialists from research,
 public administration or industry. They work on several projects and develop new technologies. Among their various specialization there is 
@@ -204,9 +216,6 @@ The client enables building and sending requests against both WPS 1.0.0 and WPS 
 52$^{\circ}$North offers synchronous/asynchronous invocation with both HTTP-GET and HTTP-POST request. All results can be stored as
 a web-accessible resource, WMS, WFS or WCS layer. Raw data inputs/outputs are also supported. Various extensions for different
 computional backends exist: WPS4R (R Backend), GRASS extension, Sextante or ArcGIS Server Connector.
-
-\subsection{deegree}
-\textit{deegree} is open-source community-driven project for spatial data infrastructure written in Java. Besides from the other OGC Web Services it implements also WPS standard 1.0.0. 
 
 \subsection{GeoServer}
 \textit{GeoServer} is Java-based server to store, view or edit geospatial data. Designed for interoperability, GeoServer conforms
@@ -256,10 +265,33 @@ and \textit{Dismiss} operations from WPS 2.0.0.
 
 To comply WPS 2.0.0 ZOO-Project must support synchronous/asynchronous invocation with both HTTP-GET and HTTP-POST request. To store 
 results there is optional MapServer support. It is convenient to publish results directly as WMS, WFS or WCS resources.
-\todo[inline]{Doplnit ZOO-Project}
 
-\subsection{ArcGIS}
-\todo[inline]{Doplnit ArcGIS}
+\subsection{ArcGIS Server}
+\textit{ArcGIS Server} is server GIS software developed by \textit{Esri}. It is capable of creating and managing GIS Web services, applications and data. It allows expose the analytic capability of ArcGIS to web as a \textit{Geoprocessing service}. A geoprocessing
+service consist of one or more geoprocessing tasks which is ArcGIS geoprocessing tool running on the server. It is possible to publish Geoprocessing service with the WPS capabilities enabled, however only WPS 1.0.0 standard is supported.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.3\textwidth]{img/Intro_esri.png}
+\caption{Esri logo}
+\label{fig:geoserver_status}
+\end{figure}
+
+All published services have specified the minimum and maximum number of available instances. These instances run on the container machines within processes. The isolation level determines whether these instances run in separate processes or shared processes. 
+\begin{itemize}
+\item \textit{High isolation}- Fig.  - each instance runs in its own process. If something causes the process to fail, it will only affect the single instance running in it.
+\item \textit{Low isolation} - allows multiple instances of a service configuration to share a single process, thus allowing one process to handle multiple concurrent, independent requests. This is often referred to as multithreading.
+\end{itemize} 
+
+\begin{figure}[h!]
+\centering
+\begin{floatrow}
+\ffigbox{\includegraphics[width=0.5\textwidth]{img/arcgis_isolation_low.png}}{\caption{Low isolation, source \cite{AG_docs}}}{\label{fig:arcgis_isolation_low}}
+\ffigbox{\includegraphics[width=0.5\textwidth]{img/arcgis_isolation_high.png}}{\caption{High isolation, source \cite{AG_docs}}}{\label{fig:arcgis_isolation_high}}
+\end{floatrow}
+\end{figure}
+
+The advantage of low isolation is that it increases the number of concurrent instances supported by a single process. Using low isolation can use slightly less memory on your server. However, this improvement comes with some risk. If a process experiences a shutdown or crash, all instances sharing the process are destroyed. It is strongly recommended that you use high isolation.\cite{AG_docs}
 
 \newpage
 \section{Process isolation in PyWPS}
@@ -1158,12 +1190,15 @@ execution the outputs are available at the host server. The host server and the 
 \necislovana{Seznam použitých zkratek}
 
 \begin{tabular}{ll}
+\textbf{API}& Application Programming Interface\\
 \textbf{CGAL}& Computational Geometry Algorithms Library\\
 \textbf{GDAL}& Geospatial Data Abstraction Library\\
+\textbf{GIS}& Geographic Information System\\
 \textbf{HPC}& High Performance Compute\\
 \textbf{KVP}& Key Value Pair\\
 \textbf{OGC}& Open Geospatial Consortium\\
 \textbf{PID}& Process identifier \\
+\textbf{SOAP}& Simple Object Access Protocol \\
 \textbf{URL}& Uniform Resource Locator\\
 \textbf{VM}& Virtual Machine\\
 \textbf{VMM}& Virtual Machine Monitor\\
@@ -1200,6 +1235,10 @@ URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=13149&ve
 Open Geospatial Consortium Inc. \textit{OGC Web Services Common Specification, OGC document number 14-065} [online].
 URL: \textless\url{https://portal.opengeospatial.org/files/?artifact_id=20040}\textgreater
 
+\bibitem{deegree_docs}
+deegree devs \textit{deegree documentation} [online].
+URL: \textless\url{http://download.deegree.org/documentation/3.3.20/html/}\textgreater
+
 \bibitem{GS_docs}
 GeoServer devs \textit{GeoServer documentation} [online].
 URL: \textless\url{http://docs.geoserver.org/}\textgreater
@@ -1207,6 +1246,10 @@ URL: \textless\url{http://docs.geoserver.org/}\textgreater
 \bibitem{ZOO_docs}
 ZOO-Project devs \textit{ZOO-Project documentation} [online].
 URL: \textless\url{http://zoo-project.org/docs}\textgreater
+
+\bibitem{AG_docs}
+Esri \textit{Tuning and configuring services} [online].
+URL: \textless\url{http://server.arcgis.com/en/server/latest/publish-services/linux/tuning-and-configuring-services.htm}\textgreater
 
 \bibitem{Docker_docs}
 Docker \textit{Docker documentation} [online].
