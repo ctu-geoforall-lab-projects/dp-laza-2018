@@ -1177,7 +1177,7 @@ The whole Docker implementation is in \textit{Container.py}. The class \textit{C
 server, file-system mounting and all container management.
 
 \newpage
-\section{Container class}
+\section{\textit{Container} class}
 The main idea of process isolation using Docker is quite simple. For every process execution one separate Docker container is created.
 Instead of starting process execution on the host PyWPS server after receiving ExecuteRequest from the client, the ExecuteRequest is
 forwarded to PyWPS server running inside Docker container. The process execution runs inside the container. After successful process
@@ -1191,11 +1191,12 @@ execution the outputs are available at the host server. The host server and the 
 \label{fig:Diag_sequence}
 \end{figure}
 
-\subsection{Container class constructor}
+\subsection{\textit{Container} class constructor}
 \textit{Container} class is initialized with standard Python method \textit{\_\_init\_\_()}. As an inheritor of \textit{Processing}
 class, at first the parent constructor is called with \textit{super().\_\_init\_\_()} method. Follows description of methods which are
 called inside the constructor method.
 
+\bigskip
 \begin{lstlisting}[basicstyle=\small,caption={\textit{Container} class constructor},label={lst:Container_constructor}]
 def __init__(self, process, wps_request, wps_response):
     super().__init__(process, wps_request, wps_response)
@@ -1212,11 +1213,12 @@ def __init__(self, process, wps_request, wps_response):
 returns an instance of \textit{DockerClient} class which is a client to communicate with the Docker daemon. The returned client is
 configured from the same variables as the Docker command-line client.
 
-\paragraph{\textit{self.\_create()}} The \textit{\_create} reads following values at the beginning:
+\paragraph{\textit{self.\_create()}} The \textit{\_create} method reads following values at the beginning:
 \begin{itemize}
 \item \textit{cntnr\_img} - Name of the image the container will be created from. The name of the image must be the same as the tag
 set by the \textit{-t} parameter in \textit{docker build} command when the image is built from Dockerfile.
 
+\bigskip
 \begin{lstlisting}[basicstyle=\small,caption={Docker build command}]
 docker build -t image_name /path/to/dockerfile
 \end{lstlisting}
@@ -1242,12 +1244,41 @@ to configure volumes mounted inside the container. The key is the host path and 
 - the path to mount the volume inside the container, and \textit{mode} - either \textit{rw} to mount the volume read/write, or 
 \textit{ro} to mount it read-only.
 
+\bigskip
 \begin{lstlisting}[basicstyle=\small,caption={\textit{create()} method}]
 self.client.containers.create(cntnr_img, detach=True,
 ports={"5000/tcp": self.port}, 
 volumes={prcs_out_dir: {'bind': dckr_out_dir, 'mode': 'rw'},
          prcs_inp_dir: {'bind': dckr_inp_dir, 'mode': 'ro'}})
 \end{lstlisting}
+
+Every container created with defined parameters \textit{volumes} and \textit{ports} will have output directory on the host mounted into 
+the container output directory as well as the process workdir at host machine mounted into container directory with data. Therefore, all
+inputs downloaded to process workdir will be available for the container and all outputs produced after process execution will be stored
+at host machine output directory.
+
+\subsection{\textit{Container.start()} method}
+When a container is created the \textit{start()} method is called and the container is started. Following methods are called:
+
+\begin{lstlisting}[basicstyle=\small,caption={\textit{create()} method}]
+def start(self):
+    self.cntnr.start()
+    time.sleep(0.5)
+    self._execute()
+    self._parse_status()
+    self._dirty_clean()
+\end{lstlisting}
+
+
+\paragraph{self.cntnr.start()} - \textit{start()} method of \textit{Container} class from Python module \textit{docker}.
+The method is similar to \textit{docker start} command. It starts the Docker container. Then the method \textit{time.sleep()} is 
+called to wait half a second after which the container is ready to use.
+\paragraph{self.\_execute()}
+\paragraph{self.\_parse\_status()}
+\paragraph{self.\_dirty\_clean()}
+
+
+
 
 \newpage
 \necislovana{Závěr}
