@@ -7,3 +7,6 @@ text/*.synctex.gz
 text/*.lof
 text/*.lot
 text/adam-laza-dp-2018.pdf
+*~
+text/*.bbl
+text/*.blg
