@@ -112,7 +112,7 @@ OGC WPS, PyWPS, Docker kontejner, Python, izolace procesu, Webová Procesingová
 \noindent {\bf Declaration of authorship}
 I declare that the work presented here is, to the best of my knowledge and
 belief, original and the result of my own investigations, except as acknowledged.
-Formulations and ideas taken from other sources are cited as such
+Formulations and ideas taken from other sources are cited as such.
 
 
 \begin{flushleft}
@@ -180,14 +180,343 @@ I have chosen this topic to get in touch with another OGC standard. I also appre
 as it is a leader in containerization in the world.
 
 \newpage
-\part{Introductory research}
+\part{Web Processing Service}
+\newpage
+\section{Web Processing Service}
+
+\subsection{History}
+The first mention of the Web Processing Service was in October 2004. Back then it
+was named Geoprocessing Service \cite{OGC_news}. The specification was first 
+implemented as a prototype in 2004 by Agriculture and Agri-Food Canada (AAFC).
+In its further development during a Geoprocessing Services Interoperability Experiment \cite{WPS_experiment} 
+the name was changed to "Web Processing Service" to avoid the acronym GPS, since 
+this would have caused confusion with the conventional use of this acronym for 
+Global Positioning System \cite{WPS_standart_1.0}. The first version of WPS was released in
+September 2005 \cite{WPS_first}. The experiment demonstrated that various clients
+could easily access and bind to services which were set up according to the WPS Implementation
+specification.
+
+Currently two major versions of WPS Standard exist. The WPS version 1.0.0 is currently used mostly.
+If not explicitly said this thesis is dedicated to the version 1.0.0. The WPS version 2.0.0 was
+released in 2015 \cite{WPS_second}.
+
+\subsection{Open Geospatial Consortium}
+The OGC \textit{Open Geospatial Consortium} is an international non-profit organization committed to making quality 
+open standards for the global geospatial community. These standards are made through a consensus process and are freely available for anyone to use to improve sharing of the world's geospatial data. The OGC members come from government, commercial organizations, NGOs, academic and research organizations.\cite{OGC}
+
+A predecessor organization, OGF, the Open GRASS Foundation, started in 1992. From 1994 the organization 
+used the name \textit{Open GIS Consortium}, in 2004 the Board changed the name to \textit{Open Geospatial Consortium}.\cite{OGC_history}
+
+Some of the widely-use OGC standards are:
+\begin{itemize}
+\item WCS, WMS, WFS, WMTS or WPS - standards for web services
+\item GML, KML - standards for XML-based languages
+\end{itemize}
+
+
+\bigskip
+\subsection{Web Processing Service}
+The OGC Web -Processing Service (WPS) Interface Standard defines a standardized interface
+that facilitates the publishing of geospatial processes. Also provides rules how to standardize
+requests and responses for geospatial processing services. 
+
+\textit{Process} means any operation on spatial
+data from simple ones as maps overlay or buffering to highly complex as complicated global models. Any kind of GIS 
+functionality can be offered to clients across a network with correctly configured WPS. 
+
+\textit{Publishing} means
+creating human-readable metadata that allow users to discover and use service as well as making 
+available machine-readable binding information.
+
+\textit{Data} can be both vector or raster data and can be delivered across the network or be available
+at the server.
+
+The interface does not specify any specific processes that can be implemented by a WPS nor any specific
+data inputs or outputs. Instead it specifies generic mechanisms to describe any geospatial process and
+data required and produced by the process. The interface does not only provide mechanisms for calculation
+but also to identify required data, initiate the calculation and manage output data so clients can access it. 
+
+\bigskip
+Web Processing Service as one of the OGC web services specifies three types of requests which can be requested
+by a client and performed by a WPS server. The implementation of these three requests is mandatory by all servers:
+
+\textbf{\textit{GetCapabilities}} - The request returns to the client a Capabilities document that describes the abilities
+of the specific server implementation. It also returns the name and abstract of each of the processes that can
+be run on a WPS instance.
+
+\textbf{\textit{DescribeProcess}} - The request returns details about the processes offered by a WPS instance. Describes
+required inputs and produced outputs and their allowable formats.
+
+\textbf{\textit{Execute}} - The request allows the client to run a specified process with provided parameters and returns
+produced outputs.
 
 \newpage
-\section{Current state}
+These operations are very similar to other OGC Web Services such as WMS, WFS, and WCS. Common interface aspects
+are defined in the OpenGIS ® Web Services Common Implementation Specification \cite{OGC_common}. As seen in 
+the class diagram at \\
+Fig. \ref{fig:WPS_class_diagram} the WPS interface class inherits the GetCapabilities operation 
+from OGCWebService interface class. The operations Execute and DescribeProcess are specific for the WPS. The WPS
+operations are based on GET and POST requests.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.78\textwidth]{img/WPS_class_diagram.png}
+\caption{WPS interface UML description, source: \cite{WPS_standart_1.0}}
+\label{fig:WPS_class_diagram}
+\end{figure}
+
+The GetCapabilities and DescribeProcess shall use HTTP GET with KVP encoding and Execute operation shall use HTTP
+POST with XML encoding. Summarized in Tab. \ref{tab:WPS_encoding}.
+\begin{table}[h!]
+\catcode`\-=12
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\multirow{2}{*}{Operation} & \multicolumn{2}{c|}{Request encoding} \\ \cline{2-3} 
+                           & Mandatory          & Optional         \\ \hhline{|=|=|=|}
+GetCapabilities            & KVP                & XML              \\ \hline
+DescribeProcess            & KVP                & XML              \\ \hline
+Execute                    & XML                & KVP              \\ \hline
+\end{tabular}
+\caption{Operations request encoding}
+\label{tab:WPS_encoding}
+\end{table}
+
+\subsubsection{GetCapabilities}
+The GetCapabilities operation is mandatory. The operation allows a client to retrieve capabilities document (metadata)
+from a server. The response XML document contains service metadata about the server and all implemented processes description.
+
+\paragraph{GetCapabilities request}
+
+\begin{table}[h!]
+\catcode`\-=12
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\thead{Name}               & \thead{Optionality and use} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
+service=WPS                & Mandatory           & Service type identifier text 	\\ \hline
+request=GetCapabilities    & Mandatory           & Operation name text              \\ \hline
+AcceptVersion=1.0.0        & Optional            & Specification version            \\ \hline
+Sections=All               & Optional            & \makecell{Comma-separated \\unordered list of sections} \\ \hline
+updateSequence=XXX         & Optional            & \makecell{Service metadata \\document version}            \\ \hline
+AcceptFormats=text/xml     & Optional            & \makecell{Comma-separated prioritized \\sequence of response formats} \\ \hline
+\end{tabular}
+\caption{GetCapabilities operation request URL parameters, source: \cite{OGC_common}}
+\label{tab:WPS_GetCapabilities}
+\end{table}
+
+\begin{itemize}
+\item\textit{service} - A mandatory parameter, WPS is only possible value.
+\item\textit{request} - A mandatory parameter, GetCapabilities is only possible value.
+\item\textit{version} - An optional parameter, version number. Three non-negative integers separated by a decimal point. Servers and
+their clients should support at least one defined version.
+\item\textit{sections} - An optional parameter that contains a list of section names. Possible values are: \textit{ServiceIdentification,
+ServiceProvider, OperationsMetadata, Contents, All}.
+\item\textit{updateSequence} - An optional parameter for maintaining the consistency of a client cache of the contents of a service
+metadata document. The parameter value can be an integer, a timestamp, or any other number or string.
+\item\textit{format} - An optional parameter that defines response format.
+\end{itemize}
+
+A client can request the GetCapabilities operation with parameters from the Tab. \ref{tab:WPS_GetCapabilities}. A corresponding
+request URL looks like:
+
+\noindent
+\url{http://localhost:5000/wps?service=WPS&request=GetCapabilities&AcceptVe}\\
+\url{rsion=1.0.0&Section=ServiceIdentification,OperationsMetadata&updateSeq}\\
+\url{uence=XXX&AcceptFormats=text/xml}
+
+\paragraph{GetCapabilities response}
+\label{para:GetCapa_response}
+\subparagraph{Normal response}
+When GetCapabilities operation is requested a client retrieve service metadata document that contains sections specified in
+\textit{sections} parameter. If the parameter value is \textit{All} or is not specified all sections retrieved.
+
+\begin{itemize}
+\item\textit{ServiceIdentification} - Server metadata.
+\item\textit{ServiceProvider} - Server operating organization metadata.
+\item\textit{OperationsMetadata} - Metadata about operations implemented by the WPS server, including URLs to request them.
+\item\textit{ProcessOfferings} - List of processes with name and brief description implemented by the WPS server.
+\end{itemize}
+
+\bigskip
+In addition to sections each GetCapabilities response should contains:
+\begin{itemize}
+\item\textit{version} - Specification version for GetCapabilities operation.
+\item\textit{updateSequence} - Server metadata document version, value is increased whenever any change is made in complete service metadata document.
+\end{itemize}
+
+\subparagraph{GetCapabilities exceptions}
+In case that WPS server encounters an error a client retrieve an exception report message with one of there exception code:
+
+\begin{itemize}
+\item\textit{MissingParameterValue} - GetCapabilities request does not contain a required parameter value.
+\item\textit{InvalidParameterValue} - GetCapabilities request contains an invalid parameter value.
+\item\textit{VersionNegotiation} - Any version from AcceptVersions parameter list does not match any version supported by the WPS server.
+\item\textit{InvalidUpdateSequence} - Value of updateSequence parameter is greater than current value of service metadata updateSequence number.
+\item\textit{NoApplicableCode} - Other exceptions.
+\end{itemize}
+
+\subsubsection{DescribeProcess}
+The DescribeProcess operation is mandatory. The operation allows clients to retrieve a detailed description of one or more
+processes implemented by a WPS server. The detailed information describes both required inputs and produced outputs and allowed
+format.
+
+\begin{table}[h!]
+\catcode`\-=12
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
+service=WPS                & Mandatory           & Service type identifier text 	\\ \hline
+request=DescribeProcess    & Mandatory           & Operation name text              \\ \hline
+version=1.0.0              & Mandatory           & WPS specification version            \\ \hline
+Identifier=buffer          & Optional            & \makecell{List of one or more process\\ identifiers, separated by commas} \\ \hline
+\end{tabular}
+\caption{DescribeProcess operation request URL parameters, source: \cite{OGC_common}}
+\label{tab:WPS_DescribeProcess}
+\end{table}
+
+\paragraph{DescribeProcess request}
+\begin{itemize}
+\item\textit{service} - Mandatory parameter, WPS is only possible value.
+\item\textit{request} - Mandatory parameter, DescribeProcess is only possible value.
+\item\textit{version} - Mandatory parameter, version number. Three non-negative integers separated by decimal point. Servers and
+their clients should support at least one defined version.
+\item\textit{Identifier} - Optional parameter, list of process names separated by comma. Another possible value is \textit{all}.
+\end{itemize}
+
+The DescribeProcess operation can be requested with parameters from Tab. \ref{tab:WPS_DescribeProcess}. A corresponding
+request URL looks like: \url{http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0}
+
+\paragraph{DescribeProcess response}
+\label{para:DesribeProc_response}
+
+\subparagraph{Normal response}
+Normal response to DescribeProcess request contains one or more process descriptions for requested process identifiers in 
+\textit{ProcessDescriptions} structure. Each
+process description contains detailed information about process in \textit{ProcessDescription} (see Tab. \ref{tab:WPS_ProcessDescription})
+including process inputs and outputs description. The number of inputs or outputs is not limited.
+
+\bigskip
+\begin{table}[h!]
+\catcode`\-=12
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
+Identifier      	       & Mandatory           & Process identigier             \\ \hline
+Title 			           & Mandatory           & Process title 				  \\ \hline
+Abstract		           & Optional            & Brief description              \\ \hline
+Metadata		           & Optional            & \makecell{Reference to more metadata about this process} \\ \hline
+Profile			           & Optional            & \makecell{Profile to which the WPS process complies} \\ \hline
+processVersion	           & Mandatory           & Release version of process \\ \hline
+WSDL    		           & Optional            & \makecell{Location of a WSDL document that \\describes this process} \\ \hline
+DataInputs		           & Optional            & \makecell{List of the required and optional inputs} \\ \hline
+ProcessOutputs	           & Mandatory           & \makecell{List of the required and optional outputs} \\ \hline
+storeSupported	           & Optional            & \makecell{Complex data outputs can be \\stored by WPS server} \\ \hline
+statusSupported	           & Optional            & \makecell{Execute response can be returned\\ quickly with status information} \\ \hline
+\end{tabular}
+\caption{Parts of ProcessDescription data structure, source: \cite{WPS_standart_1.0}}
+\label{tab:WPS_ProcessDescription}
+\end{table}
+
+\newpage
+Three data types of input or outputs exist:
+\begin{itemize}
+\item\textit{LiteralData} - any string. It is used for passing single parameters like numbers or text parameters. There can be set
+\textit{allowedValues} restriction. It can be a list of allowed values or input data type. Additional attributes such as \textit{units}
+or \textit{encoding} can be set as well. 
+\item\textit{ComplexData} - Complex data can be raster, vector or any file-based data, which are usually processed. ComplexData 
+are often result of the process. The input can be specified more using mimeType, XML schema or encoding.
+\item\textit{BoundingBoxData} - BoundingBox data are specified in OGC OWS Common specification as two pairs of coordinates (for 2D and 3D space). They can either be encoded in WGS84 or EPSG code can be passed too. They are intended to be used as definition of the target region.
+\end{itemize}
+
+\subparagraph{DescribeProcess exceptions}
+In case that WPS server encounters an error a client retrieves an exception report message with one of there exception code:
+\begin{itemize}
+\item\textit{MissingParameterValue} - GetCapabilities request does not contain a required parameter value.
+\item\textit{InvalidParameterValue} - GetCapabilities request contains an invalid parameter value.
+\item\textit{NoApplicableCode} - Other exceptions.
+\end{itemize}
+
+\subsubsection{Execute}
+The Execute operation is mandatory. The operation allows clients to run a specified process implemented by a server.
+Inputs can be included directly in the request body or be referenced as a web-accessible resource. The outputs are returned
+in XML response document, either directly embedded within the response document or stored as a resource accessible by
+returned URL.
+
+Usually the response document is returned right after the process execution is completed. However it is possible to get
+response document right after sending a request. In this case, returned response document contains a URL link from which the
+final response document can be retrieved after completed process execution. A client can request execution status update to
+find out the amount of processing remaining if the execution is not completed. Shown in Fig. \ref{fig:WPS_sequence}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{img/WPS_sequence.png}
+\caption{Sequence diagram: a client requests storage of results, source: \cite{WPS_standart_1.0}}
+\label{fig:WPS_sequence}
+\end{figure}
+
+\paragraph{Execute request}
+Execute request is usually sent via HTTP POST request. Execute request contains parameters from Tab. \ref{tab:WPS_ExecuteRequest}. Example of Execute XML sent within the POST request can be found at App.
+\ref{app:ExecuteRequest}. 
+
+\begin{table}[h!]
+\catcode`\-=12
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
+service          	       & Mandatory           & Service type identifier text             \\ \hline
+request			           & Mandatory           & Operation name text 				  \\ \hline
+version			           & Mandatory           & WPS specification version              \\ \hline
+Identifier   	           & Mandatory           & Process identifier \\ \hline
+DataInputs		           & Optional            & \makecell{List of inputs provided \\ to this process execution} \\ \hline
+ResponseForm	           & Optional            & Response type definition \\ \hline
+language   		           & Optional            & Language identifier \\ \hline
+\end{tabular}
+\caption{Parts of Execute operation request, source: \cite{WPS_standart_1.0}}
+\label{tab:WPS_ExecuteRequest}
+\end{table}
+
+\paragraph{Execute response}
+Usualy the Execute operation response document is an XML document. The only exception is in case when a response form
+of \textit{RawDataOutput} is requested, execution is successful and only one complex output is created, then directly
+the produced complex output is returned.
+
+In ussual case response to Execute opetation is an ExecuteResponse XML document. The contents depend on ResponseForm 
+request elements.
+
+\begin{table}[h!]
+\catcode`\-=12
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
+service          	       & Mandatory           & Service type identifier text             \\ \hline
+version			           & Mandatory           & WPS specification version              \\ \hline
+language   		           & Mandatory           & Language identifier \\ \hline
+statusLocation	           & Optional            & \makecell{Reference to location where current\\ExecuteResponse document is stored} \\ \hline
+serviceInstance	           & Mandatory           & \makecell{Reference to location where current\\ExecuteResponse document is stored} \\ \hline
+Process			           & Mandatory           & Process description \\ \hline
+Status			           & Mandatory           & Execution status of the process \\ \hline
+DataInputs		           & Optional            & \makecell{List of inputs provided \\ to this process execution} \\ \hline
+OutputDefinitions          & Optional            & \makecell{List of definitions of outputs \\desired from executing this process} \\ \hline
+ProcessOutputs             & Optional            & \makecell{List of values of outputs \\ from process execution} \\ \hline
+\end{tabular}
+\caption{Parts of ExecuteResponse data structure, source: \cite{WPS_standart_1.0}}
+\label{tab:WPS_ExecuteResponse}
+\end{table}
+
+\newpage
+\section{WPS implementations}
+The OGS WPS is just an interface standard that provides rules for standardizing requests and response. It also defines how clients can request the execution of defined processes and how the outputs are handled. There are several projects that implement this standard across the platforms or programming languages.
+
 \subsection{deegree}
 \textit{deegree} is open-source community-driven project for spatial data infrastructure written in Java. Besides from the other OGC Web Services it implements also WPS standard 1.0.0. Their solution offers sending request with KVP, XML or SOAP encoding, asyncronous/syncronous execution and API for implementing processes in Java. On their website there is a WPS demo
 \footnote{\url{http://demo.deegree.org/wps-workspace/}} where all operations \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute} with various processes can be tested.
 
+\bigskip
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.2\textwidth]{img/deegree.png}
@@ -195,12 +524,12 @@ as it is a leader in containerization in the world.
 \label{fig:deegree}
 \end{figure}
 
-
 \subsection{52$^{\circ}$North WPS}
 The \textit{52$^{\circ}$North} is the open-source software initiative. It is an international network of skilled specialists from research,
 public administration or industry. They work on several projects and develop new technologies. Among their various specialization there is 
 the 52$^{\circ}$North WPS project.
 
+\bigskip
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.2\textwidth]{img/Intro_52north.png}
@@ -293,6 +622,51 @@ All published services have specified the minimum and maximum number of availabl
 
 The advantage of low isolation is that it increases the number of concurrent instances supported by a single process. Using low isolation can use slightly less memory on your server. However, this improvement comes with some risk. If a process experiences a shutdown or crash, all instances sharing the process are destroyed. It is strongly recommended that you use high isolation.\cite{AG_docs}
 
+\subsection{PyWPS}
+PyWPS is a server-side implementation of the WPS standard written in Python. This project will be described in depth in the Sec. \ref{sec:PyWPS}
+
+\newpage
+\part{PyWPS}
+
+\newpage
+\section{PyWPS}
+\label{sec:PyWPS}
+\subsection{History}
+The first version of PyWPS started in 2006 as a student project. In 2007 PyWPS 2.0.0 was released supporting WPS 0.4.0.
+Next year in 2008 PyWPS 3.0.0 was released with support for WPS 1.0.0. It was possible to run multiple WPS instances
+with one PyWPS installation. This version had simple code structure and contained examples of processes. The newest version 
+is PyWPS 4.0.0 from September 2017.\cite{PyWPS_presentation}.
+
+PyWPS itself is just interface implementation. It is not an analytic tool or engine so it does not perform any kind of
+geospatial calculation nor provide any processing functionality. PyWPS handles inputs, process execution and produces outputs
+but it is up to the user (typically developer or scientist) to provide own code that is deployed on the PyWPS server
+instance and the server afterward gets input data, evaluates it and calls the execute method.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{img/pywps_logo.png}
+\caption{PyWPS project logo}
+\label{fig:pywps_logo}
+\end{figure}
+
+\subsection{PyWPS 4.0}
+PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved this major changes:
+\begin{itemize}
+\item It is written in \textit{Python 3} with backward support for Python 2.7.
+\item It utilizes native Python bindings to existing projects (GRASS GIS).
+\item New popular formats like \textit{GeoJSON}, \textit{KML} or \textit{TopoJSON} are reflected and their support is provided.
+\item PyWPS project has changed the license from \textit{GNU/GPL} to \textit{MIT}.
+\item PyWPS 4.0 is implemented using the \textit{Flask} framework.
+\item A C-based XML parser \textit{Lxml} is used to handle XML files.
+\item \textit{OWSLib} structures are used for some data types.
+\end{itemize}
+
+\subsection{PyWPS-demo}
+\todo[inline]{Doplnit info o demu a jeho pouziti}
+PyWPS-demo is a small side project distributed with PyWPS. It is a simple demo instance of PyWPS server running on Flask with
+several demo processes.
+
+
 \newpage
 \section{Process isolation in PyWPS}
 \subsection{Asynchonous requests}
@@ -302,7 +676,7 @@ the same time and for the maximal amount of waiting processes in a queue, to lat
 slots are available. If the new Execute request is received and the maximal amount is exceeded, the request is rejected
 and user is informed in response (see Lst. \ref{lst:Isolation_rejected}).
 
-\begin{lstlisting}[basicstyle=\small,caption={Resource exceeded exception},language=XML,label={lst:Isolation_rejected}]
+\begin{lstlisting}[basicstyle=\small,caption={Resource exceeded exception},label={lst:Isolation_rejected}]
 <?xml version="1.0" encoding="UTF-8"?>
 <ows:ExceptionReport xmlns:ows="http://www.opengis.net/ows/1.1" version="1.0.0">
     <ows:Exception exceptionCode="ServerBusy">
@@ -524,403 +898,6 @@ However in our use-case using Vagrant would mean that for every process executio
 on the process algorithm complexity the process execution can last from milliseconds to hours or days. On the other hand building 
 a virtual machine and booting into it last at least few seconds. That is why it is hard to imagine using virtual machine, which takes
 few seconds to boot up, to isolate process, which execution lasts less than a second.
-
-\newpage
-\part{Technological background}
-
-\newpage
-\section{Web Processing Service}
-
-\subsection{History}
-The first mention of the Web Processing Service was in October 2004. Back then it
-was named Geoprocessing Service \cite{OGC_news}. The specification was first 
-implemented as a prototype in 2004 by Agriculture and Agri-Food Canada (AAFC).
-In its further development during a Geoprocessing Services Interoperability Experiment \cite{WPS_experiment} 
-the name was changed to "Web Processing Service" to avoid the acronym GPS, since 
-this would have caused confusion with the conventional use of this acronym for 
-Global Positioning System \cite{WPS_standart_1.0}. The first version of WPS was released in
-September 2005 \cite{WPS_first}. The experiment demonstrated that various clients
-could easily access and bind to services which were set up according to the WPS Implementation
-specification.
-
-Currently two major versions of WPS Standard exist. The WPS version 1.0.0 is currently used mostly.
-If not explicitly said this thesis is dedicated to the version 1.0.0. The WPS version 2.0.0 was
-released in 2015 \cite{WPS_second}.
-
-\subsection{Open Geospatial Consortium}
-The OGC \textit{Open Geospatial Consortium} is an international non-profit organization committed to making quality 
-open standards for the global geospatial community. These standards are made through a consensus process and are freely available for anyone to use to improve sharing of the world's geospatial data. The OGC members come from government, commercial organizations, NGOs, academic and research organizations.\cite{OGC}
-
-A predecessor organization, OGF, the Open GRASS Foundation, started in 1992. From 1994 the organization 
-used the name \textit{Open GIS Consortium}, in 2004 the Board changed the name to \textit{Open Geospatial Consortium}.\cite{OGC_history}
-
-Some of the widely-use OGC standards are:
-\begin{itemize}
-\item WCS, WMS, WFS, WMTS or WPS - standards for web services
-\item GML, KML - standards for XML-based languages
-\end{itemize}
-
-
-\bigskip
-\subsection{Web Processing Service}
-The OGC Web -Processing Service (WPS) Interface Standard defines a standardized interface
-that facilitates the publishing of geospatial processes. Also provides rules how to standardize
-requests and responses for geospatial processing services. 
-
-\textit{Process} means any operation on spatial
-data from simple ones as maps overlay or buffering to highly complex as complicated global models. Any kind of GIS 
-functionality can be offered to clients across a network with correctly configured WPS. 
-
-\textit{Publishing} means
-creating human-readable metadata that allow users to discover and use service as well as making 
-available machine-readable binding information.
-
-\textit{Data} can be both vector or raster data and can be delivered across the network or be available
-at the server.
-
-The interface does not specify any specific processes that can be implemented by a WPS nor any specific
-data inputs or outputs. Instead it specifies generic mechanisms to describe any geospatial process and
-data required and produced by the process. The interface does not only provide mechanisms for calculation
-but also to identify required data, initiate the calculation and manage output data so clients can access it. 
-
-\bigskip
-Web Processing Service as one of the OGC web services specifies three types of requests which can be requested
-by a client and performed by a WPS server. The implementation of these three requests is mandatory by all servers:
-\begin{itemize}
-\item{GetCapabilities}
-\item{DescribeProcess}
-\item{Execute}
-\end{itemize}
-
-\textit{GetCapabilities} - The request returns to the client a Capabilities document that describes the abilities
-of the specific server implementation. It also returns the name and abstract of each of the processes that can
-be run on a WPS instance.
-
-\textit{DescribeProcess} - The request returns details about the processes offered by a WPS instance. Describes
-required inputs and produced outputs and their allowable formats.
-
-\textit{Execute} - The request allows the client to run a specified process with provided parameters and returns
-produced outputs.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.78\textwidth]{img/WPS_class_diagram.png}
-\caption{WPS interface UML description, source: \cite{WPS_standart_1.0}}
-\label{fig:WPS_class_diagram}
-\end{figure}
-
-These operations are very similar to other OGC Web Services such as WMS, WFS, and WCS. Common interface aspects
-are defined in the OpenGIS ® Web Services Common Implementation Specification \cite{OGC_common}. As seen in 
-the class diagram at Fig. \ref{fig:WPS_class_diagram} the WPS interface class inherits the GetCapabilities operation 
-from OGCWebService interface class. The operations Execute and DescribeProcess are specific for the WPS. The WPS
-operations are based on GET and POST requests.
-
-\bigskip
-\begin{table}[h!]
-\catcode`\-=12
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\multirow{2}{*}{Operation} & \multicolumn{2}{c|}{Request encoding} \\ \cline{2-3} 
-                           & Mandatory          & Optional         \\ \hhline{|=|=|=|}
-GetCapabilities            & KVP                & XML              \\ \hline
-DescribeProcess            & KVP                & XML              \\ \hline
-Execute                    & XML                & KVP              \\ \hline
-\end{tabular}
-\caption{Operations request encoding}
-\label{tab:WPS_encoding}
-\end{table}
-
-The GetCapabilities and DescribeProcess shall use HTTP GET with KVP encoding and Execute operation shall use HTTP
-POST with XML encoding. Summarized in Table \ref{tab:WPS_encoding}.
-
-\bigskip
-\subsubsection{GetCapabilities}
-The GetCapabilities operation is mandatory. The operation allows a client to retrieve capabilities document (metadata)
-from a server. The response XML document contains service metadata about the server and all implemented processes description.
-
-\paragraph{GetCapabilities request}
-\subparagraph{Request parameters}
-\begin{table}[h!]
-\catcode`\-=12
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\thead{Name}               & \thead{Optionality and use} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
-service=WPS                & Mandatory           & Service type identifier text 	\\ \hline
-request=GetCapabilities    & Mandatory           & Operation name text              \\ \hline
-AcceptVersion=1.0.0        & Optional            & Specification version            \\ \hline
-Sections=All               & Optional            & \makecell{Comma-separated \\unordered list of sections} \\ \hline
-updateSequence=XXX         & Optional            & \makecell{Service metadata \\document version}            \\ \hline
-AcceptFormats=text/xml     & Optional            & \makecell{Comma-separated \\prioritized sequence of \\response formats} \\ \hline
-\end{tabular}
-\caption{GetCapabilities operation request URL parameters, source: \cite{OGC_common}}
-\label{tab:WPS_GetCapabilities}
-\end{table}
-
-\begin{itemize}
-\item\textit{service} - A mandatory parameter, WPS is only possible value.
-\item\textit{request} - A mandatory parameter, GetCapabilities is only possible value.
-\item\textit{version} - An optional parameter, version number. Three non-negative integers separated by a decimal point. Servers and
-their clients should support at least one defined version.
-\item\textit{sections} - An optional parameter that contains a list of section names. Possible values are: \textit{ServiceIdentification,
-ServiceProvider, OperationsMetadata, Contents, All}.
-\item\textit{updateSequence} - An optional parameter for maintaining the consistency of a client cache of the contents of a service
-metadata document. The parameter value can be an integer, a timestamp, or any other number or string.
-\item\textit{updateSequence} - An optional parameter for maintaining the consistency of a client cache of the contents of a service
-metadata document. The parameter value can be an integer, a timestamp, or any other number or string.
-\item\textit{format} - An optional parameter that defines response format.
-\end{itemize}
-
-The GetCapabilities operation can be requested with parameters from the table \ref{tab:WPS_GetCapabilities}. A corresponding
-request URL looks like:
-
-\url{http://localhost:5000/wps?service=WPS&request=GetCapabilities&Accept}
-\url{Version=1.0.0&Section=ServiceIdentification,OperationsMetadata&updateSe}
-\url{quence=XXX&AcceptFormats=text/xml}
-
-\paragraph{GetCapabilities response}
-\label{para:GetCapa_response}
-\subparagraph{Normal response}
-When GetCapabilities operation requested a client retrieve service metadata document that contains sections specified in
-\textit{sections} parameter. If the parameter value is \textit{All} or is not specified all sections retrieved.
-
-\begin{itemize}
-\item\textit{ServiceIdentification} - Server metadata.
-\item\textit{ServiceProvider} - Server operating organization metadata.
-\item\textit{OperationsMetadata} - Metadata about operations implemented by the WPS server, including URLs to request them.
-\item\textit{ProcessOfferings} - List of processes with name and brief description implemented by the WPS server.
-\end{itemize}
-In addition to sections each GetCapabilities response should contains:
-\begin{itemize}
-\item\textit{version} - Specification version for GetCapabilities operation.
-\item\textit{updateSequence} - Server metadata document version, value is increased whenever any change is made in complete service metadata document.
-\end{itemize}
-
-\subparagraph{GetCapabilities exceptions}
-In case that WPS server encounters an error a client retrieve an exception report message with one of there exception code:
-
-\begin{itemize}
-\item\textit{MissingParameterValue} - GetCapabilities request does not contain a required parameter value.
-\item\textit{InvalidParameterValue} - GetCapabilities request contains an invalid parameter value.
-\item\textit{VersionNegotiation} - Any version from AcceptVersions parameter list does not match any version supported by the WPS server.
-\item\textit{InvalidUpdateSequence} - Value of updateSequence parameter is greater than current value of service metadata updateSequence number.
-\item\textit{NoApplicableCode} - Other exceptions.
-\end{itemize}
-
-\bigskip
-\subsubsection{DescribeProcess}
-The DescribeProcess operation is mandatory. The operation allows clients to retrieve a detailed description of one or more
-processes implemented by a WPS server. The detailed information describes both required inputs and produced outputs and allowed
-format.
-
-\paragraph{DescribeProcess request}
-\subparagraph{Request parameters}
-
-\begin{itemize}
-\item\textit{service} - Mandatory parameter, WPS is only possible value.
-\item\textit{request} - Mandatory parameter, DescribeProcess is only possible value.
-\item\textit{version} - Mandatory parameter, version number. Three non-negative integers separated by decimal point. Servers and
-their clients should support at least one defined version.
-\item\textit{Identifier} - Optional parameter, list of process names separated by comma. Another possible value is \textit{all}.
-\end{itemize}
-
-\begin{table}[h!]
-\catcode`\-=12
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
-service=WPS                & Mandatory           & Service type identifier text 	\\ \hline
-request=DescribeProcess    & Mandatory           & Operation name text              \\ \hline
-version=1.0.0              & Mandatory           & WPS specification version            \\ \hline
-Identifier=buffer          & Optional            & \makecell{List of one or more process\\ identifiers, separated by commas} \\ \hline
-\end{tabular}
-\caption{DescribeProcess operation request URL parameters, source: \cite{OGC_common}}
-\label{tab:WPS_DescribeProcess}
-\end{table}
-
-The DescribeProcess operation can be requested with parameters from table \ref{tab:WPS_DescribeProcess}. A corresponding
-request URL looks like: \url{http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0}
-
-\paragraph{DescribeProcess response}
-\label{para:DesribeProc_response}
-\subparagraph{Normal response}
-Normal response to DescribeProcess request contains or more process descriptions for requested process identifiers in 
-\textit{ProcessDescriptions} structure. Each
-process description contains detailed information about process in \textit{ProcessDescription} including process inputs and outputs description. The number of inputs or outputs is not limited. Three types of input or outputs exist
-
-\begin{itemize}
-\item\textit{LiteralData} - any string. It is used for passing single parameters like numbers or text parameters. There can be set
-\textit{allowedValues} restriction. It can be a list of allowed values or input data type. Additional attributes such as \textit{units}
-or \textit{encoding} can be set as well. 
-\item\textit{ComplexData} - Complex data are usually raster or vector files, but basically any (usually file based) data, which are usually processed (or result of the process). The input can be specified more using mimeType, XML schema or encoding (such as base64 for raster data.
-\item\textit{BoundingBoxData} - BoundingBox data are specified in OGC OWS Common specification as two pairs of coordinate (for 2D and 3D space). They can either be encoded in WGS84 or EPSG code can be passed too. They are intended to be used as definition of the target region.
-\end{itemize}
-
-
-\begin{table}[h!]
-\catcode`\-=12
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
-ProcessDescription	       & Mandatory           & \makecell{Full description of process \\ including inputs/outputs}             \\ \hline
-service=WPS                & Mandatory           & Service type identifier text 	\\ \hline
-version=1.0.0              & Mandatory           & Operation specification version          \\ \hline
-lang			           & Mandatory           & Language identifier \\ \hline
-\end{tabular}
-\caption{Parts of ProcessDescriptions data structure, source: \cite{WPS_standart_1.0}}
-\label{tab:WPS_ProcessDescriptions}
-\end{table}
-
-\begin{table}[h!]
-\catcode`\-=12
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
-Identifier      	       & Mandatory           & Process identigier             \\ \hline
-Title 			           & Mandatory           & Process title 				  \\ \hline
-Abstract		           & Optional            & Brief description              \\ \hline
-Metadata		           & Optional            & \makecell{Reference to more metadata \\about this process} \\ \hline
-Profile			           & Optional            & \makecell{Profile to which the WPS \\process complies} \\ \hline
-processVersion	           & Mandatory           & Release version of process \\ \hline
-WSDL    		           & Optional            & \makecell{Location of a WSDL document \\that describes this process} \\ \hline
-DataInputs		           & Optional            & \makecell{List of the required and \\optional inputs} \\ \hline
-ProcessOutputs	           & Mandatory           & \makecell{List of the required and\\optional outputs} \\ \hline
-storeSupported	           & Optional            & \makecell{Complex data outputs can be \\stored by WPS server} \\ \hline
-statusSupported	           & Optional            & \makecell{Execute response can be returned\\ quickly with status information} \\ \hline
-\end{tabular}
-\caption{Parts of ProcessDescription data structure, source: \cite{WPS_standart_1.0}}
-\label{tab:WPS_ProcessDescription}
-\end{table}
-
-\subparagraph{DescribeProcess exceptions}
-In case that WPS server encounters an error a client retrieves an exception report message with one of there exception code:
-
-\begin{itemize}
-\item\textit{MissingParameterValue} - GetCapabilities request does not contain a required parameter value.
-\item\textit{InvalidParameterValue} - GetCapabilities request contains an invalid parameter value.
-\item\textit{NoApplicableCode} - Other exceptions.
-\end{itemize}
-
-\bigskip
-\subsubsection{Execute}
-The Execute operation is mandatory. The operation allows clients to run a specified process implemented by a server.
-Inputs can be included directly in the request body or be referenced as a web-accessible resource. The outputs are returned
-in XML response document, either directly embedded within the response document or stored as a resource accessible by
-returned URL.
-
-Usualy the response document is returned right after the process execution is completed. However it is possible to get
-response document right after sending a request. In this case, returned response document contains a URL link from which the
-final response document can be retrieved after completed process execution. A client can request execution status update to
-find out the amount of processing remaining if the execution is not completed. Shown in Fig. \ref{fig:WPS_sequence}.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.9\textwidth]{img/WPS_sequence.png}
-\caption{Sequence diagram: a client requests storage of results, source: \cite{WPS_standart_1.0}}
-\label{fig:WPS_sequence}
-\end{figure}
-
-\paragraph{Execute request}
-\begin{table}[h!]
-\catcode`\-=12
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
-service          	       & Mandatory           & Service type identifier text             \\ \hline
-request			           & Mandatory           & Operation name text 				  \\ \hline
-version			           & Mandatory           & WPS specification version              \\ \hline
-Identifier   	           & Mandatory           & Process identifier \\ \hline
-DataInputs		           & Optional            & \makecell{List of inputs provided \\ to this process execution} \\ \hline
-ResponseForm	           & Optional            & Response type definition \\ \hline
-language   		           & Optional            & Language identifier \\ \hline
-\end{tabular}
-\caption{Parts of Execute operation request, source: \cite{WPS_standart_1.0}}
-\label{tab:WPS_ExecuteRequest}
-\end{table}
-
-\paragraph{Execute response}
-Usualy the Execute operation response document is an XML document. The only exception is in case when a response form
-of \textit{RawDataOutput} is requested, execution is successful and only one complex output is created, then directly
-the produced complex output is returned.
-
-In ussual case response to Execute opetation is an ExecuteResponse XML document. The contents depend on ResponseForm 
-request elements.
-
-\begin{table}[h!]
-\catcode`\-=12
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
-service          	       & Mandatory           & Service type identifier text             \\ \hline
-version			           & Mandatory           & WPS specification version              \\ \hline
-language   		           & Mandatory           & Language identifier \\ \hline
-statusLocation	           & Optional            & \makecell{Reference to location where current\\ExecuteResponse document is stored} \\ \hline
-serviceInstance	           & Mandatory           & \makecell{Reference to location where current\\ExecuteResponse document is stored} \\ \hline
-Process			           & Mandatory           & Process description \\ \hline
-Status			           & Mandatory           & Execution status of the process \\ \hline
-DataInputs		           & Optional            & \makecell{List of inputs provided \\ to this process execution} \\ \hline
-OutputDefinitions          & Optional            & \makecell{List of definitions of outputs \\desired from executing this process} \\ \hline
-ProcessOutputs             & Optional            & \makecell{List of values of outputs \\ from process execution} \\ \hline
-\end{tabular}
-\caption{Parts of ExecuteResponse data structure, source: \cite{WPS_standart_1.0}}
-\label{tab:WPS_ExecuteResponse}
-\end{table}
-
-\subsection{WPS implementations}
-The OGS WPS is just an interface standard that provides rules for standardizing requests and response. It also defines how clients can request the execution of defined processes and how the outputs are handled. There are several open-source projects that implement this standard across the platforms or programming languages.
-
-\begin{itemize}
-\item \textit{PyWPS} - Python implementation. This thesis is dedicated to this implementation.
-\item \textit{deegree} - Java implementation of many OGC standards including WPS.
-\item \textit{52$^{\circ}$North WPS} - Java implementation.
-\item \textit{Zoo Project} - WPS implementation written in C, Python and JavaScript.
-\item \textit{WPS.NET} - WPS implementation on .NET platform.
-\item \textit{WPSint} - Java Spring implementation.
-\end{itemize}
-
-\newpage
-\section{PyWPS}
-\todo[inline]{Doplnit a prepsat}
-PyWPS is a server-side implementation of the OGC WPS standard in the Python programming language.
-The first version of PyWPS started in 2006 as a student project. In 2007 PyWPS 2.0.0 was released supporting WPS 0.4.0.
-Next year in 2008 PyWPS 3.0.0 was released with support for WPS 1.0.0. It was possible to run multiple WPS instances
-with one PyWPS installation. This version had simple code structure and contained examples of processes. The newest version 
-is PyWPS 4.0.0 from September 2017.\cite{PyWPS_presentation}.
-
-PyWPS itself is just interface implementation. It is not an analytic tool or engine so it does not perform any kind of
-geospatial calculation nor provide any processing functionality. PyWPS handles inputs, process execution and produces outputs
-but it is up to the user (typically developer or scientist) to provide own code that is deployed on the PyWPS server
-instance and the server afterward gets input data, evaluates it and calls the execute method.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\textwidth]{img/pywps_logo.png}
-\caption{PyWPS project logo}
-\label{fig:pywps_logo}
-\end{figure}
-
-\subsection{PyWPS 4.0}
-PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved this major changes:
-\begin{itemize}
-\item It is written in \textit{Python 3} with backward support for Python 2.7.
-\item It utilizes native Python bindings to existing projects (GRASS GIS).
-\item New popular formats like \textit{GeoJSON}, \textit{KML} or \textit{TopoJSON} are reflected and their support is provided.
-\item PyWPS project has changed the license from \textit{GNU/GPL} to \textit{MIT}.
-\item PyWPS 4.0 is implemented using the \textit{Flask} framework.
-\item A C-based XML parser \textit{Lxml} is used to handle XML files.
-\item \textit{OWSLib} structures are used for some data types.
-\end{itemize}
-
-\subsection{PyWPS-demo}
-\todo[inline]{Doplnit info o demu a jeho pouziti}
-PyWPS-demo is a small side project distributed with PyWPS. It is a simple demo instance of PyWPS server running on Flask with
-several demo processes.
 
 \newpage
 \section{Docker}
@@ -1380,13 +1357,80 @@ URL: \textless\url{https://lwn.net/Articles/574323/}\textgreater
 \bibitem{Korea}
 Victor Stinner \textit{Linkage of OGC WPS 2.0 to the e-Government Standard Framework in Korea: An Implementation Case for Geo-Spatial Image Processing} [online].
 URL: \textless\url{http://www.mdpi.com/2220-9964/6/1/25/pdf}\textgreater
-
 \end{thebibliography}
 
+\appendix
 \newpage
-\section{Seznam tabulek a obrázků}
+\section{Execute request example}
+\label{app:ExecuteRequest}
+\begin{lstlisting}[basicstyle=\small,caption={Execute request example},language=XML]
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
+ <ows:Identifier>buffer</ows:Identifier>
+ <wps:DataInputs>
+  <wps:Input>
+   <ows:Identifier>poly_in</ows:Identifier>
+   <wps:Reference xlink:href="http://localhost:5000/static/data/point.gml" />
+  </wps:Input>
+  <wps:Input>
+   <ows:Identifier>buffer</ows:Identifier>
+   <wps:Data>
+    <wps:LiteralData>1</wps:LiteralData>
+   </wps:Data>
+  </wps:Input>
+ </wps:DataInputs>
+ <wps:ResponseForm>
+  <wps:ResponseDocument status="true" storeExecuteRsponse="true">
+   <wps:Output asReference="true">
+    <ows:Identifier>buff_out</ows:Identifier>
+   </wps:Output>
+  </wps:ResponseDocument>
+ </wps:ResponseForm>
+</wps:Execute>
+\end{lstlisting}
+
+\newpage
+\section{List of tables and figures}
 \listoftables
 
 \listoffigures
+
+\newpage
+\section{ZIP file content}
+
+\setlength{\unitlength}{.5mm}
+\begin{picture}(250, 220)
+  \put(  0, 212){\textbf{.}}
+  \put(  1, 200){\line(0, 1){5}}
+  \put(  1, 200){\line(1, 0){10} {\textbf{ text}}}
+  \put( 16, 190){\line(0, 1){8}}
+  \put( 16, 190){\line(1, 0){10} {\textbf{ LaTeX}}}
+  \put(150, 190){ zdrojové soubory textu}
+  \put( 16, 180){\line(0, 1){10}}
+  \put( 16, 180){\line(1, 0){10} { adam-laza-bp-2015.pdf}}
+  \put(150, 180){ tento text}
+  \put( 16, 170){\line(0, 1){10}}
+  \put( 16, 170){\line(1, 0){10} { adam-laza-bp-2015.xls}}
+  \put(150, 170){ anotace práce}
+  \put( 16, 160){\line(0, 1){10}}
+  \put( 16, 160){\line(1, 0){10} { zadani.pdf}}
+  \put(150, 160){ naskenované oficiální zadání této práce}
+  \put(  1, 150){\line(0, 1){60}}
+  \put(  1, 150){\line(1, 0){10} {\textbf{ src}}}
+  \put( 16, 140){\line(0, 1){8}}
+  \put( 16, 140){\line(1, 0){10} {\textbf{ nnbathy}}}
+  \put(150, 140){ zdrojové kódy nnbathy}
+  \put( 16, 130){\line(0, 1){10}}
+  \put( 16, 130){\line(1, 0){10} {\textbf{ cgal}}}
+  \put(150, 130){ zdrojové kódy cgal}
+  \put(  1, 120){\line(0, 1){50}}
+  \put(  1, 120){\line(1, 0){10} {\textbf{ testing}}}
+  \put( 16, 110){\line(0, 1){8}}
+  \put( 16, 110){\line(1, 0){10} {\textbf{ scripts}}}
+  \put(150, 110){ testovací skripty}
+  \put( 16, 100){\line(0, 1){10}}
+  \put( 16, 100){\line(1, 0){10} {\textbf{ sample\_data}}}
+  \put(150, 100){ testovací data}
+\end{picture}
 
 \end{document}
