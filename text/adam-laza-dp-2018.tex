@@ -421,6 +421,7 @@ statusSupported	           & Optional            & \makecell{Execute response ca
 \end{table}
 
 \newpage
+\noindent
 Three data types of input or outputs exist:
 \begin{itemize}
 \item\textit{LiteralData} - any string. It is used for passing single parameters like numbers or text parameters. There can be set
@@ -632,24 +633,27 @@ PyWPS is a server-side implementation of the WPS standard written in Python. Thi
 \section{PyWPS}
 \label{sec:PyWPS}
 \subsection{History}
-The first version of PyWPS started in 2006 as a student project. In 2007 PyWPS 2.0.0 was released supporting WPS 0.4.0.
-Next year in 2008 PyWPS 3.0.0 was released with support for WPS 1.0.0. It was possible to run multiple WPS instances
-with one PyWPS installation. This version had simple code structure and contained examples of processes. The newest version 
-is PyWPS 4.0.0 from September 2017.\cite{PyWPS_presentation}.
+The origin of PyWPS started in 2006 as a student project. The first presentation was held at the FOSS4G 2006 conference in Lausanne titled 
+‘GRASS goes to web: PyWPS’. During November 2006 the version 1.0.0 was released together with WUIW and Embrio projects that brought the
+funcionality of GRASS GIS and general web interface able to handle any WPS server.\cite{PyWPS_presentation}\cite{PyWPS_web}
 
-PyWPS itself is just interface implementation. It is not an analytic tool or engine so it does not perform any kind of
-geospatial calculation nor provide any processing functionality. PyWPS handles inputs, process execution and produces outputs
-but it is up to the user (typically developer or scientist) to provide own code that is deployed on the PyWPS server
-instance and the server afterward gets input data, evaluates it and calls the execute method.
+In 2007 PyWPS 2.0.0 was released supporting WPS standard 0.4.0. New version improved stability a approached on the standard implementation. It came with new WPS client and WPS plugin for OpenLayers \footnote{\url{http://openlayers.org/}}.
+
+Next year in 2008 PyWPS 3.0.0 was released with support for WPS 1.0.0. It was possible to run multiple WPS instances
+with one PyWPS installation. This version had simple code structure and contained examples of processes. 
+
+The newest version is PyWPS 4.0.0 from 2016 when PyWPS-4 branch was merged to official PyWPS repository as its master branch.
+ New version is described in following Sec. \ref{sec:PyWPS4}.
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.5\textwidth]{img/pywps_logo.png}
+\includegraphics[width=0.4\textwidth]{img/pywps_logo.png}
 \caption{PyWPS project logo}
 \label{fig:pywps_logo}
 \end{figure}
 
 \subsection{PyWPS 4.0}
+\label{sec:PyWPS4}
 PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved this major changes:
 \begin{itemize}
 \item It is written in \textit{Python 3} with backward support for Python 2.7.
@@ -662,9 +666,39 @@ PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved th
 \end{itemize}
 
 \subsection{PyWPS-demo}
-\todo[inline]{Doplnit info o demu a jeho pouziti}
-PyWPS-demo is a small side project distributed with PyWPS. It is a simple demo instance of PyWPS server running on Flask with
-several demo processes.
+PyWPS-demo is a small side project distributed with PyWPS. It is a simple demo instance of PyWPS server running on 
+\textit{Flask}\footnote{\url{http://flask.pocoo.org/}}. Flask is a microframework for web applications in Python. 
+Flask provides built-in development server and debugger and RESTful request dispatching. Starting PyWPS-demo server with Flask
+is very simple and can be done with command in Lst. \ref{lst:demo_start}. After starting the PyWPS-demo server the PyWPS homepage can be 
+visited at: \url{http://localhost:5000}
+
+\bigskip
+\begin{lstlisting}[basicstyle=\small,caption={Starting PyWPS-demo server},label={lst:demo_start}]
+python3 demo.py
+\end{lstlisting}
+
+PyWPS-demo comes with several demo processes:
+\begin{itemize}
+\item \textit{area.py} - Process calculates area of given polygon.
+\item \textit{bboxinout.py} - Process transforms bounding box to another EPSG.
+\item \textit{buffer.py} - Process returns buffers around the input features, using the GDAL library.
+\item \textit{centroids.py} - Process returns a GeoJSON with centroids of features from  an uploaded GML.
+\item \textit{feature\_count.py} - Process counts the number of features in an uploaded GML.
+\item \textit{grassbuffer.py} - Process uses the  GRASS GIS \textit{v.buffer} module to generate buffers around inputs.
+\item \textit{sayhello.py} - Process returns a literal string output with Hello plus the inputed name.
+\item \textit{sleep.py} - Process will sleep for a given delay or 10 seconds if not a valid value.
+\item \textit{ultimate\_question.py} - The process gives the answer to the ultimate question of "What is the meaning of life?"
+\end{itemize}
+
+Except these example processes the demo offers also example configuration file. Configuration file contains several parameters in
+these four sections:
+\begin{itemize}
+\item \textit{metadata} - parameters containing information for metadata creation.
+\item \textit{server} - definition of path to workdir and output directories, maximum number of parallel running or stored processes. 
+\item \textit{logging} - logging level setting, path to log file and log database.
+\item \textit{grass} - GRASS setting.
+\end{itemize}
+
 
 
 \newpage
@@ -736,8 +770,36 @@ def Process(process, wps_request, wps_response):
 \bigskip
 
 \paragraph{Multiprocessing}
-By default for   processes   running   in   the   background,   the   Python multiprocessing module is used – 
+By default for  processes   running   in   the   background,   the   Python \textit{multiprocessing} module is used – 
 this makes it possible to use PyWPS on the Windows operating system too.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{img/Diag_multiprocessing.png}
+\caption{Sequence diagram: Multiprocessing}
+\label{fig:Diag_multiprocessing}
+\end{figure}
+
+The number of processes running in parallel is configirable by parameter \textit{parallelprocesses} of section \textit{server} in 
+configuration file. In the Fig. \ref{fig:Diag_multiprocessing} are shown two running processes. A client sends an Execute request to
+a server. Server sends back to the client an ExecuteResponse that \textit{Process1} (green in the figure) was accepted and starts its 
+execution. During the execution the process updates its status. The interval of status updates depends on the code of the Process1.
+Process1 must support status update otherwise it cannot be run in asyncronous mode.
+
+During the execution of Process1 server receives another Execution request. It sends back the Execution response and starts the execution
+of \textit{Process2} (blue in the figure). Separated Python \textit{Process}\footnote{Explanation of term Python \textit{Process} and its
+differences to \textit{Thread} is in next paragraph.} is created. Both of the processes run on the host machine but both have own memory
+space. Their executions run concurently and client can request their status. In the figure, the Process2 ended first and client can retrieve
+the result from the server. Once the Process1 ends too, the client can retrieve its result from the server as well.
+
+It is important to say that in case of multiprocessing processes run concurently with its own memory space nevertheless they are not isolated.
+They run on the same host machine and share the resources. There are even methods like \textit{Pipe()} that enables communication between 
+processes.
+
+\paragraph{Process vs Thread} In Python there are two ways to achieve \textit{pararellism}. It is \textit{multiprocessing}
+\footnote{\url{https://docs.python.org/3/library/multiprocessing.html}} with using processes and \textit{threading}\footnote{https://docs.python.org/3/library/threading.html} with threads. The main difference is that threads run in the same memory space, while processes
+have separate memory. Multiprocessing takes advantages of multiple CPUs and cores while threads are more lightweighted and have low memory
+footprint. In case of PyWPS asyncronous requests, for every execution its own process with its own memory space is created.
 
 \paragraph{Job Scheduler Extension}
 PyWPS scheduler extension offers possibilities to execute asynchronous processes out of the WPS server machine.
@@ -749,31 +811,33 @@ centers.
 \centering
 \begin{floatrow}
 \ffigbox{\includegraphics[width=0.33\textwidth]{img/Isolation_grid.jpg}}{\caption{Grid Engine}}{\label{fig:Isolation_grid}}
-\ffigbox{\includegraphics[width=0.33\textwidth]{img/Isolation_slurm.png}}{\caption{Slurm}}{\label{fig:Isolation_slurm}}
+\ffigbox{\includegraphics[width=0.25\textwidth]{img/Isolation_slurm.png}}{\caption{Slurm}}{\label{fig:Isolation_slurm}}
 \end{floatrow}
 \end{figure}
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.5\textwidth]{img/Isolation_torque.png}
+\includegraphics[width=0.33\textwidth]{img/Isolation_torque.png}
 \caption{TORQUE}
 \label{fig:Isolation_torque}
 \end{figure}
+\bigskip
 
 The PyWPS scheduler extension uses the Python \textit{dill} library to dump and load the processing job to/from filesystem. The batch script executed on the scheduler system calls the PyWPS \textit{joblauncher} script with the dumped job status and executes the job (no WPS service running on scheduler). The job status is updated on the filesystem. Both the PyWPS service and the joblauncher script use the same PyWPS configuration. The scheduler assumes that the PyWPS server has a shared filesystem with the scheduler system so that XML status documents and WPS outputs can be found at the same file location. The interaction diagram how the communication between PyWPS and the scheduler works is displayed in Fig. \ref{fig:Isolation_interaction}.
+
+\bigskip
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{img/Isolation_slurm_usage.png}
+\caption{Example of PyWPS scheduler extension usage with Slurm, source: \cite{PyWPS_docs}}
+\label{fig:Isolation_slurm_usage}
+\end{figure}
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{img/Isolation_interaction.png}
 \caption{Communication between PyWPS and scheduler, source: \cite{PyWPS_docs}}
 \label{fig:Isolation_interaction}
-\end{figure}
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=\textwidth]{img/Isolation_slurm_usage.png}
-\caption{Example of PyWPS scheduler extension usage with Slurm, source: \cite{PyWPS_docs}}
-\label{fig:Isolation_slurm_usage}
 \end{figure}
 
 \subsection{Possible solutions}
@@ -870,7 +934,7 @@ and afterward decides which commands are allowed.
 facility in Java that supports sandboxing is the \textit{java.lang.SecurityManager}. By default, Java runs without a 
 SecurityManager.
 
-\paragraph{pysandbox} A prove, that it is very difficult to develop some kind of sandbox with all security holes considered, could be a project call \textit{pysandbox}\footnote{\url{https://github.com/vstinner/pysandbox}}. After working on it for 3 years, during which
+\paragraph{pysandbox} A prove, that it is very difficult to develop some kind of sandbox with all security holes considered, could be a project  \textit{pysandbox}\footnote{\url{https://github.com/vstinner/pysandbox}}. After working on it for 3 years, during which
 the project was used on various production servers by other developers, its author declared that the project is broken by
 design. In his post to the python-dev mailing list \cite{PyDev_ML} the author explained that with every vulnerability founded
 it became more difficult to actually write a real code:
@@ -901,10 +965,17 @@ few seconds to boot up, to isolate process, which execution lasts less than a se
 
 \newpage
 \section{Docker}
-\paragraph{Containerization} is a lightweight alternative to full machine virtualization. It involves encapsulating an application 
+\textbf{Containerization} is a lightweight alternative to full machine virtualization. It involves encapsulating an application 
 into a container with its own operating environment. It helps to run a containerized application on any physical machine without any
 worries about dependencies. The origin of containerization lies in the \textit{LinuX Containers {LXC}} format. Containerization
 works only in Linux environments and can run only Linux applications.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.33\textwidth]{img/Docker_logo}
+\caption{Docker logo}
+\label{fig:Docker_logo}
+\end{figure}
 
 Docker is not the only one technology for containerization. Other alternatives exist, it is \textit{Kubernets}, \textit{CoreOS rkt}, 
 \textit{Open Container Initiative (OCI)}, \textit{Canonical's LXD}, \textit{Apache Mesos and Mesosphere} and many others. 
@@ -915,44 +986,36 @@ Docker container.
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_kubernetes.png}}{\caption{Kubernetes}}{\label{fig:Docker_kubernetes}}
-\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_rkt.png}}{\caption{CoreOS rkt}}{\label{fig:Docker_rkt}}
+\ffigbox{\includegraphics[width=0.2\textwidth]{img/Docker_kubernetes.png}}{\caption{Kubernetes}\label{fig:Docker_kubernetes}}
+\ffigbox{\includegraphics[width=0.2\textwidth]{img/Docker_rkt.png}}{\caption{CoreOS rkt}\label{fig:Docker_rkt}}
 \end{floatrow}
 \end{figure}
 
-\bigskip
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.24\textwidth]{img/Docker_lxd.png}}{\caption{Canonical's LXD}}{\label{fig:Docker_lxd}}
-\ffigbox{\includegraphics[width=0.33\textwidth]{img/Docker_mesos.jpg}}{\caption{Apache mesos}}{\label{fig:Docker_mesos}}
+\ffigbox{\includegraphics[width=0.13\textwidth]{img/Docker_lxd.png}}{\caption{Canonical's LXD}\label{fig:Docker_lxd}}
+\ffigbox{\includegraphics[width=0.25\textwidth]{img/Docker_mesos.jpg}}{\caption{Apache mesos}\label{fig:Docker_mesos}}
 \end{floatrow}
-\end{figure}
-
-\newpage
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.6\textwidth]{img/Docker_logo}
-\caption{Docker logo}
-\label{fig:Docker_logo}
 \end{figure}
 
 \paragraph{Docker} is a Linux container technology that allows package and ship applications and everything it needs to execute into a standard
 format, and run them on any infrastructure.
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.6\textwidth]{img/Docker_VM.png}
-\caption{Virtual machine architecture, source \cite{Docker_docs}}
-\label{fig:Docker_VM}
-\end{figure}
-
-\paragraph{Docker container vs. Virtual machine}
+\subsection{Virtual machine vs. Docker container}
 Both virtual machines and Docker containers are two ways how to deploy multiple, isolated applications on a single platform. They
 both offer a way to isolate an application and its dependencies into a self-contained unit that can run anywhere. They both offer
 some kind of virtualization. They differ in architecture, see Fig. \ref{fig:Docker_VM}, \ref{fig:Docker_container}.
 
-\noindent
+\begin{figure}[h!]
+\centering
+\begin{floatrow}
+\ffigbox{\includegraphics[width=0.5\textwidth]{img/Docker_VM.png}}{\caption{Virtual machine architecture, source \cite{Docker_docs}}\label{fig:Docker_VM}}
+\ffigbox{\includegraphics[width=0.5\textwidth]{img/Docker_container.png}}{\caption{Containers architecture, source \cite{Docker_docs}}\label{fig:Docker_container}}
+\end{floatrow}
+\end{figure}
+
+\subsubsection{Virtual machine}
 Let's start with a virtual machine (Fig. \ref{fig:Docker_VM}) and its layers description from the bottom up:
 \begin{itemize}
 \item \textit{Infrastructure} - It can be a PC, developer's laptop, a physical server in datacenter but as well a virtual private
@@ -973,13 +1036,7 @@ guest OS needs its own CPU and memory resources and starts on hundreds of megaby
 \item \textit{Application} - The application source code that is desired to be run isolated. Therefore each application or each version of the application has to be run inside of its own guest OS with own copy of bins and libs. 
 \end{itemize}
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.6\textwidth]{img/Docker_container}
-\caption{Containers architecture, source \cite{Docker_docs}}
-\label{fig:Docker_container}
-\end{figure}
-
+\subsubsection{Docker container}
 \noindent
 Now, what is different regarding containers (Fig. \ref{fig:Docker_container})
 \begin{itemize}
@@ -1003,7 +1060,7 @@ But the architecture is not the only one difference:
 \item Containers share the kernel although they are isolated. VMs are monolithic and stand-alone.
 \end{itemize}
 
-\paragraph{Dockerfile}
+\subsection{Dockerfile}
 Dockerfile is a core file that contains the instruction to be performed when an image is built. It usually consists of commands to install packages, calls to other scripts, setting environmental variables, adding files or setting permissions. In Dockerfile there is also defined what image is to be used as a base image for the build.
 
 \paragraph{Dockerfile instructions}
@@ -1026,30 +1083,6 @@ one CMD instruction in Dockerfile. In case there is more CMD the last one will b
 \end{itemize}
 
 Except for the FROM instruction, all the instructions can be defined from the command line when starting docker container. There are more Dockerfile instructions however they are not relevant to this thesis as there are never used in practical part.
-
-\newpage
-\begin{lstlisting}[basicstyle=\small,caption={Dockerfile example}]
-ARG VERSION=0.9.22
-FROM phusion/baseimage:${VERSION}
-LABEL maintainer="devs@pywps.example.net"
-
-RUN apt-get update -y && apt-get install -y \
-	git \
-	python3 \
-	python3-dev
-
-RUN git clone https://github.com/geopython/pywps-flask.git
- 
-WORKDIR /pywps-flask
-RUN pip3 install -r requirements.txt
-
-RUN mkdir /etc/service/pywps4
-COPY pywps4_service.sh /etc/service/pywps4/run
-RUN chmod +x /etc/service/pywps4/run
-
-EXPOSE 5000
-ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
-\end{lstlisting}
 
 \newpage
 \part{Implementation}
@@ -1085,8 +1118,8 @@ Inputs for the method are:
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_execute.png}}{\caption{Activity diagram: method \textit{Service.execute()}}}{\label{fig:DiagServiceExecute}}
-\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_parse_execute.png}}{\caption{Activity diagram: method \textit{Service.\_parse\_and\_execute()}}}{\label{fig:DiagServiceParseExecute}}
+\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_execute.png}}{\caption{Activity diagram: method \textit{Service.execute()}}\label{fig:DiagServiceExecute}}
+\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_parse_execute.png}}{\caption{Activity diagram: method \textit{Service.\_parse\_and\_execute()}}\label{fig:DiagServiceParseExecute}}
 \end{floatrow}
 \end{figure}
 
@@ -1346,6 +1379,10 @@ URL: \textless\url{https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.n
 Jorge de Jesus, Luca Casagrande, Jáchym Čepický \textit{PyWPS a tutorial for beginners and developers} [online].
 URL: \textless\url{https://www.slideshare.net/JorgeMendesdeJesus/pywps-a-tutorial-for-beginners-and-developers}\textgreater
 
+\bibitem{PyWPS_web}
+PyWPS developers \textit{PyWPS History} [online].
+URL: \textless\url{http://pywps.org/history/}\textgreater
+
 \bibitem{PyWPS_docs}
 PyWPS developers \textit{PyWPS documentation} [online].
 URL: \textless\url{http://pywps.readthedocs.io/}\textgreater
@@ -1360,6 +1397,32 @@ URL: \textless\url{http://www.mdpi.com/2220-9964/6/1/25/pdf}\textgreater
 \end{thebibliography}
 
 \appendix
+
+\newpage
+\section{Dockerfile}
+\begin{lstlisting}[basicstyle=\small,caption={Dockerfile example}]
+ARG VERSION=0.9.22
+FROM phusion/baseimage:${VERSION}
+LABEL maintainer="devs@pywps.example.net"
+
+RUN apt-get update -y && apt-get install -y \
+	git \
+	python3 \
+	python3-dev
+
+RUN git clone https://github.com/geopython/pywps-flask.git
+ 
+WORKDIR /pywps-flask
+RUN pip3 install -r requirements.txt
+
+RUN mkdir /etc/service/pywps4
+COPY pywps4_service.sh /etc/service/pywps4/run
+RUN chmod +x /etc/service/pywps4/run
+
+EXPOSE 5000
+ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
+\end{lstlisting}
+
 \newpage
 \section{Execute request example}
 \label{app:ExecuteRequest}

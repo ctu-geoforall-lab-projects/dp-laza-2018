@@ -1,0 +1,60 @@
+@startuml
+participant Client
+box "Host" #ffc266
+	participant PyWPS_Server
+	participant Process1
+	participant Process2
+
+end box
+
+Client -> PyWPS_Server: executeRequest
+activate PyWPS_Server #Green
+PyWPS_Server --> Client: executeResponse
+deactivate PyWPS_Server
+
+PyWPS_Server -> Process1: execute
+activate Process1 #Green
+Process1 --> PyWPS_Server: Process started
+Process1 --> PyWPS_Server: statusUpdate: 5% done
+Process1 --> PyWPS_Server: statusUpdate: 10% done
+
+Client -> PyWPS_Server: getStatus
+activate PyWPS_Server #Green
+PyWPS_Server --> Client: Status: 10% done
+deactivate PyWPS_Server
+
+Client -> PyWPS_Server: executeRequest
+activate PyWPS_Server #Blue
+PyWPS_Server --> Client: executeResponse
+deactivate PyWPS_Server
+
+PyWPS_Server -> Process2: execute
+activate Process2 #Blue
+Process2 --> PyWPS_Server: Process started
+Process1 --> PyWPS_Server: statusUpdate: 60% done
+Client -> PyWPS_Server: getStatus
+activate PyWPS_Server #Green
+PyWPS_Server --> Client: Status 60% done
+deactivate PyWPS_Server
+
+Process2 --> PyWPS_Server: statusUpdate: 50% done
+Client -> PyWPS_Server: getStatus
+activate PyWPS_Server #Blue
+PyWPS_Server --> Client: Status 50% done
+deactivate PyWPS_Server
+
+Process2 --> PyWPS_Server: Process done: Result
+deactivate Process2
+Client -> PyWPS_Server: getStatus
+activate PyWPS_Server #Blue
+PyWPS_Server --> Client: Result
+deactivate PyWPS_Server
+
+Process1 --> PyWPS_Server: Process done: Result
+deactivate Process1
+
+Client -> PyWPS_Server: getStatus
+activate PyWPS_Server #Green
+PyWPS_Server --> Client: Result
+deactivate PyWPS_Server
+@enduml
