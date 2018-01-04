@@ -1350,9 +1350,28 @@ updates its status into the file that is located in container output directory. 
 si it is available even for the client.
 
 \subsubsection{\textit{Container.\_dirty\_clean()}}
+The method cares about stopping and removing Docker container, removing job workdir and original status XML. This method prevents to
+accumulation of running Docker containers and temporary files in workdir directory. On the other hand there is missing functionality
+for the process managment in database. In the current state when using Docker, the processes on the server are not ended even though
+the result is already returned from the container. These pseudo-running processes accumulate on the server and some other processes
+can be rejected because the limit of maximal running  processes is reached. This must be solved in the future.
 
+\begin{lstlisting}[basicstyle=\small,caption={\textit{get\_inputs} return value},label={lst:Container.get_inputs}]
+def _dirty_clean(self):
+    time.sleep(1)
+    self.cntnr.stop()
+    self.cntnr.remove()
+    self.job.process.clean()
+    os.remove(self.job.process.status_location)
+\end{lstlisting}
 
+\textit{time.sleep(1)} is called to wait one second so the running process execution inside the container can be finished. The parameter
+1 second is hardcoded and serves just now when the development is not done. \textit{stop()} and \textit{remove()} methods of class 
+\textit{Container} from \textit{docker} module are similar to docker commands \textit{docker stop container\_id} and 
+\textit{docker rm container\_id}.
 
+\textit{Job.process.clean()} remove the job workdir so the temporary files do not cumulate at the server. \textit{os.remove()} deletes
+the original status XML since the status XML from the container was sent back to the client.
 
 \newpage
 \necislovana{Závěr}
