@@ -1,0 +1,34 @@
+@startuml
+node "Container 1" {
+  [PyWPS] as PWPSC1
+  () 5000 as C2P5000
+}
+
+node "Container 2" {
+  [PyWPS] as PWPSC2
+  () 5000 as C1P5000
+}
+
+
+node "Host Machine" {
+  () 5000 as HMP5000
+  [PyWPS] as PWPSHM
+  [Job1] as J1
+  [Job2] as J2
+  () 5050 as HMP5050
+  () 5051 as HMP5051
+}
+
+[Client] -> HMP5000
+[Client] -> HMP5000
+HMP5000 - PWPSHM
+
+PWPSHM --> J1
+PWPSHM --> J2
+J1 -- HMP5050
+J2 -- HMP5051
+C2P5000 - PWPSC1
+HMP5050 -- C2P5000
+C1P5000 - PWPSC2
+HMP5051 - C1P5000
+@enduml

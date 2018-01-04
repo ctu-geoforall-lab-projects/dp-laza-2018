@@ -1,0 +1,52 @@
+@startuml
+node "Host Machine" {
+  rectangle Job1OutDir as J1OD
+  rectangle Job2OutDir as J2OD
+  [PyWPS] as PWPSHM
+  [Job2] as J2
+  [Job1] as J1
+  rectangle WorkDir as J1WD
+  rectangle WorkDir as J2WD
+  rectangle OutputsDir as HMOUT
+
+  PWPSHM -down-> J2
+  PWPSHM -up-> J1
+  PWPSHM -right-> HMOUT
+  J1 -up-> J1WD
+  J2 -down-> J2WD
+  HMOUT -up-> J1OD
+  HMOUT -down-> J2OD
+}
+
+node "Container 1" {
+  rectangle DataDir as C1DD
+  [PyWPS] as PWPSC1
+  C1DD -> PWPSC1
+  rectangle Outputs as C1O
+  PWPSC1 -down-> C1O
+}
+
+node "Container 2" {
+  rectangle DataDir as C2DD
+  [PyWPS] as PWPSC2
+  C2DD -> PWPSC2
+  rectangle Outputs as C2O
+  PWPSC2 -up-> C2O
+}
+
+J1WD -right-> C1DD: <back:white> **read-only bind mount**  </back>
+J1WD -right-> C1DD
+J1WD -right-> C1DD
+
+J2WD -right-> C2DD: <back:white> **read-only bind mount**  </back>
+J2WD -right-> C2DD
+J2WD -right-> C2DD
+
+C2O -left-> J2OD: <back:white> **read-write bind mount**  </back>
+C2O -left-> J2OD
+C2O -left-> J2OD
+
+C1O -left-> J1OD: <back:white> **read-write bind mount**  </back>
+C1O -left-> J1OD
+C1O -left-> J1OD
+@enduml

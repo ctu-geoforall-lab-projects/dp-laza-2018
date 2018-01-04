@@ -1216,9 +1216,9 @@ def __init__(self, process, wps_request, wps_response):
     self.cntnr = self._create()
 \end{lstlisting}
 
-\paragraph{\textit{self.\_assign\_port()}} The method returns number of available port. The port is chosen from range <\textit{port\_min},
+\paragraph{\textit{self.\_assign\_port()}} The method returns the number of available port. The port is chosen from range <\textit{port\_min},
 \textit{port\_max}> which are both configurable values. If no port from the range is available, the method returns
-\textit{NoAvailablePortException}. 
+\textit{NoAvailablePortException}. Schema of ports assignment to each container is in Fig. \ref{fig:Diag_port}.
 
 \paragraph{\textit{docker.from\_env()}} The \textit{docker} is a Python library for the Docker Engine API. \textit{from\_env} method
 returns an instance of \textit{DockerClient} class which is a client to communicate with the Docker daemon. The returned client is
@@ -1248,7 +1248,14 @@ The method returns an instance of \textit{Container} class from \textit{docker} 
 \textit{self.client.containers.create()} method. 
 
 The method takes optional parameter \textit{ports}. It is a dictionary to define ports to bind inside the container. The keys of the
-dictionary are the ports to bind inside the container. The values of the dictionary are the corresponding ports to open on the host.
+dictionary are the ports to bind inside the container (port 5000 insinde \textit{Container 1} and \textit{Container 2} at Fig. \ref{fig:Diag_port}). The values of the dictionary are the corresponding ports to open on the host (port 5050 for \textit{Job1}, port 5051 for \textit{Job2} at Fig. \ref{fig:Diag_port}).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.55\textwidth]{img/Diag_ports.png}
+\caption{Ports assignment schema}
+\label{fig:Diag_port}
+\end{figure}
 
 Another optional parameter is \textit{volumes}. It is a dictionary 
 to configure volumes mounted inside the container. The key is the host path and the value is a dictionary with the keys: \textit{bind}
@@ -1266,7 +1273,14 @@ volumes={prcs_out_dir: {'bind': dckr_out_dir, 'mode': 'rw'},
 Every container created with defined parameters \textit{volumes} and \textit{ports} will have output directory on the host mounted into 
 the container output directory as well as the process workdir at host machine mounted into container directory with data. Therefore, all
 inputs downloaded to process workdir will be available for the container and all outputs produced after process execution will be stored
-at host machine output directory.
+at host machine output directory. Displayed in Fig. \ref{fig:Diag_mount}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.65\textwidth]{img/Diag_mount.png}
+\caption{Schema of mounting directories}
+\label{fig:Diag_mount}
+\end{figure}
 
 \subsection{\textit{Container.start()} method}
 When a container is created the \textit{start()} method is called and the container is started.
