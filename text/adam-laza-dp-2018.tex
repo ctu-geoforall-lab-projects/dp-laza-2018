@@ -1216,15 +1216,16 @@ def __init__(self, process, wps_request, wps_response):
     self.cntnr = self._create()
 \end{lstlisting}
 
-\paragraph{\textit{self.\_assign\_port()}} The method returns the number of available port. The port is chosen from range <\textit{port\_min},
+\subsubsection{\textit{Container.\_assign\_port()}}
+The method returns the number of available port. The port is chosen from range <\textit{port\_min},
 \textit{port\_max}> which are both configurable values. If no port from the range is available, the method returns
 \textit{NoAvailablePortException}. Schema of ports assignment to each container is in Fig. \ref{fig:Diag_port}.
 
-\paragraph{\textit{docker.from\_env()}} The \textit{docker} is a Python library for the Docker Engine API. \textit{from\_env} method
+\subsubsection{\textit{docker.from\_env()}} The \textit{docker} is a Python library for the Docker Engine API. \textit{from\_env} method
 returns an instance of \textit{DockerClient} class which is a client to communicate with the Docker daemon. The returned client is
 configured from the same variables as the Docker command-line client.
 
-\paragraph{\textit{self.\_create()}} The \textit{\_create} method reads following values at the beginning:
+\subsubsection{\textit{Container.\_create()}} The \textit{\_create} method reads following values at the beginning:
 \begin{itemize}
 \item \textit{cntnr\_img} - Name of the image the container will be created from. The name of the image must be the same as the tag
 set by the \textit{-t} parameter in \textit{docker build} command when the image is built from Dockerfile.
