@@ -1010,7 +1010,7 @@ some kind of virtualization. They differ in architecture, see Fig. \ref{fig:Dock
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.5\textwidth]{img/Docker_VM.png}}{\caption{Virtual machine architecture, source \cite{Docker_docs}}\label{fig:Docker_VM}}
+\ffigbox{\includegraphics[width=0.495\textwidth]{img/Docker_VM.png}}{\caption{Virtual machine architecture, source \cite{Docker_docs}}\label{fig:Docker_VM}}
 \ffigbox{\includegraphics[width=0.5\textwidth]{img/Docker_container.png}}{\caption{Containers architecture, source \cite{Docker_docs}}\label{fig:Docker_container}}
 \end{floatrow}
 \end{figure}
@@ -1202,6 +1202,7 @@ execution the outputs are available at the host server. The host server and the 
 \end{figure}
 
 \subsection{\textit{Container} class constructor}
+\label{sub:Container_init}
 \textit{Container} class is initialized with standard Python method \textit{\_\_init\_\_()}. As an inheritor of \textit{Processing}
 class, at first the parent constructor is called with \textit{super().\_\_init\_\_()} method. Follows description of methods which are
 called inside the constructor method.
@@ -1268,9 +1269,13 @@ inputs downloaded to process workdir will be available for the container and all
 at host machine output directory.
 
 \subsection{\textit{Container.start()} method}
-When a container is created the \textit{start()} method is called and the container is started. Following methods are called:
-
-\begin{lstlisting}[basicstyle=\small,caption={\textit{create()} method}]
+When a container is created the \textit{start()} method is called and the container is started.
+In the time of finishing this thesis the method looks like at Lst.\ref{lst:Container_start}. In the current state is used the method
+\textit{\_dirty\_clean()}. It assures that the container is removed after the successful execution, temporary workdir is cleaned and it also 
+updates the process status in the database. Unfortunately, it causes that the process runs syncronously. To solve this problem is one of the
+future goals.
+ 
+\begin{lstlisting}[basicstyle=\small,caption={\textit{Container.create()} method},label={lst:Container_start}]
 def start(self):
     self.cntnr.start()
     time.sleep(0.5)
@@ -1279,13 +1284,58 @@ def start(self):
     self._dirty_clean()
 \end{lstlisting}
 
+\subsubsection{\textit{docker.container.start()}}
+\textit{start()} method of \textit{Container} class from Python module \textit{docker}. The method is similar to \textit{docker start} command. 
+It starts the Docker container. Then the method \textit{time.sleep()} is called to wait half a second after which the container is ready to 
+use.
 
-\paragraph{self.cntnr.start()} - \textit{start()} method of \textit{Container} class from Python module \textit{docker}.
-The method is similar to \textit{docker start} command. It starts the Docker container. Then the method \textit{time.sleep()} is 
-called to wait half a second after which the container is ready to use.
-\paragraph{self.\_execute()}
-\paragraph{self.\_parse\_status()}
-\paragraph{self.\_dirty\_clean()}
+\subsubsection{\textit{Container.\_execute()}}
+\textit{\_execute()} method handles forwarding execution from server to container. For sending request to container \textit{OWSLib} 
+library\footnote{\url{https://github.com/geopython/OWSLib}} is used. 
+\todo[inline]{Add appendix reference}
+
+\paragraph{OWSLib} is a Python package for client programming with OGC web services interface standards. However before it was possible
+to use this package there was necessary to fix a bug in the \textit{wps} module. The bug caused outputs in the Execute response, which
+were referenced as web-accesible resource, not to be parsed because of wrong handling with \textit{xlink} namespace. The bug-fix diff file 
+is available at App. 
+
+\begin{lstlisting}[basicstyle=\small,caption={\textit{Container.\_execute()} method},label={lst:Container._execute}]
+def _execute(self):
+    url_execute = "http://localhost:{}/wps".format(self.port)
+    inputs = get_inputs(self.job.wps_request.inputs)
+    output = get_output(self.job.wps_request.outputs)
+    wps = WPS(url=url_execute, skip_caps=True)
+    self.execution = wps.execute(self.job.wps_request.identifier,
+                                 inputs=inputs, output=output)
+\end{lstlisting}
+
+The method calls \textit{get\_inputs()} that 
+returns all inputs transformed into a list of tuples in form \textit{(input\_name, input\_value)}. In case of ComplexData input, the input value is replaced with path to file. It is necessary to transform the inputs into the list of tuples because it is the required form for
+\textit{WebProcessingService.execute()} method. Example for demo process \textit{buffer} at Lst. \ref{lst:Container.get_inputs}.
+
+\begin{lstlisting}[basicstyle=\small,caption={\textit{get\_inputs} return value},label={lst:Container.get_inputs}]
+the_inputs = [('poly_in', 'file:///pywps-flask/data/point.gml'),
+              ('buffer', '1.0')]
+the_outputs = [('buff_out', 'true')]
+\end{lstlisting}
+
+Then the method calls \textit{get\_outputs()} that returns list of tuples in form \textit{(output\_name, asReference\_attr\_value)}. It is 
+necessary to transform the outputs into the list of tuples because it is the required form for \textit{WebProcessingService.execute()} method. 
+
+\textit{WebProcessingService} object from OWSLib package is responsible for sending request to container. Its constructor takes URL of the
+WPS server running inside container. Container URL varies depending on the port assigned to the container. Then the \textit{WPSExecution}
+object is assigned to the \textit{Container} instance. The WPSExecution object is returned from \textit{WebProcessingService.execute()} 
+method that takes as inputs process identifier, list of inputs from \textit{get\_inputs()} and outputs from \textit{get\_outputs()}.
+
+\subsubsection{\textit{Container.\_parse\_status()}}
+The method takes path to status location from \textit{WPSExecution.statusLocation} and copies it to \textit{Job.process.status\_url}.
+Then the \textit{WPSReponse} object is updated by \textit{Job.wps\_response.update\_status()} with \textit{WPSExecution.statusMessage}.
+It means the \textit{WPSResponse} object at host machine WPS server adopts \textit{statusMessage} and path to \textit{statusLocation}
+from \textit{WPSExecution} object that handles the process execution inside the container. The process execution inside the container
+updates its status into the file that is located in container output directory. This directory is shared with WPS server at host machine
+si it is available even for the client.
+
+\subsubsection{\textit{Container.\_dirty\_clean()}}
 
 
 
