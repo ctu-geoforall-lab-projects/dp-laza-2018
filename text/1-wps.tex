@@ -35,11 +35,12 @@ Some of the widely-use OGC standards are:
 
 \bigskip
 \subsection{Web Processing Service}
-The OGC Web -Processing Service (WPS) Interface Standard defines a standardized interface
+The OGC Web Processing Service (WPS) Interface Standard defines a standardized interface
 that facilitates the publishing of geospatial processes. Also provides rules how to standardize
 requests and responses for geospatial processing services. 
 
 \textit{Process} means any operation on spatial
+%% ML: as -> like ?
 data from simple ones as maps overlay or buffering to highly complex as complicated global models. Any kind of GIS 
 functionality can be offered to clients across a network with correctly configured WPS. 
 
@@ -71,10 +72,10 @@ produced outputs.
 
 \newpage
 These operations are very similar to other OGC Web Services such as WMS, WFS, and WCS. Common interface aspects
-are defined in the OpenGIS ® Web Services Common Implementation Specification \cite{OGC_common}. As seen in 
-the class diagram at \\
-Fig. \ref{fig:WPS_class_diagram} the WPS interface class inherits the GetCapabilities operation 
+are defined in the OGC Web Services Common Implementation Specification \cite{OGC_common}. As seen in 
+the class diagram at Fig. \ref{fig:WPS_class_diagram} the~WPS interface class inherits the GetCapabilities operation 
 from OGCWebService interface class. The operations Execute and DescribeProcess are specific for the WPS. The WPS
+%% ML: vysvetlit v poznamce pod carou co je get a post?
 operations are based on GET and POST requests.
 
 \begin{figure}[h!]
@@ -84,6 +85,7 @@ operations are based on GET and POST requests.
 \label{fig:WPS_class_diagram}
 \end{figure}
 
+%% ML: mas nekde vystetleno co je KVP a XML encoding?
 The GetCapabilities and DescribeProcess shall use HTTP GET with KVP encoding and Execute operation shall use HTTP
 POST with XML encoding. Summarized in Tab. \ref{tab:WPS_encoding}.
 \begin{table}[h!]
@@ -91,6 +93,7 @@ POST with XML encoding. Summarized in Tab. \ref{tab:WPS_encoding}.
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
+%% ML: proc je hlavicka mensim pismem?
 \multirow{2}{*}{Operation} & \multicolumn{2}{c|}{Request encoding} \\ \cline{2-3} 
                            & Mandatory          & Optional         \\ \hhline{|=|=|=|}
 GetCapabilities            & KVP                & XML              \\ \hline
@@ -131,7 +134,7 @@ AcceptFormats=text/xml     & Optional            & \makecell{Comma-separated pri
 their clients should support at least one defined version.
 \item\textit{sections} - An optional parameter that contains a list of section names. Possible values are: \textit{ServiceIdentification,
 ServiceProvider, OperationsMetadata, Contents, All}.
-\item\textit{updateSequence} - An optional parameter for maintaining the consistency of a client cache of the contents of a service
+\item\textit{updateSequence} - An optional parameter for maintaining the consistency of a~client cache of the contents of a service
 metadata document. The parameter value can be an integer, a timestamp, or any other number or string.
 \item\textit{format} - An optional parameter that defines response format.
 \end{itemize}
@@ -146,9 +149,10 @@ request URL looks like:
 
 \paragraph{GetCapabilities response}
 \label{para:GetCapa_response}
+%% ML: co znamena Normal?
 \subparagraph{Normal response}
 When GetCapabilities operation is requested a client retrieve service metadata document that contains sections specified in
-\textit{sections} parameter. If the parameter value is \textit{All} or is not specified all sections retrieved.
+\textit{sections} parameter. If the parameter value is \textit{All} or not specified than all sections are retrieved.
 
 \begin{itemize}
 \item\textit{ServiceIdentification} - Server metadata.
@@ -158,14 +162,14 @@ When GetCapabilities operation is requested a client retrieve service metadata d
 \end{itemize}
 
 \bigskip
-In addition to sections each GetCapabilities response should contains:
+In addition to sections each GetCapabilities response should contain:
 \begin{itemize}
 \item\textit{version} - Specification version for GetCapabilities operation.
 \item\textit{updateSequence} - Server metadata document version, value is increased whenever any change is made in complete service metadata document.
 \end{itemize}
 
 \subparagraph{GetCapabilities exceptions}
-In case that WPS server encounters an error a client retrieve an exception report message with one of there exception code:
+In case that WPS server encounters an error a~client retrieves an exception report message with one of the exception code:
 
 \begin{itemize}
 \item\textit{MissingParameterValue} - GetCapabilities request does not contain a required parameter value.
@@ -178,7 +182,7 @@ In case that WPS server encounters an error a client retrieve an exception repor
 \subsubsection{DescribeProcess}
 The DescribeProcess operation is mandatory. The operation allows clients to retrieve a detailed description of one or more
 processes implemented by a WPS server. The detailed information describes both required inputs and produced outputs and allowed
-format.
+formats.
 
 \begin{table}[h!]
 \catcode`\-=12
@@ -210,8 +214,11 @@ request URL looks like: \url{http://localhost:5000/wps?request=DescribeProcess&s
 \paragraph{DescribeProcess response}
 \label{para:DesribeProc_response}
 
+%% ML: Normal? viz poznamka vyse
 \subparagraph{Normal response}
-Normal response to DescribeProcess request contains one or more process descriptions for requested process identifiers in 
+Normal response to DescribeProcess request contains one or more process descriptions for requested process identifiers in
+%% ML: co to je za strukturu, zde poprve pouzivas kurzivu, z toho mam pocit, ze jde o neco podstatneho ;-)
+%% ML: nikde jinde o strukture nemluvis, to je matouci
 \textit{ProcessDescriptions} structure. Each
 process description contains detailed information about process in \textit{ProcessDescription} (see Tab. \ref{tab:WPS_ProcessDescription})
 including process inputs and outputs description. The number of inputs or outputs is not limited.
@@ -223,7 +230,7 @@ including process inputs and outputs description. The number of inputs or output
 \begin{tabular}{|c|c|c|}
 \hline
 \thead{Name}               & \thead{Optionality} & \thead{Definition and format}    		\\ \hhline{|=|=|=|}
-Identifier      	       & Mandatory           & Process identigier             \\ \hline
+Identifier      	       & Mandatory           & Process identifier             \\ \hline
 Title 			           & Mandatory           & Process title 				  \\ \hline
 Abstract		           & Optional            & Brief description              \\ \hline
 Metadata		           & Optional            & \makecell{Reference to more metadata about this process} \\ \hline
@@ -244,15 +251,16 @@ statusSupported	           & Optional            & \makecell{Execute response ca
 Three data types of input or outputs exist:
 \begin{itemize}
 \item\textit{LiteralData} - any string. It is used for passing single parameters like numbers or text parameters. There can be set
-\textit{allowedValues} restriction. It can be a list of allowed values or input data type. Additional attributes such as \textit{units}
+\textit{allowedValues} restriction. It can be a~list of allowed values or input data type. Additional attributes such as \textit{units}
 or \textit{encoding} can be set as well. 
-\item\textit{ComplexData} - Complex data can be raster, vector or any file-based data, which are usually processed. ComplexData 
+\item\textit{ComplexData} - Complex data can be raster, vector or any file-based data, which are usually processed. ComplexData
+%% ML: vysvetlit mimeType, poznamka pod carou?
 are often result of the process. The input can be specified more using mimeType, XML schema or encoding.
 \item\textit{BoundingBoxData} - BoundingBox data are specified in OGC OWS Common specification as two pairs of coordinates (for 2D and 3D space). They can either be encoded in WGS84 or EPSG code can be passed too. They are intended to be used as definition of the target region.
 \end{itemize}
 
 \subparagraph{DescribeProcess exceptions}
-In case that WPS server encounters an error a client retrieves an exception report message with one of there exception code:
+In case that WPS server encounters an error a~client retrieves an exception report message with one of the exception code:
 \begin{itemize}
 \item\textit{MissingParameterValue} - GetCapabilities request does not contain a required parameter value.
 \item\textit{InvalidParameterValue} - GetCapabilities request contains an invalid parameter value.
@@ -265,9 +273,10 @@ Inputs can be included directly in the request body or be referenced as a web-ac
 in XML response document, either directly embedded within the response document or stored as a resource accessible by
 returned URL.
 
+%% ML: right after hned ve dvou vetach po sobe...
 Usually the response document is returned right after the process execution is completed. However it is possible to get
 response document right after sending a request. In this case, returned response document contains a URL link from which the
-final response document can be retrieved after completed process execution. A client can request execution status update to
+final response document can be retrieved after completed process execution. A~client can request execution status update to
 find out the amount of processing remaining if the execution is not completed. Shown in Fig. \ref{fig:WPS_sequence}.
 
 \begin{figure}[h!]
@@ -277,8 +286,10 @@ find out the amount of processing remaining if the execution is not completed. S
 \label{fig:WPS_sequence}
 \end{figure}
 
+%% ML: OK, tady uz zadne Normal neni... :-)
 \paragraph{Execute request}
-Execute request is usually sent via HTTP POST request. Execute request contains parameters from Tab. \ref{tab:WPS_ExecuteRequest}. Example of Execute XML sent within the POST request can be found at App.
+%% ML: Zkus odstavec prepsat, je to utrzkovite...
+Execute request is usually sent via HTTP POST request. Execute request contains parameters from Tab. \ref{tab:WPS_ExecuteRequest}. Example of Execute XML response document sent within the POST request can be found at App.
 \ref{app:ExecuteRequest}. 
 
 \begin{table}[h!]
@@ -304,6 +315,7 @@ Usualy the Execute operation response document is an XML document. The only exce
 of \textit{RawDataOutput} is requested, execution is successful and only one complex output is created, then directly
 the produced complex output is returned.
 
+%% ML: Podobna veta je na zacatku predesleho odstavce
 In ussual case response to Execute opetation is an ExecuteResponse XML document. The contents depend on ResponseForm 
 request elements.
 
