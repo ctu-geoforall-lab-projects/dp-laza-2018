@@ -1104,14 +1104,13 @@ second one \textit{nginx} implements pywps using Nginx and Green unicorn as WSGI
 flask} Dockerfile was used. However it was necessary to modify the Dockerfile because it did not contain \textit{GDAL} library. 
 
 As a part of the work on this thesis new version of Dockerfile with support of GDAL was created in collaboration with PyWPS developers. There 
-were some issues with \textit{Geos} and \textit{Xerces} libraries whose packages are not available for alpine distribution and their manual
-instalation was necessary. The newly-created Dockerfile is available at . At the end of the work on this thesis pywps-demo offers dockerfiles
-based on \textit{alpine} and \textit{ubuntu} Linux distribution.
+were some issues with \textit{Xerces} libraries whose packages are not available for alpine distribution and its manual
+instalation was necessary. The newly-created Dockerfile is available at App. \ref{app:dockerfile}. At the end of the work on this thesis pywps-demo offers dockerfiles based on \textit{alpine} and \textit{ubuntu} Linux distribution.
 
 \subsection{OWSLib}
 A Python package \textit{OWSLib} was used for forwarding requests from PyWPS server instance running on host machine to PyWPS server instance
 running inside a Docker container. Some bug fixing  which is detailly described in Sec.\ref{sub:Container_execute} was necessary. Complete
-diff is available at 
+diff is available at \ref{app:owslib}.
 
 \subsection{pywps}
 Most changes have been done in core pywps project. Almost all changes were made in \textit{processing} module. To this module new file
@@ -1517,34 +1516,9 @@ URL: \textless\url{http://www.mdpi.com/2220-9964/6/1/25/pdf}\textgreater
 \appendix
 
 \newpage
-\section{Dockerfile}
-\begin{lstlisting}[basicstyle=\small,caption={Dockerfile example}]
-ARG VERSION=0.9.22
-FROM phusion/baseimage:${VERSION}
-LABEL maintainer="devs@pywps.example.net"
-
-RUN apt-get update -y && apt-get install -y \
-	git \
-	python3 \
-	python3-dev
-
-RUN git clone https://github.com/geopython/pywps-flask.git
- 
-WORKDIR /pywps-flask
-RUN pip3 install -r requirements.txt
-
-RUN mkdir /etc/service/pywps4
-COPY pywps4_service.sh /etc/service/pywps4/run
-RUN chmod +x /etc/service/pywps4/run
-
-EXPOSE 5000
-ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
-\end{lstlisting}
-
-\newpage
 \section{Execute request example}
 \label{app:ExecuteRequest}
-\begin{lstlisting}[basicstyle=\small,caption={Execute request example},language=XML]
+\begin{lstlisting}[basicstyle=\small,caption={Execute request example}]
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
  <ows:Identifier>buffer</ows:Identifier>
@@ -1568,6 +1542,331 @@ ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
   </wps:ResponseDocument>
  </wps:ResponseForm>
 </wps:Execute>
+\end{lstlisting}
+
+\newpage
+\section{Execute response example (async mode)}
+\label{app:ExecuteResponse}
+\begin{lstlisting}[basicstyle=\small,caption={Execute response example (async mode)}]
+<!-- PyWPS 4.0.0 -->
+<wps:ExecuteResponse xmlns:gml="http://www.opengis.net/gml" 
+  xmlns:ows="http://www.opengis.net/ows/1.1" 
+  xmlns:wps="http://www.opengis.net/wps/1.0.0" 
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 
+  http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" 
+  service="WPS" version="1.0.0" xml:lang="en-US" 
+  serviceInstance="http://localhost:5000/wps?service=WPS&request=
+  GetCapabilities" 
+  statusLocation="http://localhost:5000/outputs/ce57acbe-f1f3-11
+  e7-ad2a-0242ac110003.xml">
+ <wps:Process wps:processVersion="0.1">
+  <ows:Identifier>buffer</ows:Identifier>
+  <ows:Title>GDAL Buffer process</ows:Title>
+  <ows:Abstract>
+   The process returns buffers around the input features,
+   using the GDAL library
+  </ows:Abstract>
+ </wps:Process>
+ <wps:Status creationTime="2018-01-05T09:38:41Z">
+  <wps:ProcessAccepted>
+   PyWPS Process buffer accepted
+  </wps:ProcessAccepted>
+ </wps:Status>
+</wps:ExecuteResponse
+\end{lstlisting}
+
+\newpage
+\section{Status XML example with referenced output}
+\label{app:status_reference}
+\begin{lstlisting}[basicstyle=\small,caption={Status XML example}]
+<wps:ExecuteResponse
+  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 
+  http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" 
+  service="WPS" version="1.0.0" xml:lang="en-US"
+  serviceInstance="http://localhost:5000/wps?service=WPS&request=
+  GetCapabilities" 
+  statusLocation="http://localhost:5000/outputs/ce57acbe-f1f3-11
+  e7-ad2a-0242ac110003.xml">
+ <wps:Process wps:processVersion="0.1">
+  <ows:Identifier>buffer</ows:Identifier>
+  <ows:Title>GDAL Buffer process</ows:Title>
+  <ows:Abstract>
+   The process returns buffers around the input features,
+   using the GDAL library
+  </ows:Abstract>
+ </wps:Process>
+ <wps:Status creationTime="2018-01-05T08:38:30Z">
+  <wps:ProcessSucceeded>
+   PyWPS Process GDAL Buffer process finished
+  </wps:ProcessSucceeded>
+ </wps:Status>
+ <wps:ProcessOutputs>
+  <wps:Output>
+   <ows:Identifier>buff_out</ows:Identifier>
+   <ows:Title>Buffered file</ows:Title>
+   <wps:Reference xlink:href="http://localhost:5000/outputs/ce57acbe-f1f3-11e7-ad2a-0242ac110003/point_buffer_42rkmvt1.gml" mimeType="application/gml+xml"/>
+  </wps:Output>
+ </wps:ProcessOutputs>
+</wps:ExecuteResponse>
+\end{lstlisting}
+
+\section{Status XML example with inline output}
+\label{app:status_inline}
+\begin{lstlisting}[basicstyle=\small,caption={Status XML example}]
+<wps:ExecuteResponse
+  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 
+  http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" 
+  service="WPS" version="1.0.0" xml:lang="en-US" 
+  serviceInstance="http://localhost:5000/wps?service=WPS&request=
+  GetCapabilities" 
+  statusLocation="http://localhost:5000/outputs/1cd3e506-f1f7-11
+  e7-8546-0242ac110003.xml">
+ <wps:Process wps:processVersion="0.1">
+  <ows:Identifier>buffer</ows:Identifier>
+  <ows:Title>GDAL Buffer process</ows:Title>
+  <ows:Abstract>
+   The process returns buffers around the input features,
+   using the GDAL library
+  </ows:Abstract>
+ </wps:Process>
+ <wps:Status creationTime="2018-01-05T09:02:10Z">
+  <wps:ProcessSucceeded>
+   PyWPS Process GDAL Buffer process finished
+  </wps:ProcessSucceeded>
+ </wps:Status>
+ <wps:ProcessOutputs>
+  <wps:Output>
+   <ows:Identifier>buff_out</ows:Identifier>
+   <ows:Title>Buffered file</ows:Title>
+   <wps:Data>
+    <wps:ComplexData mimeType="application/gml+xml">
+     <ogr:FeatureCollection xmlns:ogr="http://ogr.maptools.org/" 
+       xsi:schemaLocation="http://schemas.opengis.net/gml/2.1.2/
+       feature.xsd">
+      <gml:boundedBy>
+       <gml:Box>
+        <gml:coord>
+         <gml:X>-0.9514645979959721</gml:X>
+         <gml:Y>-0.986306232731747</gml:Y>
+        </gml:coord>
+        <gml:coord>
+         <gml:X>1.048535402004028</gml:X>
+         <gml:Y>1.013693767268253</gml:Y>
+        </gml:coord>
+       </gml:Box>
+      </gml:boundedBy>
+      <gml:featureMember>
+      <ogr:point_buffer fid="point_buffer.0">
+       <ogr:geometryProperty>
+        <gml:Polygon>
+         <gml:outerBoundaryIs>
+          <gml:LinearRing>
+           <gml:coordinates>1.04853540200403,0.013693767268253 
+           1.0471649367586,-0.038642188974691  0.857552396378976,
+           -0.57409148502422 0.825681363460999,-0.615626623781584 
+           0.791680227481423,-0.655436839090605 0.75564218319056,
+           -0.852331636516187 -0.496103633010996,-0.8249768006773
+           -0.539249850288442,-0.795323227106697 -0.580784989006,
+           -0.763452194188721 -0.620595204354827,-0.7294510582044
+           </gml:LinearRing>
+          </gml:outerBoundaryIs>
+         </gml:Polygon>
+        </ogr:geometryProperty>
+       </ogr:point_buffer>
+      </gml:featureMember>
+     </ogr:FeatureCollection>
+    </wps:ComplexData>
+   </wps:Data>
+  </wps:Output>
+ </wps:ProcessOutputs>
+</wps:ExecuteResponse>
+\end{lstlisting}
+
+\newpage
+\section{Dockerfile}
+\label{app:dockerfile}
+\begin{lstlisting}[basicstyle=\small,caption={Dockerfile example}]
+FROM alpine:latest
+MAINTAINER Jorge S. Mendes de Jesus <jorge.dejesus@geocat.net>
+
+ENV GDAL_VERSION 2.2.0
+ENV XERCES_VERSION 3.2.0
+
+RUN apk add --no-cache \
+	git \
+	gcc \
+	bash \
+	openssh \
+	musl-dev  \
+	python3 \
+	python3-dev \
+	libxml2-dev  \
+	libxslt-dev \
+	linux-headers \
+	expat \
+	expat-dev
+
+
+RUN apk --update --no-cache add g++ libstdc++ make swig
+
+# Xerces
+RUN wget http://www.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCES_VERSION}.tar.gz -O /tmp/xerces-c-${XERCES_VERSION}.tar.gz && \
+    tar xvf /tmp/xerces-c-${XERCES_VERSION}.tar.gz -C /tmp && \
+    cd /tmp/xerces-c-${XERCES_VERSION} && \
+    ./configure --prefix=/opt/xerces && \
+    make -j 4 && \
+    make install
+
+# Geos
+RUN apk add --no-cache \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    geos \
+    geos-dev
+
+# Install GDAL
+RUN wget http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz -O /tmp/gdal.tar.gz && \
+	tar xzf /tmp/gdal.tar.gz -C /tmp && \
+	cd /tmp/gdal-${GDAL_VERSION} && \
+	CFLAGS="-g -Wall" LDFLAGS="-s" ./configure --with-expat=yes --with-xerces=/opt/xerces --with-geos=yes \
+	&& make -j 4 && make install
+
+RUN cd /tmp/gdal-${GDAL_VERSION}/swig/python \
+	&& python3 setup.py build \
+	&& python3 setup.py install
+
+RUN git clone https://github.com/lazaa32/pywps-flask.git
+
+WORKDIR /pywps-flask
+RUN pip3 install -r requirements.txt
+
+
+EXPOSE 5000
+ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
+
+#docker build -t pywps-flask .
+#docker run -p 5000:5000 pywps-flask
+#http://localhost:5000/wps?request=GetCapabilities&service=WPS
+#http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0
+\end{lstlisting}
+
+\newpage
+\section{OWSLib diff file}
+\label{app:owslib}
+\begin{lstlisting}[basicstyle=\small,caption={OWSLib diff file}]
+diff --git a/owslib/wps.py b/owslib/wps.py
+index c16e288..ce86f93 100644
+--- a/owslib/wps.py
++++ b/owslib/wps.py
+@@ -1117,13 +1117,15 @@ class Output(InputOutput):
+ 
+   # extract wps namespace from outputElement itself
+   wpsns = getNamespace(outputElement)
++  # extract xlink namespace
++  xlins =outputElement.nsmap['xlink']
+ 
+   # <ns:Reference encoding="UTF-8" mimeType="text/csv"
+   # href="http://cida.usgs.gov/climate/gdp/process/RetrieveResultServlet?id=1318528582026OUTPUT.601bb3d0-547f-4eab-8642-7c7d2834459e"
+   # />
+   referenceElement = outputElement.find(nspath('Reference', ns=wpsns))
+   if referenceElement is not None:
+-      self.reference = referenceElement.get('href')
++      self.reference = referenceElement.get('{{{}}}href'.format(xlins))
+       self.mimeType = referenceElement.get('mimeType')
+ 
+   # <LiteralOutput>
+\end{lstlisting}
+
+\newpage
+\section{pywps-demo diff file}
+\label{app:pywps-demo}
+\begin{lstlisting}[basicstyle=\small,caption={pywps-demo diff file}]
+diff --git a/pywps.cfg b/pywps.cfg
+index a1ed125..f6e3981 100644
+--- a/pywps.cfg
++++ b/pywps.cfg
+@@ -28,14 +28,25 @@ maxrequestsize=3mb
+ url=http://localhost:5000/wps
+ outputurl=http://localhost:5000/outputs/
+ outputpath=outputs
+-workdir=/tmp
++workdir=workdir
++wd_inp_subdir=inputs
++wd_out_subdir=outputs
+ maxprocesses=10
+-parallelprocesses=2
++parallelprocesses=6
++
++[processing]
++mode=multiprocessing
++port_min=5050
++port_max=5070
++docker_img=pywps_container
++dckr_inp_dir=/pywps-flask/data
++dckr_out_dir=/pywps-flask/outputs
+ 
+ [logging]
+ level=INFO
+ file=logs/pywps.log
+ database=sqlite:///logs/pywps-logs.sqlite3
++format=%(asctime)s] [%(levelname)s] file=%(pathname)s line=%(lineno)s module=%(module)s function=%(funcName)s %(message)s
+ 
+ 
+ [grass]
+diff --git a/requirements.txt b/requirements.txt
+index f9884fd..327038c 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,12 +1,13 @@
+-Flask==0.10.1
+-Jinja2==2.7.3
+-jsonschema==2.5.1
+-lxml==3.3.3
+-OWSLib==0.11.2
+-pyproj==1.9.5.1
+-requests==2.11.1
+-Shapely==1.5.7
+-Werkzeug==0.10.4
+-SQLAlchemy==1.0.15
+-psutil==4.3.1
+--e git+https://github.com/geopython/pywps.git@master#egg=pywps-master
++Flask
++Jinja2
++jsonschema
++lxml
++OWSLib
++pyproj
++requests
++Shapely
++Werkzeug
++SQLAlchemy
++psutil
++docker
++-e git+https://github.com/lazaa32/pywps.git@develop#egg=pywps-develop
+
+diff --git a/setup.py b/setup.py
+index d4a5f6a..7c92362 100644
+--- a/setup.py
++++ b/setup.py
+@@ -50,7 +50,7 @@ config = {
+     'license': 'MIT',
+     'platforms': 'all',
+     'url': 'http://pywps.org',
+-    'download_url': 'https://github.com/geopython/pywps-flask',
++    'download_url': 'https://github.com/lazaa32/pywps-flask',
+     'author_email': 'luis.a.de.sousa@gmail.com',
+     'maintainer': 'Luis de Sousa',
+     'maintainer_email': 'luis.de.sousa@protonmail.ch',
+@@ -67,7 +67,7 @@ config = {
+     'version': VERSION,
+     'install_requires': INSTALL_REQUIRES,
+     'dependency_links': [
+-        'git+https://github.com/geopython/pywps.git@pywps-'+VERSION+'#egg=pywps-'+VERSION
++        'git+https://github.com/lazaa32/pywps.git@pywps-'+VERSION+'#egg=pywps-'+VERSION
+      ],
+     'packages': ['processes', 'tests'],
+     'scripts': ['demo.py'],
 \end{lstlisting}
 
 \newpage
