@@ -1,0 +1,740 @@
+\newpage
+\part{Appendix}
+
+\appendix
+\newpage
+\section{Execute request example}
+\label{app:ExecuteRequest}
+\begin{lstlisting}[basicstyle=\small,caption={Execute request example}]
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
+ <ows:Identifier>buffer</ows:Identifier>
+ <wps:DataInputs>
+  <wps:Input>
+   <ows:Identifier>poly_in</ows:Identifier>
+   <wps:Reference xlink:href="http://localhost:5000/static/data/point.gml" />
+  </wps:Input>
+  <wps:Input>
+   <ows:Identifier>buffer</ows:Identifier>
+   <wps:Data>
+    <wps:LiteralData>1</wps:LiteralData>
+   </wps:Data>
+  </wps:Input>
+ </wps:DataInputs>
+ <wps:ResponseForm>
+  <wps:ResponseDocument status="true" storeExecuteRsponse="true">
+   <wps:Output asReference="true">
+    <ows:Identifier>buff_out</ows:Identifier>
+   </wps:Output>
+  </wps:ResponseDocument>
+ </wps:ResponseForm>
+</wps:Execute>
+\end{lstlisting}
+
+\newpage
+\section{Execute response example (async mode)}
+\label{app:ExecuteResponse}
+\begin{lstlisting}[basicstyle=\small,caption={Execute response example (async mode)}]
+<!-- PyWPS 4.0.0 -->
+<wps:ExecuteResponse xmlns:gml="http://www.opengis.net/gml" 
+  xmlns:ows="http://www.opengis.net/ows/1.1" 
+  xmlns:wps="http://www.opengis.net/wps/1.0.0" 
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 
+  http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" 
+  service="WPS" version="1.0.0" xml:lang="en-US" 
+  serviceInstance="http://localhost:5000/wps?service=WPS&request=
+  GetCapabilities" 
+  statusLocation="http://localhost:5000/outputs/ce57acbe-f1f3-11
+  e7-ad2a-0242ac110003.xml">
+ <wps:Process wps:processVersion="0.1">
+  <ows:Identifier>buffer</ows:Identifier>
+  <ows:Title>GDAL Buffer process</ows:Title>
+  <ows:Abstract>
+   The process returns buffers around the input features,
+   using the GDAL library
+  </ows:Abstract>
+ </wps:Process>
+ <wps:Status creationTime="2018-01-05T09:38:41Z">
+  <wps:ProcessAccepted>
+   PyWPS Process buffer accepted
+  </wps:ProcessAccepted>
+ </wps:Status>
+</wps:ExecuteResponse
+\end{lstlisting}
+
+\newpage
+\section{Status XML example with referenced output}
+\label{app:status_reference}
+\begin{lstlisting}[basicstyle=\small,caption={Status XML example}]
+<wps:ExecuteResponse
+  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 
+  http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" 
+  service="WPS" version="1.0.0" xml:lang="en-US"
+  serviceInstance="http://localhost:5000/wps?service=WPS&request=
+  GetCapabilities" 
+  statusLocation="http://localhost:5000/outputs/ce57acbe-f1f3-11
+  e7-ad2a-0242ac110003.xml">
+ <wps:Process wps:processVersion="0.1">
+  <ows:Identifier>buffer</ows:Identifier>
+  <ows:Title>GDAL Buffer process</ows:Title>
+  <ows:Abstract>
+   The process returns buffers around the input features,
+   using the GDAL library
+  </ows:Abstract>
+ </wps:Process>
+ <wps:Status creationTime="2018-01-05T08:38:30Z">
+  <wps:ProcessSucceeded>
+   PyWPS Process GDAL Buffer process finished
+  </wps:ProcessSucceeded>
+ </wps:Status>
+ <wps:ProcessOutputs>
+  <wps:Output>
+   <ows:Identifier>buff_out</ows:Identifier>
+   <ows:Title>Buffered file</ows:Title>
+   <wps:Reference xlink:href="http://localhost:5000/outputs/ce57acbe-f1f3-11e7-ad2a-0242ac110003/point_buffer_42rkmvt1.gml" mimeType="application/gml+xml"/>
+  </wps:Output>
+ </wps:ProcessOutputs>
+</wps:ExecuteResponse>
+\end{lstlisting}
+
+\section{Status XML example with inline output}
+\label{app:status_inline}
+\begin{lstlisting}[basicstyle=\small,caption={Status XML example}]
+<wps:ExecuteResponse
+  xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 
+  http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" 
+  service="WPS" version="1.0.0" xml:lang="en-US" 
+  serviceInstance="http://localhost:5000/wps?service=WPS&request=
+  GetCapabilities" 
+  statusLocation="http://localhost:5000/outputs/1cd3e506-f1f7-11
+  e7-8546-0242ac110003.xml">
+ <wps:Process wps:processVersion="0.1">
+  <ows:Identifier>buffer</ows:Identifier>
+  <ows:Title>GDAL Buffer process</ows:Title>
+  <ows:Abstract>
+   The process returns buffers around the input features,
+   using the GDAL library
+  </ows:Abstract>
+ </wps:Process>
+ <wps:Status creationTime="2018-01-05T09:02:10Z">
+  <wps:ProcessSucceeded>
+   PyWPS Process GDAL Buffer process finished
+  </wps:ProcessSucceeded>
+ </wps:Status>
+ <wps:ProcessOutputs>
+  <wps:Output>
+   <ows:Identifier>buff_out</ows:Identifier>
+   <ows:Title>Buffered file</ows:Title>
+   <wps:Data>
+    <wps:ComplexData mimeType="application/gml+xml">
+     <ogr:FeatureCollection xmlns:ogr="http://ogr.maptools.org/" 
+       xsi:schemaLocation="http://schemas.opengis.net/gml/2.1.2/
+       feature.xsd">
+      <gml:boundedBy>
+       <gml:Box>
+        <gml:coord>
+         <gml:X>-0.9514645979959721</gml:X>
+         <gml:Y>-0.986306232731747</gml:Y>
+        </gml:coord>
+        <gml:coord>
+         <gml:X>1.048535402004028</gml:X>
+         <gml:Y>1.013693767268253</gml:Y>
+        </gml:coord>
+       </gml:Box>
+      </gml:boundedBy>
+      <gml:featureMember>
+      <ogr:point_buffer fid="point_buffer.0">
+       <ogr:geometryProperty>
+        <gml:Polygon>
+         <gml:outerBoundaryIs>
+          <gml:LinearRing>
+           <gml:coordinates>1.04853540200403,0.013693767268253 
+           1.0471649367586,-0.038642188974691  0.857552396378976,
+           -0.57409148502422 0.825681363460999,-0.615626623781584 
+           0.791680227481423,-0.655436839090605 0.75564218319056,
+           -0.852331636516187 -0.496103633010996,-0.8249768006773
+           -0.539249850288442,-0.795323227106697 -0.580784989006,
+           -0.763452194188721 -0.620595204354827,-0.7294510582044
+           </gml:LinearRing>
+          </gml:outerBoundaryIs>
+         </gml:Polygon>
+        </ogr:geometryProperty>
+       </ogr:point_buffer>
+      </gml:featureMember>
+     </ogr:FeatureCollection>
+    </wps:ComplexData>
+   </wps:Data>
+  </wps:Output>
+ </wps:ProcessOutputs>
+</wps:ExecuteResponse>
+\end{lstlisting}
+
+\newpage
+\section{Dockerfile}
+\label{app:dockerfile}
+\begin{lstlisting}[basicstyle=\small,caption={Dockerfile example}]
+FROM alpine:latest
+MAINTAINER Jorge S. Mendes de Jesus <jorge.dejesus@geocat.net>
+
+ENV GDAL_VERSION 2.2.0
+ENV XERCES_VERSION 3.2.0
+
+RUN apk add --no-cache \
+	git \
+	gcc \
+	bash \
+	openssh \
+	musl-dev  \
+	python3 \
+	python3-dev \
+	libxml2-dev  \
+	libxslt-dev \
+	linux-headers \
+	expat \
+	expat-dev
+
+
+RUN apk --update --no-cache add g++ libstdc++ make swig
+
+# Xerces
+RUN wget http://www.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCES_VERSION}.tar.gz -O /tmp/xerces-c-${XERCES_VERSION}.tar.gz && \
+    tar xvf /tmp/xerces-c-${XERCES_VERSION}.tar.gz -C /tmp && \
+    cd /tmp/xerces-c-${XERCES_VERSION} && \
+    ./configure --prefix=/opt/xerces && \
+    make -j 4 && \
+    make install
+
+# Geos
+RUN apk add --no-cache \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    geos \
+    geos-dev
+
+# Install GDAL
+RUN wget http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz -O /tmp/gdal.tar.gz && \
+	tar xzf /tmp/gdal.tar.gz -C /tmp && \
+	cd /tmp/gdal-${GDAL_VERSION} && \
+	CFLAGS="-g -Wall" LDFLAGS="-s" ./configure --with-expat=yes --with-xerces=/opt/xerces --with-geos=yes \
+	&& make -j 4 && make install
+
+RUN cd /tmp/gdal-${GDAL_VERSION}/swig/python \
+	&& python3 setup.py build \
+	&& python3 setup.py install
+
+RUN git clone https://github.com/lazaa32/pywps-flask.git
+
+WORKDIR /pywps-flask
+RUN pip3 install -r requirements.txt
+
+
+EXPOSE 5000
+ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
+
+#docker build -t pywps-flask .
+#docker run -p 5000:5000 pywps-flask
+#http://localhost:5000/wps?request=GetCapabilities&service=WPS
+#http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0
+\end{lstlisting}
+
+\newpage
+\section{OWSLib diff file}
+\label{app:owslib}
+\begin{lstlisting}[basicstyle=\small,caption={OWSLib diff file}]
+diff --git a/owslib/wps.py b/owslib/wps.py
+index c16e288..ce86f93 100644
+--- a/owslib/wps.py
++++ b/owslib/wps.py
+@@ -1117,13 +1117,15 @@ class Output(InputOutput):
+ 
+   # extract wps namespace from outputElement itself
+   wpsns = getNamespace(outputElement)
++  # extract xlink namespace
++  xlins =outputElement.nsmap['xlink']
+ 
+   # <ns:Reference encoding="UTF-8" mimeType="text/csv"
+   # href="http://cida.usgs.gov/climate/gdp/process/RetrieveResultServlet?id=1318528582026OUTPUT.601bb3d0-547f-4eab-8642-7c7d2834459e"
+   # />
+   referenceElement = outputElement.find(nspath('Reference', ns=wpsns))
+   if referenceElement is not None:
+-      self.reference = referenceElement.get('href')
++      self.reference = referenceElement.get('{{{}}}href'.format(xlins))
+       self.mimeType = referenceElement.get('mimeType')
+ 
+   # <LiteralOutput>
+\end{lstlisting}
+
+\newpage
+\section{pywps-demo diff file}
+\label{app:pywps-demo}
+\begin{lstlisting}[basicstyle=\small,caption={pywps-demo diff file}]
+diff --git a/pywps.cfg b/pywps.cfg
+index a1ed125..f6e3981 100644
+--- a/pywps.cfg
++++ b/pywps.cfg
+@@ -28,14 +28,25 @@ maxrequestsize=3mb
+ url=http://localhost:5000/wps
+ outputurl=http://localhost:5000/outputs/
+ outputpath=outputs
+-workdir=/tmp
++workdir=workdir
++wd_inp_subdir=inputs
++wd_out_subdir=outputs
+ maxprocesses=10
+-parallelprocesses=2
++parallelprocesses=6
++
++[processing]
++mode=multiprocessing
++port_min=5050
++port_max=5070
++docker_img=pywps_container
++dckr_inp_dir=/pywps-flask/data
++dckr_out_dir=/pywps-flask/outputs
+ 
+ [logging]
+ level=INFO
+ file=logs/pywps.log
+ database=sqlite:///logs/pywps-logs.sqlite3
++format=%(asctime)s] [%(levelname)s] file=%(pathname)s line=%(lineno)s module=%(module)s function=%(funcName)s %(message)s
+ 
+ 
+ [grass]
+diff --git a/requirements.txt b/requirements.txt
+index f9884fd..327038c 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,12 +1,13 @@
+-Flask==0.10.1
+-Jinja2==2.7.3
+-jsonschema==2.5.1
+-lxml==3.3.3
+-OWSLib==0.11.2
+-pyproj==1.9.5.1
+-requests==2.11.1
+-Shapely==1.5.7
+-Werkzeug==0.10.4
+-SQLAlchemy==1.0.15
+-psutil==4.3.1
+--e git+https://github.com/geopython/pywps.git@master#egg=pywps-master
++Flask
++Jinja2
++jsonschema
++lxml
++OWSLib
++pyproj
++requests
++Shapely
++Werkzeug
++SQLAlchemy
++psutil
++docker
++-e git+https://github.com/lazaa32/pywps.git@develop#egg=pywps-develop
+
+diff --git a/setup.py b/setup.py
+index d4a5f6a..7c92362 100644
+--- a/setup.py
++++ b/setup.py
+@@ -50,7 +50,7 @@ config = {
+     'license': 'MIT',
+     'platforms': 'all',
+     'url': 'http://pywps.org',
+-    'download_url': 'https://github.com/geopython/pywps-flask',
++    'download_url': 'https://github.com/lazaa32/pywps-flask',
+     'author_email': 'luis.a.de.sousa@gmail.com',
+     'maintainer': 'Luis de Sousa',
+     'maintainer_email': 'luis.de.sousa@protonmail.ch',
+@@ -67,7 +67,7 @@ config = {
+     'version': VERSION,
+     'install_requires': INSTALL_REQUIRES,
+     'dependency_links': [
+-        'git+https://github.com/geopython/pywps.git@pywps-'+VERSION+'#egg=pywps-'+VERSION
++        'git+https://github.com/lazaa32/pywps.git@pywps-'+VERSION+'#egg=pywps-'+VERSION
+      ],
+     'packages': ['processes', 'tests'],
+     'scripts': ['demo.py'],
+\end{lstlisting}
+
+\newpage
+\section{pywps diff file}
+\begin{lstlisting}[basicstyle=\small,caption={pywps diff file}]
+diff --git a/pywps/exceptions.py b/pywps/exceptions.py
+index 8483911..e0e1c57 100644
+--- a/pywps/exceptions.py
++++ b/pywps/exceptions.py
+@@ -150,3 +150,10 @@ class SchedulerNotAvailable(NoApplicableCode):
+     """Job scheduler not available exception implementation
+     """
+     code = 400
++
++
++class NoAvailablePortException(NoApplicableCode):
++    """
++    No port available for new docker.
++    """
++    code = 400
+diff --git a/pywps/processing/__init__.py b/pywps/processing/__init__.py
+index 03bf0af..63816e1 100644
+--- a/pywps/processing/__init__.py
++++ b/pywps/processing/__init__.py
+@@ -7,6 +7,7 @@
+ import pywps.configuration as config
+ from pywps.processing.basic import MultiProcessing
+ from pywps.processing.scheduler import Scheduler
++from pywps.processing.container import Container
+ # api only
+ from pywps.processing.basic import Processing  # noqa: F401
+ from pywps.processing.job import Job  # noqa: F401
+@@ -16,6 +17,7 @@ LOGGER = logging.getLogger("PYWPS")
+ 
+ MULTIPROCESSING = 'multiprocessing'
+ SCHEDULER = 'scheduler'
++DOCKER = 'docker'
+ DEFAULT = MULTIPROCESSING
+ 
+ 
+@@ -30,6 +32,8 @@ def Process(process, wps_request, wps_response):
+     LOGGER.info("Processing mode: %s", mode)
+     if mode == SCHEDULER:
+         process = Scheduler(process, wps_request, wps_response)
++    elif mode == DOCKER:
++        process = Container(process, wps_request, wps_response)
+     else:
+         process = MultiProcessing(process, wps_request, wps_response)
+     return process
+diff --git a/pywps/processing/container.py b/pywps/processing/container.py
+new file mode 100644
+index 0000000..8f5151e
+--- /dev/null
++++ b/pywps/processing/container.py
+@@ -0,0 +1,155 @@
++##################################################################
++# Copyright 2016 OSGeo Foundation,                               #
++# represented by PyWPS Project Steering Committee,               #
++# licensed under MIT, Please consult LICENSE.txt for details     #
++##################################################################
++
++import os
++import shutil
++import pywps.configuration as config
++from pywps.processing.basic import Processing
++
++from owslib.wps import WebProcessingService as WPS
++from pywps.response.status import STATUS
++from pywps.exceptions import NoAvailablePortException
++import docker
++import socket
++import time
++
++from pywps.inout.basic import LiteralInput, ComplexInput, BBoxInput
++import owslib
++from pywps.dblog import update_response
++
++
++import logging
++LOGGER = logging.getLogger("PYWPS")
++
++
++class ClientError:
++    pass
++
++
++class Container(Processing):
++    def __init__(self, process, wps_request, wps_response):
++        super().__init__(process, wps_request, wps_response)
++        self.port = self._assign_port()
++        self.client = docker.from_env()
++        self.cntnr = self._create()
++
++    def _create(self):
++        cntnr_img = config.get_config_value("processing", "docker_img")
++        prcs_inp_dir = self.job.wps_response.process.workdir
++        prcs_out_dir = config.get_config_value("server", "outputpath")
++        dckr_inp_dir = config.get_config_value("processing", "dckr_inp_dir")
++        dckr_out_dir = config.get_config_value("processing", "dckr_out_dir")
++        container = self.client.containers.create(cntnr_img, ports={"5000/tcp": self.port}, detach=True,
++                                                  volumes={
++                                                  prcs_out_dir: {'bind': dckr_out_dir, 'mode': 'rw'},
++                                                  prcs_inp_dir: {'bind': dckr_inp_dir, 'mode': 'ro'}
++                                                  })
++        return container
++
++    def _assign_port(self):
++        port_min = int(config.get_config_value("processing", "port_min"))
++        port_max = int(config.get_config_value("processing", "port_max"))
++        for port in range(port_min, port_max):
++            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
++            res = sock.connect_ex(('127.0.0.1', port))
++            # TODO find better solution for errno
++            if res != 0:
++                return port
++        raise NoAvailablePortException("No port from range {}-{} available.".format(port_min, port_max))
++
++    def start(self):
++        self.cntnr.start()
++        # TODO it takes some time to start the container
++        time.sleep(0.5)
++        self._execute()
++        self._parse_status()
++        self._dirty_clean()
++
++    def stop(self):
++        self.cntnr.stop()
++
++    def cancel(self):
++        self.cntnr.kill()
++
++    def pause(self):
++        self.cntnr.pause()
++
++    def unpause(self):
++        self.cntnr.unpause()
++
++    def _execute(self):
++        url_execute = "http://localhost:{}/wps".format(self.port)
++        inputs = get_inputs(self.job.wps_request.inputs)
++        output = get_output(self.job.wps_request.outputs)
++        wps = WPS(url=url_execute, skip_caps=True)
++        self.execution = wps.execute(self.job.wps_request.identifier, inputs=inputs, output=output)
++
++    # Obsolete function when docker was called in synchro mode
++    def _parse_outputs(self):
++        for output in self.execution.processOutputs:
++            # TODO what if len(data) > 1 ??
++            if output.data:
++                self.job.wps_response.outputs[output.identifier].data = output.data[0]
++            if output.reference:
++                rp = output.reference[output.reference.index('outputs/'):]
++                self.job.wps_response.outputs[output.identifier].file = rp
++
++        self.job.wps_response.update_status('PyWPS process {} finished'.format(self.job.process.identifier),
++                                            status_percentage=100, status=STATUS.DONE_STATUS)
++
++    def _parse_status(self):
++        self.job.process.status_url = self.execution.statusLocation
++        self.job.wps_response.update_status(message=self.execution.statusMessage)
++
++    def _dirty_clean(self):
++        # TODO wait then stop&remove container
++        time.sleep(1)
++        self.cntnr.stop()
++        self.cntnr.remove()
++        self.job.process.clean()
++        os.remove(self.job.process.status_location)
++        # update_response(self.job.wps_response.uuid, self.job.wps_response)
++        # self.job.wps_response.update_status('PyWPS Process {} finished'.format(self.job.process.title), 100,
++        #                                     STATUS.DONE_STATUS, clean=self.job.process.async)
++
++
++def get_inputs(job_inputs):
++    """
++    Return all inputs in [(input_name1, input_value1), (input_name2, input_value2)]
++    Return value can be used for WPS.execute method.
++    :return: input values
++    :rtype:list of tuples
++    """
++    the_inputs = []
++    for key in job_inputs.keys():
++        inp = job_inputs[key][0]
++        if isinstance(inp, LiteralInput):
++            # TODO use inp.source or inp.data?
++            ows_inp = str(job_inputs[key][0].source)
++        elif isinstance(inp, ComplexInput):
++            fp = os.path.basename(job_inputs[key][0].file)
++            dckr_inp_dir = config.get_config_value('processing', 'dckr_inp_dir')
++            ows_inp = owslib.wps.ComplexDataInput("file://" + os.path.join(dckr_inp_dir, fp))
++        elif isinstance(inp, BBoxInput):
++            ows_inp = owslib.wps.BoundingBoxDataInput(job_inputs[key][0].source)
++        else:
++            raise Exception
++        the_inputs.append((key, ows_inp))
++
++    return the_inputs
++
++
++def get_output(job_output):
++    """
++    Return all outputs name
++    Return value can be used for WPS.execute method.
++    :return: output names
++    :rtype:list
++    """
++    the_output = []
++    for key in job_output.keys():
++        the_output.append((key, job_output[key]['asReference']))
++    return the_output
+diff --git a/pywps/processing/job.py b/pywps/processing/job.py
+index b855599..f7fe2bc 100644
+--- a/pywps/processing/job.py
++++ b/pywps/processing/job.py
+@@ -38,7 +38,7 @@ class Job(object):
+         LOGGER.debug('dump job ...')
+         import dill
+         filename = tempfile.mkstemp(prefix='job_', suffix='.dump', dir=self.workdir)[1]
+-        with open(filename, 'w') as fp:
++        with open(filename, 'wb') as fp:
+             dill.dump(self, fp)
+             LOGGER.debug("dumped job status to %s", filename)
+             return filename
+diff --git a/pywps/response/execute.py b/pywps/response/execute.py
+index f78cfb0..e994de3 100644
+--- a/pywps/response/execute.py
++++ b/pywps/response/execute.py
+@@ -15,7 +15,7 @@ from pywps import WPS, OWS
+ from pywps.app.basic import xml_response
+ from pywps.exceptions import NoApplicableCode
+ import pywps.configuration as config
+-import pywps.dblog
++from pywps.dblog import update_response
+ 
+ from pywps.response.status import STATUS
+ from pywps.response import WPSResponse
+@@ -38,6 +38,33 @@ class ExecuteResponse(WPSResponse):
+         self.process = kwargs["process"]
+         self.outputs = {o.identifier: o for o in self.process.outputs}
+ 
++    def update_status(self, message=None, status_percentage=None, status=None,
++                      clean=True):
++        """
++        Update status report of currently running process instance
++
++        :param str message: Message you need to share with the client
++        :param int status_percentage: Percent done (number betwen <0-100>)
++        :param pywps.app.WPSResponse.STATUS status: process status - user should usually
++            ommit this parameter
++        """
++
++        if message:
++            self.message = message
++
++        if status:
++            self.status = status
++
++        if status_percentage:
++            self.status_percentage = status_percentage
++
++        # check if storing of the status is requested
++        if self.status >= STATUS.STORE_AND_UPDATE_STATUS:
++            # rebuild the doc and update the status xml file
++            self.doc = self._construct_doc()
++            self.write_response_doc(clean)
++
++        update_response(self.uuid, self)
+ 
+     def write_response_doc(self, clean=True):
+         # TODO: check if file/directory is still present, maybe deleted in mean time
+\end{lstlisting}
+
+\newpage
+\section{Docker extension documentation}
+\label{app:docker_ext_docs}
+\begin{lstlisting}[basicstyle=\small,caption={Docker extension documentation}]
+.. _docker:
+
+Docker Container Extension
+==========================
+
+To isolate each process execution it is possible to enable docker extension.
+
+.. note:: The PyWPS process implementations are not changed by using the
+  scheduler extension.
+
+First of all install Docker from `website <https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/>`_.
+
+Clone ``pywps-demo``::
+
+  $ git clone https://github.com/lazaa32/pywps-flask.git
+
+Install demo requirements from ``requirement.txt``. It will download all required packages including
+``pywps`` core package::
+
+  $ cd pywps-flask
+  $ pip install -r requirements.txt
+
+``pywps`` package was downloaded to ``src`` directory. Let's set the ``PYTHONPATH`` so ``pywps-demo`` knows
+where to find::
+
+  $ EXPORT PYTHONPATH=$PYTHONPATH:$PWD/src/pywps-develop
+
+If everything went OK, it should be now possible to run::
+
+  $ python3 demo.py
+
+However the demo still runs without Docker extension. First of all it is necessary to build an image from Dockerfile.
+From the image all containers will be created::
+
+  $ cd docker/isolation
+  $ docker build -t container .
+
+.. note:: The **-t** flag sets a name and optionally a tag in the **name:tag** format. The name of the image
+   will be one of the parameter value in configuration file.
+.. warning:: The image build can take up to several tens of minutes since some manual installation run on the
+   background.
+
+You can check the image was built by::
+
+  $ docker images
+
+To activate this extension you need to edit the ``pywps.cfg`` configuration file and make the following changes::
+
+  [processing]
+  mode=docker
+  port_min=5050
+  port_max=5070
+  docker_img=container
+  dckr_inp_dir=/pywps-flask/data
+  dckr_out_dir=/pywps-flask/outputs
+
+``mode`` must be set to ``docker``. ``port_min`` and ``port_max`` define the range of ports which can be
+assigned to containers. ``docker_img`` must match to name of the image given by -t flag during the image build.
+
+The docker extension is now enabled and every asynchronous request will be executed separately in a Docker
+container.
+\end{lstlisting}
+
+\newpage
+\section{List of tables and figures}
+\listoftables
+
+\listoffigures
+
+\newpage
+\section{ZIP file content}
+
+\todo[inline]{Upravit}
+
+\setlength{\unitlength}{.5mm}
+\begin{picture}(250, 220)
+  \put(  0, 212){\textbf{.}}
+  \put(  1, 200){\line(0, 1){5}}
+  \put(  1, 200){\line(1, 0){10} {\textbf{ text}}}
+  \put( 16, 190){\line(0, 1){8}}
+  \put( 16, 190){\line(1, 0){10} {\textbf{ LaTeX}}}
+  \put(150, 190){ zdrojové soubory textu}
+  \put( 16, 180){\line(0, 1){10}}
+  \put( 16, 180){\line(1, 0){10} { adam-laza-bp-2015.pdf}}
+  \put(150, 180){ tento text}
+  \put( 16, 170){\line(0, 1){10}}
+  \put( 16, 170){\line(1, 0){10} { adam-laza-bp-2015.xls}}
+  \put(150, 170){ anotace práce}
+  \put( 16, 160){\line(0, 1){10}}
+  \put( 16, 160){\line(1, 0){10} { zadani.pdf}}
+  \put(150, 160){ naskenované oficiální zadání této práce}
+  \put(  1, 150){\line(0, 1){60}}
+  \put(  1, 150){\line(1, 0){10} {\textbf{ src}}}
+  \put( 16, 140){\line(0, 1){8}}
+  \put( 16, 140){\line(1, 0){10} {\textbf{ nnbathy}}}
+  \put(150, 140){ zdrojové kódy nnbathy}
+  \put( 16, 130){\line(0, 1){10}}
+  \put( 16, 130){\line(1, 0){10} {\textbf{ cgal}}}
+  \put(150, 130){ zdrojové kódy cgal}
+  \put(  1, 120){\line(0, 1){50}}
+  \put(  1, 120){\line(1, 0){10} {\textbf{ testing}}}
+  \put( 16, 110){\line(0, 1){8}}
+  \put( 16, 110){\line(1, 0){10} {\textbf{ scripts}}}
+  \put(150, 110){ testovací skripty}
+  \put( 16, 100){\line(0, 1){10}}
+  \put( 16, 100){\line(1, 0){10} {\textbf{ sample\_data}}}
+  \put(150, 100){ testovací data}
+\end{picture}
