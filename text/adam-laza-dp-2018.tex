@@ -70,8 +70,8 @@ bottom=35mm]
 \newpage
 \input{tituldp}
 
-%\newpage
-%\includepdf[pages={1}]{../formulare/zadani.pdf}
+\newpage
+\includepdf[pages={1}]{../zadani/zadanidp.pdf}
 
 \newpage
 
@@ -514,7 +514,7 @@ ProcessOutputs             & Optional            & \makecell{List of values of o
 The OGS WPS is just an interface standard that provides rules for standardizing requests and response. It also defines how clients can request the execution of defined processes and how the outputs are handled. There are several projects that implement this standard across the platforms or programming languages.
 
 \subsection{deegree}
-\textit{deegree} is open-source community-driven project for spatial data infrastructure written in Java. Besides from the other OGC Web Services it implements also WPS standard 1.0.0. Their solution offers sending request with KVP, XML or SOAP encoding, asyncronous/syncronous execution and API for implementing processes in Java. On their website there is a WPS demo
+\textit{deegree} is open-source community-driven project for spatial data infrastructure written in Java. Besides from the other OGC Web Services it implements also WPS standard 1.0.0. Their solution offers sending request with KVP, XML or SOAP encoding, asynchronous/synchronous execution and API for implementing processes in Java. On their website there is a WPS demo
 \footnote{\url{http://demo.deegree.org/wps-workspace/}} where all operations \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute} with various processes can be tested.
 
 \bigskip
@@ -564,7 +564,7 @@ based on inputs served from GeoServer as well as storing the outputs in the cata
 
 Since GeoServer implements WPS standard 1.0.0, it must supports the \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute}
 operations. Apart of these, it implements also \textit{GetExecutionStatus} and \textit{Dismiss} operations. The \textit{Dismiss} operation
-serves for asyncronous requests to get progress report and eventually retrieve the result data. A client send in the GetExecutionStatus
+serves for asynchronous requests to get progress report and eventually retrieve the result data. A client send in the GetExecutionStatus
 request a mandatory \textit{executionId} parameter to specify the process. The executionId is mandatory parameter for Dismiss operation
 either. The Dismiss operation cancels an execution of the process of given executionId. As seen in Fig. \ref{fig:geoserver_status},
 GeoServer offers \textit{Progress status page} where progress of all executions can be reviewed as well as dismissing of each execution
@@ -785,7 +785,7 @@ The number of processes running in parallel is configirable by parameter \textit
 configuration file. In the Fig. \ref{fig:Diag_multiprocessing} are shown two running processes. A client sends an Execute request to
 a server. Server sends back to the client an ExecuteResponse that \textit{Process1} (green in the figure) was accepted and starts its 
 execution. During the execution the process updates its status. The interval of status updates depends on the code of the Process1.
-Process1 must support status update otherwise it cannot be run in asyncronous mode.
+Process1 must support status update otherwise it cannot be run in asynchronous mode.
 
 During the execution of Process1 server receives another Execution request. It sends back the Execution response and starts the execution
 of \textit{Process2} (blue in the figure). Separated Python \textit{Process}\footnote{Explanation of term Python \textit{Process} and its
@@ -800,7 +800,7 @@ processes.
 \paragraph{Process vs Thread} In Python there are two ways to achieve \textit{pararellism}. It is \textit{multiprocessing}
 \footnote{\url{https://docs.python.org/3/library/multiprocessing.html}} with using processes and \textit{threading}\footnote{https://docs.python.org/3/library/threading.html} with threads. The main difference is that threads run in the same memory space, while processes
 have separate memory. Multiprocessing takes advantages of multiple CPUs and cores while threads are more lightweighted and have low memory
-footprint. In case of PyWPS asyncronous requests, for every execution its own process with its own memory space is created.
+footprint. In case of PyWPS asynchronous requests, for every execution its own process with its own memory space is created.
 
 \paragraph{Job Scheduler Extension}
 PyWPS scheduler extension offers possibilities to execute asynchronous processes out of the WPS server machine.
@@ -1124,7 +1124,7 @@ Most changes have been done in core pywps project. Almost all changes were made 
 PyWPS in current version 4.0.0 implements all mandatory operations: \textit{Execute}, \textit{GetCapabilities}, \textit{DescribeProcess}.
 Operations are handled by corresponding methods \textit{execute()}, \textit{get\_capabilities()} and \textit{describe()} in \textit{Service.py} class. 
 
-However both \textit{GetCapabilities} and \textit{DescribeProcess} operations run in syncronous mode only. After sending a request,
+However both \textit{GetCapabilities} and \textit{DescribeProcess} operations run in synchronous mode only. After sending a request,
 a client receives back GetCapabilities or DescribeProcess response (both detaily described in \ref{para:GetCapa_response} and \ref{para:DesribeProc_response}). Both operations return only information or description about process but do not trigger the
 execution of the process. It is supposed the response to GetCapabilities and DescribeProcess is returned almost immediately.
 During the GetCapabilities and the DescribeProcess operations a process execution is not started and therefore there is no
@@ -1162,7 +1162,7 @@ Fig. \ref{fig:DiagServiceParseExecute}). Here the inputs are parsed, in case of 
 
 \subsection{Process.execute()}
 The method \textit{execute()} of class \textit{Process} contains crucial if-statement where is decided whether the process will be
-run in asyncronous or syncronous mode. Running in asyncronous mode can be enforced by setting both attributes \textit{status} and \textit{storeExecuteResponse} of the \textit{ResponseDocument} element in the ExecuteRequest XML to True.
+run in asynchronous or synchronous mode. Running in asynchronous mode can be enforced by setting both attributes \textit{status} and \textit{storeExecuteResponse} of the \textit{ResponseDocument} element in the ExecuteRequest XML to True.
 
 \bigskip
 \begin{lstlisting}[basicstyle=\small,caption={ReponseForm element of ExecuteRequest XML},language=XML,label={lst:Execute_ResponseForm}]
@@ -1176,9 +1176,9 @@ run in asyncronous or syncronous mode. Running in asyncronous mode can be enforc
 \end{lstlisting}
 \bigskip 
 
-No matter whether the process runs syncronously or asyncronously always there is a control how many parallel processes are currently
-running. The number of the maximum of concurrently running processes can be configured. If the process is asyncronous and the number of currently running processes exceeds the maximal number, the process is stored and its execution is started lately. In case of the syncronous process the \textit{ServerBusy} exception is raised. If the number of processes is smaller than the maximal number of 
-concurrent processes, the process can be executed. In syncronous mode the \textit{\_run\_process()} is called, in asyncronous mode the method \textit{\_run\_async()} is called. The activity diagram of the \textit{Process.execute()} is displayed in Fig.\ref{fig:Diag_process_execute}.
+No matter whether the process runs synchronously or asynchronously always there is a control how many parallel processes are currently
+running. The number of the maximum of concurrently running processes can be configured. If the process is asynchronous and the number of currently running processes exceeds the maximal number, the process is stored and its execution is started lately. In case of the synchronous process the \textit{ServerBusy} exception is raised. If the number of processes is smaller than the maximal number of 
+concurrent processes, the process can be executed. In synchronous mode the \textit{\_run\_process()} is called, in asynchronous mode the method \textit{\_run\_async()} is called. The activity diagram of the \textit{Process.execute()} is displayed in Fig.\ref{fig:Diag_process_execute}.
 
 \begin{figure}[h!]
 \centering
@@ -1319,7 +1319,7 @@ at host machine output directory. Displayed in Fig. \ref{fig:Diag_mount}.
 When a container is created the \textit{start()} method is called and the container is started.
 In the time of finishing this thesis the method looks like at Lst.\ref{lst:Container_start}. In the current state is used the method
 \textit{\_dirty\_clean()}. It assures that the container is removed after the successful execution, temporary workdir is cleaned and it also 
-updates the process status in the database. Unfortunately, it causes that the process runs syncronously. To solve this problem is one of the
+updates the process status in the database. Unfortunately, it causes that the process runs synchronously. To solve this problem is one of the
 future goals.
  
 \begin{lstlisting}[basicstyle=\small,caption={\textit{Container.create()} method},label={lst:Container_start}]
@@ -2012,7 +2012,7 @@ index 0000000..8f5151e
 +        wps = WPS(url=url_execute, skip_caps=True)
 +        self.execution = wps.execute(self.job.wps_request.identifier, inputs=inputs, output=output)
 +
-+    # Obsolete function when docker was called in syncro mode
++    # Obsolete function when docker was called in synchro mode
 +    def _parse_outputs(self):
 +        for output in self.execution.processOutputs:
 +            # TODO what if len(data) > 1 ??
@@ -2215,6 +2215,8 @@ container.
 
 \newpage
 \section{ZIP file content}
+
+\todo[inline]{Upravit}
 
 \setlength{\unitlength}{.5mm}
 \begin{picture}(250, 220)
