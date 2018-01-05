@@ -78,30 +78,46 @@ bottom=35mm]
 \selectlanguage{english}
 \begin{abstract}
 \bigskip
-\todo[inline]{Upravit abstract, aby odpovidal skutec strukture}
-This master thesis is dedicated to an isolation of PyWPS processes as one of the OGC WPS implementation. OGC WPS is Web Processing Service
-Standard defined by Open Geospatial Consortium. The practical part contains an introductory research where various solutions how 
-to reach the process isolation are considered and described. Based on the research the Docker technology has been chosen for the 
-implementation of process isolation.  In the theoretical part Docker technology is described as well as the OGC WPS standard and 
-its PyWPS implementation written in Python.
+This master thesis is dedicated to a process isolation in PyWPS framework as one of the OGC WPS implementation. OGC WPS is Web Processing Service
+Standard defined by Open Geospatial Consortium.
+
+The first part describes the standard itself including all three mandatory operations
+\textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute}. At the end of the first part some implementations of the standard
+are mentioned.
+
+The second part concentrates on \textit{PyWPS}, one of the WPS implementation written in Python. Readers are introduced to the current
+state of PyWPS as well as to \textit{PyWPS-demo} project, a demo server isntance, which the implementation part is based on. A research about possible solutions of process isolation follows and then \textit{Docker} technology is described as final choice for implementaion.
+
+The third part covers the implementation of Docker containers for process isolation. The workflow of \textit{Execute} operation is
+described in detail and brand new \textit{Container} class with all its methods is introduced.
 
 \bigskip
+\bigskip
 \keywords{Keywords}
-OGC WPS, PyWPS, Docker container, Python, process izolation, Web Processing Service.
+OGC WPS, PyWPS, Docker container, Python, process isolation, Web Processing Service, geoprocessing.
 \end{abstract}
 
+\newpage
 \selectlanguage{czech}
 \begin{abstract}
 \bigskip
-\todo[inline]{Překlad WPS - Webová Procesingová??? Služba, OGC??}
-Tato diplomová práce se věnuje možnostem izolace procesů v rámci frameworku PyWPS jako jedné z implementací OGC WPS. Webová Procesingová 
-Služba je standard vydaný a dále rozšiřovaný Open Geospatial Consorciem. Praktická část obsahuje úvodní rešerši, ve které jsou popsány
-různé možnosti, jak izolace jednotlivých procesů dosáhnout. Na základě rešerše byla pro implementaci vybraná technologie Docker.
-V teoretické části je popsána jak technologie Docker, tak OGC WPS standard a jeho implementace PyWPS napsaná v jazyce Python.
+Tato diplomová práce se věnuje možnostem izolace procesů v rámci frameworku PyWPS jako jedné z implementací OGC WPS. Web Processing 
+Service je standard vydaný a dále rozšiřovaný Open Geospatial Consorciem. 
+
+První část popisuje samotný standard včetně všech základních požadavků \textit{GetCapabilities}, \textit{DescribeProcess} a \textit{Execute}.
+V závěru první části jsou zmíněny některé z implementací WPS standardu.
+
+Druhý část se zaměřuje na \textit{PyWPS}, což je implementace WPS standardu napsaná v programovacím jazyce Python. Čtenáři jsou seznámeni
+jak se současným stavem PyWPS, tak s projektem \textit{PyWPS-demo}, ukázkovou instancí PyWPS serveru, na kterém je postavena praktická část. 
+Následuje rešerše, která mapuje možné řešení izolace procesů, a nakonec je popsána \textit{Docker} technologie, která slouží pro kontejnerizaci
+a která byla vybrána pro samotnou implementaci izolace.
+
+Poslední část se zabývá použitím Docker kontejnerů pro izolaci procesů. Detailně je vysvětleno, jak funguje \textit{Execute} operace a následně je popsána nově vytvořená třída \textit{Container} se všemi svými metodami.
 
 \bigskip
+\bigskip
 \keywords{Klíčová slova}
-OGC WPS, PyWPS, Docker kontejner, Python, izolace procesu, Webová Procesingová Služba.
+OGC WPS, PyWPS, Docker kontejner, Python, izolace procesu, geoprocesing, zpracování dat.
 \end{abstract}
 
 \selectlanguage{english}
