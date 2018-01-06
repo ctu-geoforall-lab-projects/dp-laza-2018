@@ -26,33 +26,37 @@ implements pywps using Nginx and Green unicorn as WSGI server. During
 the implementation only the \textit{pywps-flask} Dockerfile was
 used. However it was necessary to modify the Dockerfile because it did
 %% ML: je nekde vysvetleno, proc je potreba GDAL, pokud ano, tak zde chybi reference
-not contain \textit{GDAL} library.
+%% AL: pridano vysvetleni
+not contain \textit{GDAL} library which is required for most of the
+demo processes that \textit{pywps-demo} offers.
 
-As a part of the work on this thesis new version of Dockerfile with
+During implementaion a new version of Dockerfile with
 support of GDAL was created in collaboration with PyWPS
 developers. There were some issues with \textit{Xerces} libraries
 whose packages are not available for alpine distribution and its
 manual instalation was necessary. The newly-created Dockerfile is
 %% ML: ta posledni veta zni divne, v odstavci se opakuje casteji "work
 %% on this thesis"
-available in App. \ref{app:dockerfile}. At the end of the work on this
+%% AL: prepsano
+available in App. \ref{app:dockerfile}. At the time of finishing this
 thesis pywps-demo offers dockerfiles based on \textit{alpine} and
 \textit{ubuntu} Linux distribution.
 
 \subsection{OWSLib}
+\label{sub:owslib}
 A Python package \textit{OWSLib} was used for forwarding requests from
 PyWPS server instance running on host machine to PyWPS server instance
 %% ML: detailly?
-running inside a Docker container. Some bug fixing which is detailly
-described in Sec.\ref{sub:Container_execute} was necessary. Complete
+%% AL: 
+running inside a Docker container. Some bug fixing which is
+mentioned in Sec.\ref{sub:Container_execute} was necessary. Complete
 %% ML: Byly ty upravy zacleneny do OWSlib, pokud ano, tak to zmin
+%% AL: Pull request jsem zatim neresil.
 diff is available in App. \ref{app:owslib}.
 
 \subsection{PyWPS}
 Most changes have been done in core PyWPS project. Almost all changes were made in \textit{processing} module. To this module new file
-\textit{container.py} containing the \textit{Container} class was added. Complete diff is available at
-
-\todo[inline]{Doplnit reference}
+\textit{container.py} containing the \textit{Container} class was added. Complete diff is available at App. \ref{app:pywps}.
 
 \newpage
 \section{Operations overview}
@@ -71,14 +75,16 @@ GetCapabilities and DescribeProcess is returned almost immediately.
 During the GetCapabilities and the DescribeProcess operations a
 process execution is not started and therefore there is no starting
 %% ML: ta posledni veta zni divne
-process to be isolated. That is why from this point on this thesis is
-dedicated only to \textit{Execute} operation.
+%% AL: opraveno
+process to be isolated. That is why whole contribution of this thesis
+only applies to \textit{Execute} operation.
 
 %% ML: chybi zdroj, pokud je to Tvuj diagram, tak to uved (napr. (source: author))
+%% AL: ok
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.9\textwidth]{img/Diag_operations.png}
-\caption{PyWPS operations activity diagram}
+\caption{PyWPS operations activity diagram, source: author}
 \label{fig:Diag_operations}
 \end{figure}
 
@@ -93,11 +99,12 @@ Inputs for the method are:
 \end{itemize}
 
 %% ML: opet: zdroj
+%% AL: ok
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_execute.png}}{\caption{Activity diagram: method \textit{Service.execute()}}\label{fig:DiagServiceExecute}}
-\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_parse_execute.png}}{\caption{Activity diagram: method \textit{Service.\_parse\_and\_execute()}}\label{fig:DiagServiceParseExecute}}
+\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_execute.png}}{\caption{Activity diagram: method \textit{Service.execute()}, source: author}\label{fig:DiagServiceExecute}}
+\ffigbox{\includegraphics[width=0.4\textwidth]{img/Diag_service_parse_execute.png}}{\caption{Activity diagram: method \textit{Service.\_parse\_and\_execute()}, source: author}\label{fig:DiagServiceParseExecute}}
 \end{floatrow}
 \end{figure}
 
@@ -127,17 +134,19 @@ running. The number of the maximum of concurrently running processes can be conf
 concurrent processes, the process can be executed. In synchronous mode the \textit{\_run\_process()} is called, in asynchronous mode the method \textit{\_run\_async()} is called. The activity diagram of the \textit{Process.execute()} is displayed in Fig.\ref{fig:Diag_process_execute}.
 
 %% ML: zdroj?
+%% AL: ok
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.9\textwidth]{img/Diag_process_execute.png}
-\caption{\textit{Activity diagram: Process.execute()}}
+\caption{\textit{Activity diagram: Process.execute()}, source: author}
 \label{fig:Diag_process_execute}
 \end{figure}
 
 \subsection{Processing module}
 
 %% ML: code -> operations ?
-Until now the code described in this thesis was not
+%% AL: asi lepsi operations
+Until now the operations described in this thesis was not
 modified. Requirements which have been considered during the
 implementation of Docker technology were that the source code will not
 be very modified, the process isolation will be easily inserted and
@@ -160,11 +169,12 @@ mode=docker/scheduler/multiprocessing
 \end{lstlisting}
 
 %% ML: zdroj
+%% AL: ok
 \begin{figure}[h!]
 \centering
 \begin{floatrow}
-\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_run_async.png}}{\caption{Activity diagram: Method \textit{Process.\_run\_async() }}}{\label{fig:Diag_run_async}}
-\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_class_processing.png}}{\caption{Class diagram: \textit{Processing} class}}{\label{fig:Diag_class_proc}}
+\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_run_async.png}}{\caption{Activity diagram: Method \textit{Process.\_run\_async()}, source: author}}{\label{fig:Diag_run_async}}
+\ffigbox{\includegraphics[width=0.48\textwidth]{img/Diag_class_processing.png}}{\caption{Class diagram: \textit{Processing} class, source: author}}{\label{fig:Diag_class_proc}}
 \end{floatrow}
 \end{figure}
 
@@ -180,11 +190,12 @@ forwarded to PyWPS server running inside Docker container. The process execution
 execution the outputs are available at the host server. The host server and the container share the same process workdir at filesystem.
 
 %% ML: zdroj
+%% AL: ok
 \bigskip
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.9\textwidth]{img/Diag_sequence.png}
-\caption{Sequence diagram: Process execution using Docker}
+\caption{Sequence diagram: Process execution using Docker, source: author}
 \label{fig:Diag_sequence}
 \end{figure}
 
@@ -192,10 +203,10 @@ execution the outputs are available at the host server. The host server and the 
 \label{sub:Container_init}
 
 %% ML: opravit preteceni textu
+%% AL: preteceni opraveno
 \textit{Container} class is initialized with standard Python method
 \textit{\_\_init\_\_()}. As an inheritor of \textit{Processing} class,
-at first the parent constructor is called with
-\textit{super().\_\_init\_\_()} method. Follows description of methods
+at first the parent constructor \textit{super().\_\_init\_\_()} is called. Follows description of methods
 which are called inside the constructor method.
 
 \bigskip
@@ -250,7 +261,7 @@ port 5051 for \textit{Job2} at Fig. \ref{fig:Diag_port}).
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.55\textwidth]{img/Diag_ports.png}
-\caption{Ports assignment schema}
+\caption{Ports assignment schema, source: author}
 \label{fig:Diag_port}
 \end{figure}
 
@@ -260,6 +271,8 @@ to configure volumes mounted inside the container. The key is the host path and 
 \textit{ro} to mount it read-only.
 
 %% ML: zdroj
+%% AL: tohle predpokladam patri k tomu obrazku o par radku vyse
+%% k listingu zdroj snad davat nemusim
 \bigskip
 \begin{lstlisting}[basicstyle=\small,caption={\textit{create()} method}]
 self.client.containers.create(cntnr_img, detach=True,
@@ -279,10 +292,11 @@ stored at host machine output directory. Displayed in
 Fig. \ref{fig:Diag_mount}.
 
 %% ML: zdroj
+%% AL: ok
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.65\textwidth]{img/Diag_mount.png}
-\caption{Schema of mounting directories}
+\caption{Schema of mounting directories, source: author}
 \label{fig:Diag_mount}
 \end{figure}
 
@@ -317,7 +331,8 @@ use.
 \textit{\_execute()} method handles forwarding execution from server
 to container. For sending request to container \textit{OWSLib}
 %% ML: misto poznamky pod carou uved odkaz na kapitolu
-library\footnote{\url{https://github.com/geopython/OWSLib}} is used.
+%% AL: predelano
+library (Sec. \ref{sub:owslib}) is used.
 
 \paragraph{OWSLib} is a Python package for client programming with OGC web services interface standards. However before it was possible
 to use this package there was necessary to fix a bug in the \textit{wps} module. The bug caused outputs in the Execute response, which

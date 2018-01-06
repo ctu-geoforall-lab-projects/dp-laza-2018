@@ -11,7 +11,8 @@ funcionality of GRASS GIS and general web interface able to handle any WPS serve
 
 In 2007 PyWPS 2.0.0 was released supporting WPS standard 0.4.0. New
 %% ML: a -> and?
-version improved stability a approached on the standard
+%% AL: and
+version improved stability and approached on the standard
 implementation. It came with new WPS client and WPS plugin for
 OpenLayers \footnote{\url{http://openlayers.org/}}.
 
@@ -31,7 +32,8 @@ The newest version is PyWPS 4.0.0 from 2016 when PyWPS-4 branch was merged to of
 \subsection{PyWPS 4.0}
 \label{sec:PyWPS4}
 %% ML: this -> these
-PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved this major changes:
+%% AL: these
+PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved these major changes:
 \begin{itemize}
 \item It is written in \textit{Python 3} with backward support for Python 2.7.
 \item It utilizes native Python bindings to existing projects (GRASS GIS).
@@ -85,8 +87,9 @@ these four sections:
 Right now in PyWPS 4.0 version a PyWPS server instance is able to run
 multiple concurrent processes in parallel. The server is configured
 %% ML: maximal amount(s) se opakuje dvakrat po sobe
+%% AL: pouzito maximum, je to lepsi?
 for maximal amounts of concurrently running processes at the same time
-and for the maximal amount of waiting processes in a queue, to later
+and for maximum of waiting processes in a queue, to later
 start their execution once new slots are available. If the new Execute
 request is received and the maximal amount is exceeded, the request is
 rejected and user is informed in response (see
@@ -105,9 +108,10 @@ Lst. \ref{lst:Isolation_rejected}).
 
 To facilitate the management of concurrent processes, process metadata
 %% ML: dve vety za sebou zacinaji stejne: This database...
+%% AL: opraveno
 are stored into a local database. This database is used for logging
 and saving waiting Execute requests in the queue and invoking them
-later on.  This database will also enable the implementation of
+later on. The database will also enable the implementation of
 pausing, releasing and deleting running process. These features will
 allow PyWPS to comply with WPS version 2.0.0.
 
@@ -135,25 +139,7 @@ parameter \textit{mode} in section \textit{processing} which is by default \text
 to \textit{scheduler}.
 
 %% ML: je tato ukazka kodu opravdu nutna?
-\bigskip
-\begin{lstlisting}[basicstyle=\small,caption={processing.\_\_init\_\_.py},label={lst:Process_init},language=python]
-def Process(process, wps_request, wps_response):
-    """
-    Factory method (looking like a class) to return the
-    configured processing class.
-
-    :return: instance of :class:`pywps.processing.Processing`
-    """
-    mode = config.get_config_value("processing", "mode")
-    LOGGER.info("Processing mode: %s", mode)
-    if mode == SCHEDULER:
-        process = Scheduler(process, wps_request, wps_response)
-    else:
-        process = MultiProcessing(process, wps_request, wps_response)
-    return process
-\end{lstlisting}
-\bigskip
-\bigskip
+%% AL: smazano
 
 \paragraph{Multiprocessing}
 By default for  processes   running   in   the   background,   the   Python \textit{multiprocessing} module is used – 
@@ -227,21 +213,24 @@ The PyWPS scheduler extension uses the Python \textit{dill} library to dump and 
 \end{figure}
 
 %% ML: upresnit nadpis
-\subsection{Possible solutions}
+%% AL: upresneno
+\subsection{Possible solutions for process isolation}
 In previous section there were described two mechanisms for running parallel processes. Nevertheless in case of Python module
 \textit{Multiprocessing} the processes are not really isolated. They run concurrently but they can share resources and there are 
 even methods like \textit{Pipe()} that enables communication between processes.
 
 %% ML: depends?
-On the other hand \textit{Job Scheduler Extension} is dependent on
+%% AL: depends
+On the other hand \textit{Job Scheduler Extension} depends on
 \textit{dill} library as well as on some external scheduler systems
 like \textit{Slurm}, \textit{Grid Engine} or \textit{TORQUE}.
 
 %% MK: v tomto odstavce se to hemzi "some of them"
+%% AL: prepsano
 \bigskip In this section there are described some other
-solutions. Some of them were suggested by PyPWS developers with
-encouragement to make a feasible study. Some of them were discovered
-during research on the internet forums like StackOverflow, some of
+solutions. Some were suggested by PyPWS developers with
+encouragement to make a feasible study. Others were discovered
+during research on the internet forums like StackOverflow and few of
 them were referenced in the documentation of other projects. During
 the research two requirements were considered.
 
@@ -297,8 +286,9 @@ to these sections:
 
 \paragraph{Processes} - Class \textit{psutil.Process} represents an OS
 %% ML: vysvetlit pid (poznamka pod carou, ci jinak)
+%% AL: mam to ve zkratkach, ale pridal jsem i poznamku
 process with given pid. The class is bound with a process via its
-PID. The \textit{Process} class offers these methods for
+PID\footnote{\textit{PID} is a process identifier. It is a number used by operating system to uniquely identify an active process.}. The \textit{Process} class offers these methods for
 starting/pausing:
 \begin{itemize}
 \item suspend() - The method suspends a process using SIGSTOP signal.
@@ -417,7 +407,8 @@ Let's start with a virtual machine (Fig. \ref{fig:Docker_VM}) and its layers des
 \item \textit{Infrastructure} - It can be a PC, developer's laptop, a
   physical server in datacenter but as well a virtual private server
   %% ML: nemelo by tady byt misto EC2 -> AWS (jako zastresujici zalezitost)?
-  in the cloud as Microsoft Azure or Amazon EC2.
+  %% AL: opraveno
+  in the cloud as Microsoft Azure or Amazon Web Services.
 \item \textit{Host OS} - Host operating system. In case of native
   hypervisor this layer is missing. In case of hosted hypervisor it is
   probably some distribution of Linux, Windows or MacOS.
@@ -481,6 +472,7 @@ one CMD instruction in Dockerfile. In case there is more CMD the last one will b
 \item \textit{VOLUME} - The VOLUME instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from the native host or other containers.
 \end{itemize}
 
-Except for the FROM instruction, all the instructions can be defined from the command line when starting docker container. There are more Dockerfile instructions however they are not relevant to this thesis as there are never used in practical part.
+Except for the FROM instruction, all the instructions can be defined from the command line when starting docker container. There are more Dockerfile instructions however they are not relevant to this thesis as there are never used in practical part. A Dockerfile, which was created during the work on the thesis, is available at App. \ref{app:dockerfile}.
 
 %% ML: chybi tu odkaz na appendix
+%% AL: odkaz pridan

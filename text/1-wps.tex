@@ -389,7 +389,8 @@ ProcessOutputs             & Optional            & \makecell{List of values of o
 \section{WPS implementations}
 The OGC WPS is just an interface standard that provides rules for
 %% ML: requests (mnozne cislo), response (jednotne) - je v tom nejaky zamer?
-standardizing requests and response. It also defines how clients can
+%% AL: opraveno
+standardizing requests and responses. It also defines how clients can
 request the execution of defined processes and how the outputs are
 handled. There are several projects that implement this standard
 across the platforms or programming languages.
@@ -397,9 +398,10 @@ across the platforms or programming languages.
 \subsection{deegree}
 
 %% ML: their zni v odstavci divne
+%% AL: opraveno
 \textit{deegree} is open-source community-driven project for spatial
 data infrastructure written in Java. Besides from the other OGC Web
-Services it implements also WPS standard 1.0.0. Their solution offers
+Services it implements also WPS standard 1.0.0. The implementation offers
 sending request with KVP, XML or SOAP encoding,
 asynchronous/synchronous execution and API for implementing processes
 in Java. On their website there is a WPS demo
@@ -418,10 +420,11 @@ operations \textit{GetCapabilities}, \textit{DescribeProcess} and
 \subsection{52$^{\circ}$North WPS}
 The \textit{52$^{\circ}$North} is the open-source software initiative. It is an international network of skilled specialists from research,
 %% ML: viz poznamka vyse, they/their, ale je v to celku detail
-public administration or industry. They work on several projects and
+%% AL: opraveno
+public administration or industry. The initiative works on several projects and
 %% ML: nenajdes lepsi slovo nez specialization(s)?
-develop new technolog ies. Among their various specialization there is
-the 52$^{\circ}$North WPS project.
+%% AL: nenapadlo me, tak jsem to nejak opsal
+develop new technologies. On of them is the 52$^{\circ}$North WPS project.
 
 \bigskip
 \begin{figure}[h!]
@@ -492,19 +495,22 @@ and \textit{Dismiss} operations from WPS 2.0.0.
 
 To comply WPS 2.0.0 ZOO-Project must support synchronous/asynchronous
 %% ML: To store ... - ta veta zni divne
-invocation with both HTTP-GET and HTTP-POST request. To store results
-there is optional MapServer support. It is convenient to publish
+%% AL: Prepsano.
+invocation with both HTTP-GET and HTTP-POST request. There is optional 
+MapServer support so an output can be stored in MapServer catalog. It is convenient to publish
 results directly as WMS, WFS or WCS resources.
 
 \subsection{ArcGIS Server}
 \textit{ArcGIS Server} is server-side GIS software developed by
 \textit{Esri}. It is capable of creating and managing GIS Web
 %% ML: exposing ?
-services, applications and data. It allows expose the analytic
+%% AL: opraveno
+services, applications and data. It allows exposing the analytic
 capability of ArcGIS to web as a \textit{Geoprocessing service}. A
 %%% ML: moc mi ta veta nedava smysl
-geoprocessing service consists of one or more geoprocessing tasks which
-is ArcGIS geoprocessing tool running on the server. It is possible to
+%% AL: zkusil jsem to rozdelit, je to lepsi?
+geoprocessing service consists of one or more geoprocessing tasks. 
+A geoprocessing task can be any ArcGIS tool. It is possible to
 publish Geoprocessing service with the WPS capabilities enabled,
 however only WPS 1.0.0 standard is supported.
 
