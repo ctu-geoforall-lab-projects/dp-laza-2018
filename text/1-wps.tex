@@ -41,7 +41,8 @@ requests and responses for geospatial processing services.
 
 \textit{Process} means any operation on spatial
 %% ML: as -> like ?
-data from simple ones as maps overlay or buffering to highly complex as complicated global models. Any kind of GIS 
+%% AL: opraveno
+data from simple ones like maps overlay or buffering to highly complex as complicated global models. Any kind of GIS 
 functionality can be offered to clients across a network with correctly configured WPS. 
 
 \textit{Publishing} means
@@ -76,7 +77,10 @@ are defined in the OGC Web Services Common Implementation Specification \cite{OG
 the class diagram at Fig. \ref{fig:WPS_class_diagram} the~WPS interface class inherits the GetCapabilities operation 
 from OGCWebService interface class. The operations Execute and DescribeProcess are specific for the WPS. The WPS
 %% ML: vysvetlit v poznamce pod carou co je get a post?
-operations are based on GET and POST requests.
+%% AL: vysvetleno.
+operations are based on HTTP GET\footnote{\textit{HTTP GET} requests data from a specified resource. Data are sent in the URL of a GET request.} and 
+POST\footnote{\textit{HTTP POST} submits data to be processed to a specified resource. Data are sent inside the HTTP message body of
+POST request} requests.
 
 \begin{figure}[h!]
 \centering
@@ -86,6 +90,7 @@ operations are based on GET and POST requests.
 \end{figure}
 
 %% ML: mas nekde vystetleno co je KVP a XML encoding?
+%% AL: vysvetleno.
 The GetCapabilities and DescribeProcess shall use HTTP GET with KVP encoding and Execute operation shall use HTTP
 POST with XML encoding. Summarized in Tab. \ref{tab:WPS_encoding}.
 \begin{table}[h!]
@@ -94,6 +99,7 @@ POST with XML encoding. Summarized in Tab. \ref{tab:WPS_encoding}.
 \begin{tabular}{|c|c|c|}
 \hline
 %% ML: proc je hlavicka mensim pismem?
+%% AL: mne se hlavicka vykresluje stejne velkym pismem.
 \multirow{2}{*}{Operation} & \multicolumn{2}{c|}{Request encoding} \\ \cline{2-3} 
                            & Mandatory          & Optional         \\ \hhline{|=|=|=|}
 GetCapabilities            & KVP                & XML              \\ \hline
@@ -103,6 +109,31 @@ Execute                    & XML                & KVP              \\ \hline
 \caption{Operations request encoding}
 \label{tab:WPS_encoding}
 \end{table}
+
+
+\paragraph{KVP encoding} are key-value pairs usually sent via HTTP GET request method encoded directly in the URL. The 
+keys and values are separated with = sign and each pair is separated with \& sign  or with ? sign at the beginning of 
+the request. Example could be the get capabilities request:
+
+\begin{lstlisting}[basicstyle=\small,caption={GetCapabilities with KVP encoding.}]
+http://server.domain/wps?service=WPS&request=GetCapabilities&version=1.0.0
+\end{lstlisting}
+
+In this example, there are 3 pairs of input parameter: service, request and version with values WPS, GetCapabilities and 
+1.0.0 respectively.\cite{PyWPS_docs}
+
+\paragraph{XML payload} is XML data sent via HTTP POST request method. The XML document can be more rich, having more 
+parameters, better to be parsed in complex structures. The Client can also encode entire datasets to the request, 
+including raster (encoded using base64) or vector data (usually as GML file).\cite{PyWPS_docs}
+
+\begin{lstlisting}[basicstyle=\small,caption={GetCapabilities XML payload example}]
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:GetCapabilities language="cz" service="WPS" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_request.xsd">
+  <wps:AcceptVersions>
+    <ows:Version>1.0.0</ows:Version>
+  </wps:AcceptVersions>
+</wps:GetCapabilities>
+\end{lstlisting}
 
 \subsubsection{GetCapabilities}
 The GetCapabilities operation is mandatory. The operation allows a client to retrieve capabilities document (metadata)
@@ -150,7 +181,7 @@ request URL looks like:
 \paragraph{GetCapabilities response}
 \label{para:GetCapa_response}
 %% ML: co znamena Normal?
-\subparagraph{Normal response}
+%% AL: jakoze neskonci s exception. Ale mozna je ten nadpis matouc, mazu
 When GetCapabilities operation is requested a client retrieve service metadata document that contains sections specified in
 \textit{sections} parameter. If the parameter value is \textit{All} or not specified than all sections are retrieved.
 
@@ -215,12 +246,14 @@ request URL looks like: \url{http://localhost:5000/wps?request=DescribeProcess&s
 \label{para:DesribeProc_response}
 
 %% ML: Normal? viz poznamka vyse
-\subparagraph{Normal response}
-Normal response to DescribeProcess request contains one or more process descriptions for requested process identifiers in
+%% AL: Smazano
+A response to DescribeProcess request contains one or more process descriptions for requested process identifiers.
 %% ML: co to je za strukturu, zde poprve pouzivas kurzivu, z toho mam pocit, ze jde o neco podstatneho ;-)
 %% ML: nikde jinde o strukture nemluvis, to je matouci
-\textit{ProcessDescriptions} structure. Each
-process description contains detailed information about process in \textit{ProcessDescription} (see Tab. \ref{tab:WPS_ProcessDescription})
+%% AL: prepsal jsem odstavec, snad je to srozumitelnejsi
+Each
+process description contains detailed information about process in ProcessDescription XML element (see Tab. 
+\ref{tab:WPS_ProcessDescription})
 including process inputs and outputs description. The number of inputs or outputs is not limited.
 
 \bigskip
@@ -246,7 +279,6 @@ statusSupported	           & Optional            & \makecell{Execute response ca
 \label{tab:WPS_ProcessDescription}
 \end{table}
 
-\newpage
 \noindent
 Three data types of input or outputs exist:
 \begin{itemize}
@@ -255,8 +287,12 @@ Three data types of input or outputs exist:
 or \textit{encoding} can be set as well. 
 \item\textit{ComplexData} - Complex data can be raster, vector or any file-based data, which are usually processed. ComplexData
 %% ML: vysvetlit mimeType, poznamka pod carou?
-are often result of the process. The input can be specified more using mimeType, XML schema or encoding.
-\item\textit{BoundingBoxData} - BoundingBox data are specified in OGC OWS Common specification as two pairs of coordinates (for 2D and 3D space). They can either be encoded in WGS84 or EPSG code can be passed too. They are intended to be used as definition of the target region.
+%% AL: vysvetleno
+are often result of the process. The input can be specified more using 
+mimeType\footnote{\textit{mimeType} - is a standardized way to indicate the nature and format of a document. Browsers often use the MIME type (and not the file extension) to determine how it will process a document.}, XML schema or encoding.
+\item\textit{BoundingBoxData} - BoundingBox data are specified in OGC OWS Common specification as two pairs of 
+coordinates (for 2D and 3D space). They can either be encoded in WGS84 or EPSG code can be passed too. They are intended 
+to be used as definition of the target region.
 \end{itemize}
 
 \subparagraph{DescribeProcess exceptions}
@@ -269,29 +305,11 @@ In case that WPS server encounters an error a~client retrieves an exception repo
 
 \subsubsection{Execute}
 The Execute operation is mandatory. The operation allows clients to run a specified process implemented by a server.
-Inputs can be included directly in the request body or be referenced as a web-accessible resource. The outputs are returned
-in XML response document, either directly embedded within the response document or stored as a resource accessible by
-returned URL.
+Inputs can be included directly in the request body or be referenced as a web-accessible resource. The outputs are 
+returned in XML response document, either directly embedded within the response document or stored as a resource 
+accessible by returned URL.
 
-%% ML: right after hned ve dvou vetach po sobe...
-Usually the response document is returned right after the process execution is completed. However it is possible to get
-response document right after sending a request. In this case, returned response document contains a URL link from which the
-final response document can be retrieved after completed process execution. A~client can request execution status update to
-find out the amount of processing remaining if the execution is not completed. Shown in Fig. \ref{fig:WPS_sequence}.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.8\textwidth]{img/WPS_sequence.png}
-\caption{Sequence diagram: a client requests storage of results, source: \cite{WPS_standart_1.0}}
-\label{fig:WPS_sequence}
-\end{figure}
-
-%% ML: OK, tady uz zadne Normal neni... :-)
-\paragraph{Execute request}
-%% ML: Zkus odstavec prepsat, je to utrzkovite...
-Execute request is usually sent via HTTP POST request. Execute request contains parameters from Tab. \ref{tab:WPS_ExecuteRequest}. Example of Execute XML response document sent within the POST request can be found at App.
-\ref{app:ExecuteRequest}. 
-
+\bigskip
 \begin{table}[h!]
 \catcode`\-=12
 \centering
@@ -310,15 +328,42 @@ language   		           & Optional            & Language identifier \\ \hline
 \label{tab:WPS_ExecuteRequest}
 \end{table}
 
+%% ML: OK, tady uz zadne Normal neni... :-)
+\paragraph{Execute request}
+%% ML: Zkus odstavec prepsat, je to utrzkovite...
+%% AL: trochu prehazena struktura a prepsany text
+Execute request is usually sent via HTTP POST request. It triggers an execution of a specified process if no exceptions
+raised (for instance ServerBusy). Execute request contains parameters from Tab. \ref{tab:WPS_ExecuteRequest}. Example of 
+Execute XML response document sent within the POST request can be found at App. \ref{app:ExecuteRequest}. 
+
+
 \paragraph{Execute response}
-Usualy the Execute operation response document is an XML document. The only exception is in case when a response form
+Usually the Execute operation response document is an XML document. The only exception is in case when a response form
 of \textit{RawDataOutput} is requested, execution is successful and only one complex output is created, then directly
-the produced complex output is returned.
+the produced complex output is returned. The result can be inserted directly inline the response document or be
+referenced as web-accessible resource, it depends on ResponseForm request elements.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{img/WPS_sequence.png}
+\caption{Sequence diagram: a client requests storage of results, source: \cite{WPS_standart_1.0}}
+\label{fig:WPS_sequence}
+\end{figure}
+
+%% ML: right after hned ve dvou vetach po sobe...
+%% AL: opraveno
+In synchronous mode the response document is returned when the process execution is completed. However in asynchronous
+mode it is possible to get
+response document right after sending a request. In this case, returned response document contains a URL link from which 
+the final response document can be retrieved after completed process execution. A~client can request execution status 
+update to find out the amount of processing remaining if the execution is not completed. Shown in Fig. 
+\ref{fig:WPS_sequence}.
 
 %% ML: Podobna veta je na zacatku predesleho odstavce
-In ussual case response to Execute opetation is an ExecuteResponse XML document. The contents depend on ResponseForm 
-request elements.
+%% AL: Prepsano.
 
+
+\newpage
 \begin{table}[h!]
 \catcode`\-=12
 \centering
