@@ -151,8 +151,6 @@ Foremost, I would like to thank my parents for their long-time support during my
 Jáchym Čepický for his provided insight into PyWPS. Then I want to thank Martin Landa, my supervisor, not only for 
 his guidance during the work on the thesis, but also that he revealed me the way to programming.
 
-\todo[inline]{Podekovani}
-
 \newpage
 \tableofcontents
 
@@ -160,43 +158,43 @@ his guidance during the work on the thesis, but also that he revealed me the way
 \pagestyle{fancy}
 
 \necislovana{Introduction} 
-There are data all around us. As the society is becoming more and more digitalized the amount of the data is getting
-bigger and bigger. A lot of enterprises, institutions and organizations realize that these data hide a huge potential
-they can profit from. However the data themselves in their raw form are not usually sufficient to make a
-conclusion from them. More often the data need to be processed and used as an inputs data for some kind of analyses. 
-With the increasing number of gathered data a manual processing is almost inconceivable. Data are processed in an automatized way. 
+With the huge progress of technologies, our society is becoming more and more digitalized and the amount of various data 
+is getting bigger and bigger. There are data all around us and demand for applications or services based on the data is
+growing. However, the data in its raw form may not be sufficient to make a conclusion. More often the data need to be 
+processed and used as an inputs data for some kind of analyses. With increasing number of gathered data such as
+satellite images or remotely sensed data, any manual processing is almost inconceivable. The data processing needs to
+be done in a systematic and fully-automized way.
 
-Therefore, in order to be able to process the data independently of the type of acquisition, format or platform, 
-it is necessary to define standards. Regarding spatial data, these standards are made by the Open Geospatial Consortium. 
-Besides quite famous and used standards as WMS and WFS there also exists the WPS standard. The WPS standard defines an 
-interface that facilitates the publishing of geospatial processes. It also provides rules how inputs and outputs are handled.
-The WPS is only a standard and there are several implementations. This work is primarily focused on the \textit{PyWPS} framework.
+Therefore, in order to be able to process data independently of the type of acquisition, format or platform, 
+international standard interfaces and standardized frameworks are necessary. The Open Geospatial Consortium, Inc. 
+(OGC), an organization oriented toward open geospatial standards, researches and establishes technical standards for 
+data compatibility and interoperability technical standards. Besides quite famous and used standards as WMS and WFS, 
+there exists the WPS standard. The WPS standard defines an interface that facilitates the publishing of geospatial 
+processes. It provides rules how inputs and outputs are handled. The WPS is only a standard and there are several 
+implementations. This work is primarily focused on the \textit{PyWPS} framework.
 
 \bigskip
-The main topic of this thesis is process isolation. A process is just some geospatial operation which has its defined
-inputs and outputs and which is deployed on a server. The server is able to execute multiple 
-processes at the same time. This thesis deals with the isolation of individual processes especially for security and 
-performance reasons. With every process fully isolated so they cannot interact with each other the higher security level
-is assured.
+The main topic of this thesis is process isolation in PyWPS framework. A process is just some geospatial operation which 
+has its defined inputs and outputs and which is deployed on a server. The server is able to execute multiple 
+processes at the same time. This thesis deals with the isolation of individual processes, especially for security and 
+performance reasons. With every process fully isolated, so they cannot interact with each other, the higher security 
+level is ensured.
 
-The thesis is composed of several parts. The introductory research discusses the current state of the PyWPS and the
-other projects that implement the WPS standard, namely \textit{ZOO-Project} and \textit{52$^{\circ}$North}. Then the
-introducing research offers possible solutions to achieve process isolation. Various projects and technologies are
-described and finally the Docker has been selected as the technology we try to implement in the practical part. Docker
-has been selected as one of the most used technology for containerization. It puts every process into a separate
-container so the isolation is ensured. Moreover Docker provides a mechanism to pause, stop and start a container so it
+The thesis is composed of several parts. The first part describes the WPS standard, its operations 
+\textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute} and inputs and outputs structures. A quick
+overview of some implementations of WPS standard follows and brings a basic information about them.
+
+Nevertheless, this work is dedicated to PyWPS, an implementation in Python. In the second part, its current state
+is described as well as \textit{pywps-demo} - a side project providing demo server instance - which the practical
+part is based on. A research comes after that and covers various projects and technologies which were considered
+as a solution for process isolation. Eventually, the Docker technology is chosen for the implementation part.
+Docker has been selected as one of the most used technology for containerization. It puts every process into a separate
+container so the isolation is ensured. Moreover, Docker provides a mechanism to pause, stop and start a container so it
 looks like a possible solution for the future WPS 2.0.0 standard implementation which requires this functionality. Using
 Docker it also opens new possibilities, e. g. being able to deploy running job to cloud.
 
-The technological background is covered in the second part. There is the WPS standard described, especially its operations
-- \textit{GetCapabilities}, \textit{DesribeProcess} and \textit{Execute} - and inputs and outputs structures. There are also
-\textit{PyPWS} and \textit{Docker} described.
-
-Last part consists of the implementation description.
-\todo[inline]{Doplnit uvod o implementaci}
-
-I have chosen this topic to get in touch with another OGC standard. I also appreciate I can dive more into Docker technology
-as it is a leader in containerization in the world.
+The third part describes the implementation. It explains the Execute operation workflow, a process execution and how the Docker containers are used for the PyWPS process isolation. New \textit{Container} class, which were developed during
+the work on this thesis, is introduced as well as its methods.
 
 \include{1-wps}
 
