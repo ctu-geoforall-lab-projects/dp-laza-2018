@@ -387,11 +387,25 @@ ProcessOutputs             & Optional            & \makecell{List of values of o
 
 \newpage
 \section{WPS implementations}
-The OGS WPS is just an interface standard that provides rules for standardizing requests and response. It also defines how clients can request the execution of defined processes and how the outputs are handled. There are several projects that implement this standard across the platforms or programming languages.
+The OGC WPS is just an interface standard that provides rules for
+%% ML: requests (mnozne cislo), response (jednotne) - je v tom nejaky zamer?
+standardizing requests and response. It also defines how clients can
+request the execution of defined processes and how the outputs are
+handled. There are several projects that implement this standard
+across the platforms or programming languages.
 
 \subsection{deegree}
-\textit{deegree} is open-source community-driven project for spatial data infrastructure written in Java. Besides from the other OGC Web Services it implements also WPS standard 1.0.0. Their solution offers sending request with KVP, XML or SOAP encoding, asynchronous/synchronous execution and API for implementing processes in Java. On their website there is a WPS demo
-\footnote{\url{http://demo.deegree.org/wps-workspace/}} where all operations \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute} with various processes can be tested.
+
+%% ML: their zni v odstavci divne
+\textit{deegree} is open-source community-driven project for spatial
+data infrastructure written in Java. Besides from the other OGC Web
+Services it implements also WPS standard 1.0.0. Their solution offers
+sending request with KVP, XML or SOAP encoding,
+asynchronous/synchronous execution and API for implementing processes
+in Java. On their website there is a WPS demo
+\footnote{\url{http://demo.deegree.org/wps-workspace/}} where all
+operations \textit{GetCapabilities}, \textit{DescribeProcess} and
+\textit{Execute} with various processes can be tested.
 
 \bigskip
 \begin{figure}[h!]
@@ -403,7 +417,10 @@ The OGS WPS is just an interface standard that provides rules for standardizing 
 
 \subsection{52$^{\circ}$North WPS}
 The \textit{52$^{\circ}$North} is the open-source software initiative. It is an international network of skilled specialists from research,
-public administration or industry. They work on several projects and develop new technologies. Among their various specialization there is 
+%% ML: viz poznamka vyse, they/their, ale je v to celku detail
+public administration or industry. They work on several projects and
+%% ML: nenajdes lepsi slovo nez specialization(s)?
+develop new technolog ies. Among their various specialization there is
 the 52$^{\circ}$North WPS project.
 
 \bigskip
@@ -414,10 +431,14 @@ the 52$^{\circ}$North WPS project.
 \label{fig:Intro_52north}
 \end{figure}
 
-The  WPS project is full Java-based open-source implementation of the WPS 1.0.0. The back-end side implements only version 1.0.0 and it
-does not seem there is any progress in implementation of version 2.0.0. On the other hand on the 52$^{\circ}$North GitHub there is a
-repository \textit{wps-js-client\footnote{\url{https://github.com/52North/wps-js-client}}} that is standalone Javascript WPS Client. 
-The client enables building and sending requests against both WPS 1.0.0 and WPS 2.0.0 instances as well as reading the responses.
+The WPS project is full Java-based open-source implementation of the
+WPS 1.0.0. The back-end side implements only version 1.0.0 and it does
+not seem there is any progress in implementation of version 2.0.0. On
+the other hand on the 52$^{\circ}$North GitHub there is a repository
+\textit{wps-js-client\footnote{\url{https://github.com/52North/wps-js-client}}}
+that is standalone Javascript WPS Client.  The client enables building
+and sending requests against both WPS 1.0.0 and WPS 2.0.0 instances as
+well as reading the responses.
 
 52$^{\circ}$North offers synchronous/asynchronous invocation with both HTTP-GET and HTTP-POST request. All results can be stored as
 a web-accessible resource, WMS, WFS or WCS layer. Raw data inputs/outputs are also supported. Various extensions for different
@@ -454,7 +475,7 @@ can be done.
 \end{figure}
 
 \subsection{ZOO-Project}
-\textit{ZOO-Project} is a WPS implementation writenn in C, Python and Javascript. It is an open-source project released under MIT licence.
+\textit{ZOO-Project} is a WPS implementation writen in C, Python and Javascript. It is an open-source project released under MIT licence.
 The platform is composed of several components:
 
 \begin{itemize}
@@ -469,12 +490,23 @@ ZOO-Project is the first and in this time probably only one full implementation 
 \textit{DescribeProcess} and \textit{Execute} operations from WPS 1.0.0 standard it also implements \textit{GetStatus}, \textit{GetResult}
 and \textit{Dismiss} operations from WPS 2.0.0.
 
-To comply WPS 2.0.0 ZOO-Project must support synchronous/asynchronous invocation with both HTTP-GET and HTTP-POST request. To store 
-results there is optional MapServer support. It is convenient to publish results directly as WMS, WFS or WCS resources.
+To comply WPS 2.0.0 ZOO-Project must support synchronous/asynchronous
+%% ML: To store ... - ta veta zni divne
+invocation with both HTTP-GET and HTTP-POST request. To store results
+there is optional MapServer support. It is convenient to publish
+results directly as WMS, WFS or WCS resources.
 
 \subsection{ArcGIS Server}
-\textit{ArcGIS Server} is server GIS software developed by \textit{Esri}. It is capable of creating and managing GIS Web services, applications and data. It allows expose the analytic capability of ArcGIS to web as a \textit{Geoprocessing service}. A geoprocessing
-service consist of one or more geoprocessing tasks which is ArcGIS geoprocessing tool running on the server. It is possible to publish Geoprocessing service with the WPS capabilities enabled, however only WPS 1.0.0 standard is supported.
+\textit{ArcGIS Server} is server-side GIS software developed by
+\textit{Esri}. It is capable of creating and managing GIS Web
+%% ML: exposing ?
+services, applications and data. It allows expose the analytic
+capability of ArcGIS to web as a \textit{Geoprocessing service}. A
+%%% ML: moc mi ta veta nedava smysl
+geoprocessing service consists of one or more geoprocessing tasks which
+is ArcGIS geoprocessing tool running on the server. It is possible to
+publish Geoprocessing service with the WPS capabilities enabled,
+however only WPS 1.0.0 standard is supported.
 
 \begin{figure}[h!]
 \centering
@@ -500,4 +532,4 @@ All published services have specified the minimum and maximum number of availabl
 The advantage of low isolation is that it increases the number of concurrent instances supported by a single process. Using low isolation can use slightly less memory on your server. However, this improvement comes with some risk. If a process experiences a shutdown or crash, all instances sharing the process are destroyed. It is strongly recommended that you use high isolation.\cite{AG_docs}
 
 \subsection{PyWPS}
-PyWPS is a server-side implementation of the WPS standard written in Python. This project will be described in depth in the Sec. \ref{sec:PyWPS}
+PyWPS is a server-side implementation of the WPS standard written in Python. This project will be described in depth in the Sec. \ref{sec:PyWPS}.
