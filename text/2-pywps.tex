@@ -9,7 +9,11 @@ The origin of PyWPS started in 2006 as a student project. The first presentation
 ‘GRASS goes to web: PyWPS’. During November 2006 the version 1.0.0 was released together with WUIW and Embrio projects that brought the
 funcionality of GRASS GIS and general web interface able to handle any WPS server.\cite{PyWPS_presentation}\cite{PyWPS_web}
 
-In 2007 PyWPS 2.0.0 was released supporting WPS standard 0.4.0. New version improved stability a approached on the standard implementation. It came with new WPS client and WPS plugin for OpenLayers \footnote{\url{http://openlayers.org/}}.
+In 2007 PyWPS 2.0.0 was released supporting WPS standard 0.4.0. New
+%% ML: a -> and?
+version improved stability a approached on the standard
+implementation. It came with new WPS client and WPS plugin for
+OpenLayers \footnote{\url{http://openlayers.org/}}.
 
 Next year in 2008 PyWPS 3.0.0 was released with support for WPS 1.0.0. It was possible to run multiple WPS instances
 with one PyWPS installation. This version had simple code structure and contained examples of processes. 
@@ -26,6 +30,7 @@ The newest version is PyWPS 4.0.0 from 2016 when PyWPS-4 branch was merged to of
 
 \subsection{PyWPS 4.0}
 \label{sec:PyWPS4}
+%% ML: this -> these
 PyWPS-4 is the most current version of PyWPS. Rewriting from scratch involved this major changes:
 \begin{itemize}
 \item It is written in \textit{Python 3} with backward support for Python 2.7.
@@ -69,7 +74,7 @@ these four sections:
 \item \textit{metadata} - parameters containing information for metadata creation.
 \item \textit{server} - definition of path to workdir and output directories, maximum number of parallel running or stored processes. 
 \item \textit{logging} - logging level setting, path to log file and log database.
-\item \textit{grass} - GRASS setting.
+\item \textit{grass} - GRASS settings.
 \end{itemize}
 
 
@@ -77,11 +82,15 @@ these four sections:
 \newpage
 \section{Process isolation in PyWPS}
 \subsection{Asynchonous requests}
-Right now in PyWPS 4.0 version a PyWPS server instance is able to run multiple
-concurrent processes in parallel. The server is configured for maximal amounts of concurrently running processes at
-the same time and for the maximal amount of waiting processes in a queue, to later start their execution once new
-slots are available. If the new Execute request is received and the maximal amount is exceeded, the request is rejected
-and user is informed in response (see Lst. \ref{lst:Isolation_rejected}).
+Right now in PyWPS 4.0 version a PyWPS server instance is able to run
+multiple concurrent processes in parallel. The server is configured
+%% ML: maximal amount(s) se opakuje dvakrat po sobe
+for maximal amounts of concurrently running processes at the same time
+and for the maximal amount of waiting processes in a queue, to later
+start their execution once new slots are available. If the new Execute
+request is received and the maximal amount is exceeded, the request is
+rejected and user is informed in response (see
+Lst. \ref{lst:Isolation_rejected}).
 
 \begin{lstlisting}[basicstyle=\small,caption={Resource exceeded exception},label={lst:Isolation_rejected}]
 <?xml version="1.0" encoding="UTF-8"?>
@@ -94,9 +103,12 @@ and user is informed in response (see Lst. \ref{lst:Isolation_rejected}).
 </ows:ExceptionReport>
 \end{lstlisting}
 
-To facilitate the management of concurrent processes, process metadata are stored into a local database. This database is used
-for logging and saving waiting Execute requests in the queue and invoking them later on.
-This database will also enable the implementation of pausing, releasing and deleting running process. These features will
+To facilitate the management of concurrent processes, process metadata
+%% ML: dve vety za sebou zacinaji stejne: This database...
+are stored into a local database. This database is used for logging
+and saving waiting Execute requests in the queue and invoking them
+later on.  This database will also enable the implementation of
+pausing, releasing and deleting running process. These features will
 allow PyWPS to comply with WPS version 2.0.0.
 
 \subsection{Current state}
@@ -122,6 +134,7 @@ If the execute request is sent asynchronously the type of process constructor is
 parameter \textit{mode} in section \textit{processing} which is by default \textit{multiprocessing} or can be changed 
 to \textit{scheduler}.
 
+%% ML: je tato ukazka kodu opravdu nutna?
 \bigskip
 \begin{lstlisting}[basicstyle=\small,caption={processing.\_\_init\_\_.py},label={lst:Process_init},language=python]
 def Process(process, wps_request, wps_response):
@@ -170,7 +183,7 @@ They run on the same host machine and share the resources. There are even method
 processes.
 
 \paragraph{Process vs Thread} In Python there are two ways to achieve \textit{pararellism}. It is \textit{multiprocessing}
-\footnote{\url{https://docs.python.org/3/library/multiprocessing.html}} with using processes and \textit{threading}\footnote{https://docs.python.org/3/library/threading.html} with threads. The main difference is that threads run in the same memory space, while processes
+\footnote{\url{https://docs.python.org/3/library/multiprocessing.html}} with using processes and \textit{threading}\footnote{\url{https://docs.python.org/3/library/threading.html}} with threads. The main difference is that threads run in the same memory space, while processes
 have separate memory. Multiprocessing takes advantages of multiple CPUs and cores while threads are more lightweighted and have low memory
 footprint. In case of PyWPS asynchronous requests, for every execution its own process with its own memory space is created.
 
@@ -213,18 +226,24 @@ The PyWPS scheduler extension uses the Python \textit{dill} library to dump and 
 \label{fig:Isolation_interaction}
 \end{figure}
 
+%% ML: upresnit nadpis
 \subsection{Possible solutions}
 In previous section there were described two mechanisms for running parallel processes. Nevertheless in case of Python module
 \textit{Multiprocessing} the processes are not really isolated. They run concurrently but they can share resources and there are 
 even methods like \textit{Pipe()} that enables communication between processes.
 
-On the otherhand \textit{Job Scheduler Extension} is dependent on \textit{dill} library as well as on some external scheduler
-systems like \textit{Slurm}, \textit{Grid Engine} or \textit{TORQUE}.
+%% ML: depends?
+On the other hand \textit{Job Scheduler Extension} is dependent on
+\textit{dill} library as well as on some external scheduler systems
+like \textit{Slurm}, \textit{Grid Engine} or \textit{TORQUE}.
 
-\bigskip
-In this section there are described some other solutions. Some of them were suggested by PyPWS developers with encouragement to
-make a feasible study. Some of them were discovered during research on the internet forums like StackOverflow, some of them
-were referenced in the documentation of other projects. During the research two requirements were considered.
+%% MK: v tomto odstavce se to hemzi "some of them"
+\bigskip In this section there are described some other
+solutions. Some of them were suggested by PyPWS developers with
+encouragement to make a feasible study. Some of them were discovered
+during research on the internet forums like StackOverflow, some of
+them were referenced in the documentation of other projects. During
+the research two requirements were considered.
 
 \begin{itemize}
 \item The solution provides a mechanism for full isolation. This is a must-have requirement.
@@ -251,7 +270,8 @@ To communicate between client and workers Celery uses a \textit{broker}. The com
 client adds a message to the queue and the broker then delivers the message to a worker. Multiple workers and brokers can be added
 so there is assured high availability and horizontal scaling.
 
-Celery provide worker remote control client in class \textit{celery.app.control.Control(app=None)}. The class offers these functions:
+Celery provide worker remote control client in class
+\textit{celery.app.control.Control}. The class offers these functions:
 \begin{itemize}
 \item\textbf{revoke} - Tell all (or specific) workers to revoke a task by id. If a task is revoked, the workers will ignore the task and not execute it after all.
 \item\textbf{shutdown} - Shutdown worker(s).
@@ -275,8 +295,11 @@ to these sections:
 \item Processes - functions will be described in detail later.
 \end{itemize}
 
-\paragraph{Processes} - Class \textit{psutil.Process(pid=None)} represents an OS process with given pid. The class is
-bound with a process via its PID. The \textit{Process} class offers these methods for starting/pausing:
+\paragraph{Processes} - Class \textit{psutil.Process} represents an OS
+%% ML: vysvetlit pid (poznamka pod carou, ci jinak)
+process with given pid. The class is bound with a process via its
+PID. The \textit{Process} class offers these methods for
+starting/pausing:
 \begin{itemize}
 \item suspend() - The method suspends a process using SIGSTOP signal.
 \item resume() - The method resumes a process using SIGCONT signal.
@@ -296,7 +319,7 @@ of the projects that can run Python code in a sandbox are:
 \end{itemize}
 
 \paragraph{PyPy} PyPy is Python interpreter written in RPython that implements full Python language and very closely 
-emulates the behavior of CPython. PyPy offers fully portable sandboxing feature similar to OS-level sandboxing (e. g. SECCOMP).
+emulates the behavior of CPython. PyPy offers fully portable sandboxing feature similar to OS-level sandboxing (e.g. SECCOMP).
 It is not sandboxing at the Python language level so it does not put any restriction on any Python functionality.
 
 Untrusted Python code that is intended to be sandboxed is launched in a subprocess, that is a special sandboxed version of PyPy.
@@ -328,7 +351,7 @@ secure sandbox."}
 \subsubsection{Virtual Machine/Vagrant}
 Using full virtualization for process isolation is mentioned here but in fact it is hard to imagine this solution could work
 in practice. \textit{Vagrant} is a tool for managing and building virtual machines. It provides a way how to manage various virtual 
-machines in an automatized way e. g. using scripts. There also exists a Python package \textit{python-vagrant} that offers 
+machines in an automatized way e.g. using scripts. There also exists a Python package \textit{python-vagrant} that offers 
 Python bindings for interacting with Vagrant.
 
 However in our use-case using Vagrant would mean that for every process execution a separate virtual machine is created. Depending
@@ -352,8 +375,8 @@ works only in Linux environments and can run only Linux applications.
 
 Docker is not the only one technology for containerization. Other alternatives exist, it is \textit{Kubernets}, \textit{CoreOS rkt}, 
 \textit{Open Container Initiative (OCI)}, \textit{Canonical's LXD}, \textit{Apache Mesos and Mesosphere} and many others. 
-However Docker is a leader on the field of containerization and with most public traction is de facto considered as a container standard.
-That's why the Docker was chosen for this thesis as a container technology. So from this point on any term \textit{container} refers to
+However Docker is a leader on the field of containerization and with most public traction is de facto considered as a~container standard.
+That's why the Docker was chosen for this thesis as a~container technology. So from this point on any term \textit{container} refers to
 Docker container.
 
 \begin{figure}[h!]
@@ -391,10 +414,13 @@ some kind of virtualization. They differ in architecture, see Fig. \ref{fig:Dock
 \subsubsection{Virtual machine}
 Let's start with a virtual machine (Fig. \ref{fig:Docker_VM}) and its layers description from the bottom up:
 \begin{itemize}
-\item \textit{Infrastructure} - It can be a PC, developer's laptop, a physical server in datacenter but as well a virtual private
-server in the cloud as Microsoft Azure or Amazon EC2.
-\item \textit{Host OS} - Host operating system. In case of native hypervisor this layer is missing. In case of hosted hypervisor
-it is probably some distribution of Linux, Windows or MacOS.
+\item \textit{Infrastructure} - It can be a PC, developer's laptop, a
+  physical server in datacenter but as well a virtual private server
+  %% ML: nemelo by tady byt misto EC2 -> AWS (jako zastresujici zalezitost)?
+  in the cloud as Microsoft Azure or Amazon EC2.
+\item \textit{Host OS} - Host operating system. In case of native
+  hypervisor this layer is missing. In case of hosted hypervisor it is
+  probably some distribution of Linux, Windows or MacOS.
 \item \textit{Hypervisor} - Also called virtual machine monitor (VMM). It allows hosting several different virtual machines
 on a single hardware. There are two types of hypervisors:
 \begin{itemize}
@@ -411,7 +437,7 @@ guest OS needs its own CPU and memory resources and starts on hundreds of megaby
 
 \subsubsection{Docker container}
 \noindent
-Now, what is different regarding containers (Fig. \ref{fig:Docker_container})
+Now, what is different regarding containers (Fig. \ref{fig:Docker_container}):
 \begin{itemize}
 \item \textit{Infrastructure} - PC, laptop, physical or virtual server.
 \item \textit{Host OS with container support} - Any OS capable of run Docker. All major distributions of Linux are supported and there are ways
@@ -456,3 +482,5 @@ one CMD instruction in Dockerfile. In case there is more CMD the last one will b
 \end{itemize}
 
 Except for the FROM instruction, all the instructions can be defined from the command line when starting docker container. There are more Dockerfile instructions however they are not relevant to this thesis as there are never used in practical part.
+
+%% ML: chybi tu odkaz na appendix
