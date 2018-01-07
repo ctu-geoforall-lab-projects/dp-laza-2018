@@ -1,0 +1,38 @@
+\select@language {english}
+\select@language {english}
+\select@language {czech}
+\select@language {english}
+\contentsline {figure}{\numberline {1}{\ignorespaces WPS interface UML description, source: \cite {WPS_standart_1.0}}}{17}{figure.1}
+\contentsline {figure}{\numberline {2}{\ignorespaces Sequence diagram: a client requests storage of results, source: \cite {WPS_standart_1.0}}}{24}{figure.2}
+\contentsline {figure}{\numberline {3}{\ignorespaces deegree project logo}}{26}{figure.3}
+\contentsline {figure}{\numberline {4}{\ignorespaces 52$^{\circ }$North project logo}}{26}{figure.4}
+\contentsline {figure}{\numberline {5}{\ignorespaces GeoServer logo}}{27}{figure.5}
+\contentsline {figure}{\numberline {6}{\ignorespaces Process status page, source \cite {GS_docs}}}{28}{figure.6}
+\contentsline {figure}{\numberline {7}{\ignorespaces Esri logo}}{29}{figure.7}
+\contentsline {figure}{\numberline {8}{\ignorespaces Low isolation, source \cite {AG_docs}}}{30}{figure.8}
+\contentsline {figure}{\numberline {9}{\ignorespaces High isolation, source \cite {AG_docs}}}{30}{figure.9}
+\contentsline {figure}{\numberline {10}{\ignorespaces PyWPS project logo}}{32}{figure.10}
+\contentsline {figure}{\numberline {11}{\ignorespaces Sequence diagram: Multiprocessing}}{37}{figure.11}
+\contentsline {figure}{\numberline {12}{\ignorespaces Grid Engine}}{38}{figure.12}
+\contentsline {figure}{\numberline {13}{\ignorespaces Slurm}}{38}{figure.13}
+\contentsline {figure}{\numberline {14}{\ignorespaces TORQUE}}{38}{figure.14}
+\contentsline {figure}{\numberline {15}{\ignorespaces Example of PyWPS scheduler extension usage with Slurm, source: \cite {PyWPS_docs}}}{39}{figure.15}
+\contentsline {figure}{\numberline {16}{\ignorespaces Communication between PyWPS and scheduler, source: \cite {PyWPS_docs}}}{39}{figure.16}
+\contentsline {figure}{\numberline {17}{\ignorespaces Docker logo}}{45}{figure.17}
+\contentsline {figure}{\numberline {18}{\ignorespaces Kubernetes}}{45}{figure.18}
+\contentsline {figure}{\numberline {19}{\ignorespaces CoreOS rkt}}{45}{figure.19}
+\contentsline {figure}{\numberline {20}{\ignorespaces Canonical's LXD}}{45}{figure.20}
+\contentsline {figure}{\numberline {21}{\ignorespaces Apache mesos}}{45}{figure.21}
+\contentsline {figure}{\numberline {22}{\ignorespaces Virtual machine architecture, source \cite {Docker_docs}}}{46}{figure.22}
+\contentsline {figure}{\numberline {23}{\ignorespaces Containers architecture, source \cite {Docker_docs}}}{46}{figure.23}
+\contentsline {figure}{\numberline {24}{\ignorespaces PyWPS operations activity diagram, source: author}}{54}{figure.24}
+\contentsline {figure}{\numberline {25}{\ignorespaces Activity diagram: method \textit {Service.execute()}, source: author}}{56}{figure.25}
+\contentsline {figure}{\numberline {26}{\ignorespaces Activity diagram: method \textit {Service.\_parse\_and\_execute()}, source: author}}{56}{figure.26}
+\contentsline {figure}{\numberline {27}{\ignorespaces \textit {Activity diagram: Process.execute()}, source: author}}{57}{figure.27}
+\contentsline {figure}{\numberline {28}{\ignorespaces Activity diagram: Method \textit {Process.\_run\_async()}, source: author}}{58}{figure.28}
+\contentsline {figure}{\numberline {29}{\ignorespaces Class diagram: \textit {Processing} class, source: author}}{58}{figure.29}
+\contentsline {figure}{\numberline {30}{\ignorespaces Sequence diagram: Process execution using Docker, source: author}}{59}{figure.30}
+\contentsline {figure}{\numberline {31}{\ignorespaces Ports assignment schema, source: author}}{62}{figure.31}
+\contentsline {figure}{\numberline {32}{\ignorespaces Schema of mounting directories, source: author}}{63}{figure.32}
+\contentsline {figure}{\numberline {33}{\ignorespaces Schema of \textit {WPSExecution}, source: author}}{66}{figure.33}
+\contentsfinish 

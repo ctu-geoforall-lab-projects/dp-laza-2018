@@ -1,0 +1,95 @@
+\select@language {english}
+\select@language {english}
+\select@language {czech}
+\select@language {english}
+\contentsline {section}{Introduction}{12}{section*.2}
+\contentsline {part}{I\hspace {1em}Web Processing Service}{14}{part.1}
+\contentsline {section}{\numberline {1}Web Processing Service}{15}{section.1}
+\contentsline {subsection}{\numberline {1.1}History}{15}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Open Geospatial Consortium}{15}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}Web Processing Service}{16}{subsection.1.3}
+\contentsline {paragraph}{KVP encoding}{18}{section*.4}
+\contentsline {paragraph}{XML payload}{18}{section*.5}
+\contentsline {subsubsection}{\numberline {1.3.1}GetCapabilities}{18}{subsubsection.1.3.1}
+\contentsline {paragraph}{GetCapabilities request}{19}{table.2}
+\contentsline {paragraph}{GetCapabilities response}{20}{section*.7}
+\contentsline {subparagraph}{GetCapabilities exceptions}{20}{section*.8}
+\contentsline {subsubsection}{\numberline {1.3.2}DescribeProcess}{21}{subsubsection.1.3.2}
+\contentsline {paragraph}{DescribeProcess request}{21}{section*.9}
+\contentsline {paragraph}{DescribeProcess response}{21}{section*.10}
+\contentsline {subparagraph}{DescribeProcess exceptions}{23}{section*.11}
+\contentsline {subsubsection}{\numberline {1.3.3}Execute}{23}{subsubsection.1.3.3}
+\contentsline {paragraph}{Execute request}{24}{section*.12}
+\contentsline {paragraph}{Execute response}{24}{section*.13}
+\contentsline {section}{\numberline {2}WPS implementations}{26}{section.2}
+\contentsline {subsection}{\numberline {2.1}deegree}{26}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}52$^{\circ }$North WPS}{26}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}GeoServer}{27}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}ZOO-Project}{28}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}ArcGIS Server}{29}{subsection.2.5}
+\contentsline {subsection}{\numberline {2.6}PyWPS}{30}{subsection.2.6}
+\contentsline {part}{II\hspace {1em}PyWPS}{31}{part.2}
+\contentsline {section}{\numberline {3}PyWPS}{32}{section.3}
+\contentsline {subsection}{\numberline {3.1}History}{32}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}PyWPS 4.0}{32}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}PyWPS-demo}{33}{subsection.3.3}
+\contentsline {section}{\numberline {4}Process isolation in PyWPS}{35}{section.4}
+\contentsline {subsection}{\numberline {4.1}Asynchonous requests}{35}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Current state}{35}{subsection.4.2}
+\contentsline {paragraph}{Multiprocessing}{36}{section*.14}
+\contentsline {paragraph}{Process vs Thread}{38}{section*.15}
+\contentsline {paragraph}{Job Scheduler Extension}{38}{section*.16}
+\contentsline {subsection}{\numberline {4.3}Possible solutions for process isolation}{40}{subsection.4.3}
+\contentsline {subsubsection}{\numberline {4.3.1}Celery}{41}{subsubsection.4.3.1}
+\contentsline {subsubsection}{\numberline {4.3.2}Docker}{41}{subsubsection.4.3.2}
+\contentsline {subsubsection}{\numberline {4.3.3}psutil}{41}{subsubsection.4.3.3}
+\contentsline {paragraph}{Processes}{42}{section*.17}
+\contentsline {subsubsection}{\numberline {4.3.4}Sandboxed Python}{42}{subsubsection.4.3.4}
+\contentsline {paragraph}{PyPy}{43}{section*.18}
+\contentsline {paragraph}{Jython}{43}{section*.19}
+\contentsline {paragraph}{pysandbox}{43}{section*.20}
+\contentsline {subsubsection}{\numberline {4.3.5}Virtual Machine/Vagrant}{43}{subsubsection.4.3.5}
+\contentsline {section}{\numberline {5}Docker}{45}{section.5}
+\contentsline {paragraph}{Docker}{46}{section*.21}
+\contentsline {subsection}{\numberline {5.1}Virtual machine vs. Docker container}{46}{subsection.5.1}
+\contentsline {subsubsection}{\numberline {5.1.1}Virtual machine}{46}{subsubsection.5.1.1}
+\contentsline {subsubsection}{\numberline {5.1.2}Docker container}{47}{subsubsection.5.1.2}
+\contentsline {subsection}{\numberline {5.2}Dockerfile}{48}{subsection.5.2}
+\contentsline {paragraph}{Dockerfile instructions}{49}{section*.22}
+\contentsline {part}{III\hspace {1em}Implementation}{51}{part.3}
+\contentsline {section}{\numberline {6}Implementation introduction}{52}{section.6}
+\contentsline {subsection}{\numberline {6.1}pywps-demo}{52}{subsection.6.1}
+\contentsline {subsubsection}{\numberline {6.1.1}pywps-demo Dockerfile}{52}{subsubsection.6.1.1}
+\contentsline {subsection}{\numberline {6.2}OWSLib}{52}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}PyWPS}{53}{subsection.6.3}
+\contentsline {section}{\numberline {7}Operations overview}{54}{section.7}
+\contentsline {section}{\numberline {8}Execute operation}{55}{section.8}
+\contentsline {subsection}{\numberline {8.1}Service.execute()}{55}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}Process.execute()}{55}{subsection.8.2}
+\contentsline {subsection}{\numberline {8.3}Processing module}{57}{subsection.8.3}
+\contentsline {section}{\numberline {9}\textit {Container} class}{59}{section.9}
+\contentsline {subsection}{\numberline {9.1}\textit {Container} class constructor}{60}{subsection.9.1}
+\contentsline {subsubsection}{\numberline {9.1.1}\textit {Container.\_assign\_port()}}{60}{subsubsection.9.1.1}
+\contentsline {subsubsection}{\numberline {9.1.2}\textit {docker.from\_env()}}{60}{subsubsection.9.1.2}
+\contentsline {subsubsection}{\numberline {9.1.3}\textit {Container.\_create()}}{60}{subsubsection.9.1.3}
+\contentsline {subsection}{\numberline {9.2}\textit {Container.start()} method}{62}{subsection.9.2}
+\contentsline {subsubsection}{\numberline {9.2.1}\textit {docker.container.start()}}{63}{subsubsection.9.2.1}
+\contentsline {subsubsection}{\numberline {9.2.2}\textit {Container.\_execute()}}{63}{subsubsection.9.2.2}
+\contentsline {paragraph}{OWSLib}{64}{section*.23}
+\contentsline {subsubsection}{\numberline {9.2.3}\textit {Container.\_parse\_status()}}{65}{subsubsection.9.2.3}
+\contentsline {subsubsection}{\numberline {9.2.4}\textit {Container.\_dirty\_clean()}}{65}{subsubsection.9.2.4}
+\contentsline {section}{Conclusion}{67}{section*.24}
+\contentsline {section}{List of abbreviation}{69}{section*.26}
+\contentsline {part}{IV\hspace {1em}Appendix}{72}{part.4}
+\contentsline {section}{\numberline {A}Execute request example}{73}{appendix.A}
+\contentsline {section}{\numberline {B}Execute response example (async mode)}{74}{appendix.B}
+\contentsline {section}{\numberline {C}Status XML example with referenced output}{75}{appendix.C}
+\contentsline {section}{\numberline {D}Status XML example with inline output}{76}{appendix.D}
+\contentsline {section}{\numberline {E}Dockerfile}{78}{appendix.E}
+\contentsline {section}{\numberline {F}OWSLib diff file}{80}{appendix.F}
+\contentsline {section}{\numberline {G}PyWPS-demo diff file (shortened)}{81}{appendix.G}
+\contentsline {section}{\numberline {H}PyWPS diff file (shortened)}{82}{appendix.H}
+\contentsline {section}{\numberline {I}Docker extension documentation (shortened)}{85}{appendix.I}
+\contentsline {section}{\numberline {J}List of tables and figures}{87}{appendix.J}
+\contentsline {section}{\numberline {K}ZIP file content}{89}{appendix.K}
+\contentsfinish 
