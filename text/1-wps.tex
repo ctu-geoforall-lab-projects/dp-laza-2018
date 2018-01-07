@@ -82,7 +82,7 @@ from OGCWebService interface class. The operations Execute and DescribeProcess a
 %% AL: vysvetleno.
 operations are based on HTTP GET\footnote{\textit{HTTP GET} requests data from a specified resource. Data are sent in the URL of a GET request.} and 
 POST\footnote{\textit{HTTP POST} submits data to be processed to a specified resource. Data are sent inside the HTTP message body of
-POST request} requests.
+POST request.} requests.
 
 \begin{figure}[h!]
 \centering
@@ -253,6 +253,7 @@ A response to DescribeProcess request contains one or more process descriptions 
 %% ML: co to je za strukturu, zde poprve pouzivas kurzivu, z toho mam pocit, ze jde o neco podstatneho ;-)
 %% ML: nikde jinde o strukture nemluvis, to je matouci
 %% AL: prepsal jsem odstavec, snad je to srozumitelnejsi
+%% ML: OK
 Each
 process description contains detailed information about process in ProcessDescription XML element (see Tab. 
 \ref{tab:WPS_ProcessDescription})
@@ -334,6 +335,7 @@ language   		           & Optional            & Language identifier \\ \hline
 \paragraph{Execute request}
 %% ML: Zkus odstavec prepsat, je to utrzkovite...
 %% AL: trochu prehazena struktura a prepsany text
+%% ML: OK
 Execute request is usually sent via HTTP POST request. It triggers an execution of a specified process if no exceptions
 raised (for instance ServerBusy). Execute request contains parameters from Tab. \ref{tab:WPS_ExecuteRequest}. Example of 
 Execute XML response document sent within the POST request can be found at App. \ref{app:ExecuteRequest}. 
@@ -426,7 +428,7 @@ The \textit{52$^{\circ}$North} is the open-source software initiative. It is an 
 public administration or industry. The initiative works on several projects and
 %% ML: nenajdes lepsi slovo nez specialization(s)?
 %% AL: nenapadlo me, tak jsem to nejak opsal
-develop new technologies. On of them is the 52$^{\circ}$North WPS project.
+develop new technologies. One of them is the 52$^{\circ}$North WPS project.
 
 \bigskip
 \begin{figure}[h!]
@@ -510,6 +512,7 @@ services, applications and data. It allows exposing the analytic
 capability of ArcGIS to web as a \textit{Geoprocessing service}. A
 %%% ML: moc mi ta veta nedava smysl
 %% AL: zkusil jsem to rozdelit, je to lepsi?
+%% ML: OK
 geoprocessing service consists of one or more geoprocessing tasks. 
 A geoprocessing task can be any ArcGIS tool. It is possible to
 publish Geoprocessing service with the WPS capabilities enabled,
