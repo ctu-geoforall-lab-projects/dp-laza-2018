@@ -1,0 +1,253 @@
+diff --git a/.gitignore b/.gitignore
+index 09facc7..e30a284 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -7,6 +7,7 @@ logs/*
+ *.sw*
+ .DS_Store
+ .*.un~
++.idea
+ 
+ # python setup.py build/install artifacts
+ build
+diff --git a/.travis.yml b/.travis.yml
+index fd70912..cd23501 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -10,8 +10,8 @@ git:
+ install:
+   - sudo apt-get update -qq
+   - sudo apt-get install -qq gdal-bin libgdal-dev libgdal1h libgdal1-dev libgeos-dev python-dev python3-dev
+-  - pip install GDAL==1.10.0 --global-option=build_ext --global-option="-I/usr/include/gdal"
+-  - pip install -r requirements.txt
++  - isolation install GDAL==1.10.0 --global-option=build_ext --global-option="-I/usr/include/gdal"
++  - isolation install -r requirements.txt
+ 
+ before_script:
+     "python demo.py -d"
+diff --git a/README.rst b/README.rst
+index 484afa2..1ebd0b0 100644
+--- a/README.rst
++++ b/README.rst
+@@ -1,3 +1,26 @@
++PyWPS demo with docker support
++==============================
++Clone pywps-flask, install libraries, build docker image (due to GDAL compiling lasts quite long)::
++
++    $ pip3 install -r requirements.txt
++    $ cd pywps-flask/docker/alpine/flask
++    $ docker build -t pywps_container .
++
++
++Clone pywps and OWSLib::
++
++    $ git clone https://github.com/lazaa32/pywps.git
++    $ git clone https://github.com/lazaa32/OWSLib.git
++
++Set PYTHONPATH::
++
++    $ export PYTHONPATH=$PYTHONPATH:$PWD/OWSLib:$PWD/pywps
++
++Run server::
++
++    python3 demo.py
++
++
+ PyWPS example service
+ ========================
+ 
+diff --git a/demo.py b/demo.py
+index 87e8d31..e3eff59 100755
+--- a/demo.py
++++ b/demo.py
+@@ -79,7 +79,7 @@ def wps():
+     return service
+ 
+ 
+-@app.route('/outputs/'+'<filename>')
++@app.route('/outputs/'+'<path:filename>')
+ def outputfile(filename):
+     targetfile = os.path.join('outputs', filename)
+     if os.path.isfile(targetfile):
+@@ -94,7 +94,7 @@ def outputfile(filename):
+         flask.abort(404)
+ 
+ 
+-@app.route('/static/'+'<filename>')
++@app.route('/static/'+'<path:filename>')
+ def staticfile(filename):
+     targetfile = os.path.join('static', filename)
+     if os.path.isfile(targetfile):
+diff --git a/docker/isolation/Dockerfile b/docker/isolation/Dockerfile
+new file mode 100644
+index 0000000..0a6254a
+--- /dev/null
++++ b/docker/isolation/Dockerfile
+@@ -0,0 +1,61 @@
++FROM alpine:latest
++MAINTAINER Jorge S. Mendes de Jesus <jorge.dejesus@geocat.net>
++
++ENV GDAL_VERSION 2.2.0
++ENV XERCES_VERSION 3.2.0
++
++RUN apk add --no-cache \
++	git \
++	gcc \
++	bash \
++	openssh \
++	musl-dev  \
++	python3 \
++	python3-dev \
++	libxml2-dev  \
++	libxslt-dev \
++	linux-headers \
++	expat \
++	expat-dev
++
++
++RUN apk --update --no-cache add g++ libstdc++ make swig
++
++# Xerces
++RUN wget http://www.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCES_VERSION}.tar.gz -O /tmp/xerces-c-${XERCES_VERSION}.tar.gz && \
++    tar xvf /tmp/xerces-c-${XERCES_VERSION}.tar.gz -C /tmp && \
++    cd /tmp/xerces-c-${XERCES_VERSION} && \
++    ./configure --prefix=/opt/xerces && \
++    make -j 4 && \
++    make install
++
++# Geos
++RUN apk add --no-cache \
++    --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
++    geos \
++    geos-dev
++
++# Install GDAL
++RUN wget http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz -O /tmp/gdal.tar.gz && \
++	tar xzf /tmp/gdal.tar.gz -C /tmp && \
++	cd /tmp/gdal-${GDAL_VERSION} && \
++	CFLAGS="-g -Wall" LDFLAGS="-s" ./configure --with-expat=yes --with-xerces=/opt/xerces --with-geos=yes \
++	&& make -j 4 && make install
++
++RUN cd /tmp/gdal-${GDAL_VERSION}/swig/python \
++	&& python3 setup.py build \
++	&& python3 setup.py install
++
++RUN git clone https://github.com/lazaa32/pywps-flask.git
++
++WORKDIR /pywps-flask
++RUN pip3 install -r requirements.txt
++
++
++EXPOSE 5000
++ENTRYPOINT ["/usr/bin/python3", "demo.py","-a"]
++
++#docker build -t pywps-flask .
++#docker run -p 5000:5000 pywps-flask
++#http://localhost:5000/wps?request=GetCapabilities&service=WPS
++#http://localhost:5000/wps?request=DescribeProcess&service=WPS&identifier=all&version=1.0.0
+diff --git a/processes/ultimate_question.py b/processes/ultimate_question.py
+index 5817ba8..37505db 100644
+--- a/processes/ultimate_question.py
++++ b/processes/ultimate_question.py
+@@ -1,7 +1,9 @@
+ 
+-from pywps import Process, LiteralOutput
++from pywps.app import Process
++from pywps.inout.outputs import LiteralOutput
+ from pywps.app.Common import Metadata
+ 
++
+ class UltimateQuestion(Process):
+     def __init__(self):
+         inputs = []
+diff --git a/pywps.cfg b/pywps.cfg
+index a1ed125..e0e1874 100644
+--- a/pywps.cfg
++++ b/pywps.cfg
+@@ -1,6 +1,6 @@
+ [metadata:main]
+ identification_title=PyWPS Demo server
+-identification_abstract=PyWPS testing and development server. Do NOT use this server in production environement. You shall setup PyWPS as WSGI application for production. Please refer documentation for further detials.
++identification_abstract=PyWPS testing and development server. Do NOT use this server in production environment. You shall setup PyWPS as WSGI application for production. Please refer documentation for further detials.
+ identification_keywords=WPS,GRASS,PyWPS, Demo, Dev
+ identification_keywords_type=theme
+ identification_fees=None
+@@ -28,14 +28,25 @@ maxrequestsize=3mb
+ url=http://localhost:5000/wps
+ outputurl=http://localhost:5000/outputs/
+ outputpath=outputs
+-workdir=/tmp
++workdir=workdir
++wd_inp_subdir=inputs
++wd_out_subdir=outputs
+ maxprocesses=10
+ parallelprocesses=2
+ 
++[processing]
++mode=default
++port_min=5050
++port_max=5070
++docker_img=container
++dckr_inp_dir=/pywps-flask/data
++dckr_out_dir=/pywps-flask/outputs
++
+ [logging]
+ level=INFO
+ file=logs/pywps.log
+ database=sqlite:///logs/pywps-logs.sqlite3
++format=%(asctime)s] [%(levelname)s] file=%(pathname)s line=%(lineno)s module=%(module)s function=%(funcName)s %(message)s
+ 
+ 
+ [grass]
+diff --git a/requirements.txt b/requirements.txt
+index f9884fd..327038c 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,12 +1,13 @@
+-Flask==0.10.1
+-Jinja2==2.7.3
+-jsonschema==2.5.1
+-lxml==3.3.3
+-OWSLib==0.11.2
+-pyproj==1.9.5.1
+-requests==2.11.1
+-Shapely==1.5.7
+-Werkzeug==0.10.4
+-SQLAlchemy==1.0.15
+-psutil==4.3.1
+--e git+https://github.com/geopython/pywps.git@master#egg=pywps-master
++Flask
++Jinja2
++jsonschema
++lxml
++OWSLib
++pyproj
++requests
++Shapely
++Werkzeug
++SQLAlchemy
++psutil
++docker
++-e git+https://github.com/lazaa32/pywps.git@develop#egg=pywps-develop
+diff --git a/setup.py b/setup.py
+index d4a5f6a..7c92362 100644
+--- a/setup.py
++++ b/setup.py
+@@ -50,7 +50,7 @@ config = {
+     'license': 'MIT',
+     'platforms': 'all',
+     'url': 'http://pywps.org',
+-    'download_url': 'https://github.com/geopython/pywps-flask',
++    'download_url': 'https://github.com/lazaa32/pywps-flask',
+     'author_email': 'luis.a.de.sousa@gmail.com',
+     'maintainer': 'Luis de Sousa',
+     'maintainer_email': 'luis.de.sousa@protonmail.ch',
+@@ -67,7 +67,7 @@ config = {
+     'version': VERSION,
+     'install_requires': INSTALL_REQUIRES,
+     'dependency_links': [
+-        'git+https://github.com/geopython/pywps.git@pywps-'+VERSION+'#egg=pywps-'+VERSION
++        'git+https://github.com/lazaa32/pywps.git@pywps-'+VERSION+'#egg=pywps-'+VERSION
+      ],
+     'packages': ['processes', 'tests'],
+     'scripts': ['demo.py'],

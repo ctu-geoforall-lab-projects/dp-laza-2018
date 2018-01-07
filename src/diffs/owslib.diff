@@ -1,0 +1,21 @@
+diff --git a/owslib/wps.py b/owslib/wps.py
+index c16e288..ce86f93 100644
+--- a/owslib/wps.py
++++ b/owslib/wps.py
+@@ -1117,13 +1117,15 @@ class Output(InputOutput):
+ 
+         # extract wps namespace from outputElement itself
+         wpsns = getNamespace(outputElement)
++        # extract xlink namespace
++        xlins =outputElement.nsmap['xlink']
+ 
+         # <ns:Reference encoding="UTF-8" mimeType="text/csv"
+         # href="http://cida.usgs.gov/climate/gdp/process/RetrieveResultServlet?id=1318528582026OUTPUT.601bb3d0-547f-4eab-8642-7c7d2834459e"
+         # />
+         referenceElement = outputElement.find(nspath('Reference', ns=wpsns))
+         if referenceElement is not None:
+-            self.reference = referenceElement.get('href')
++            self.reference = referenceElement.get('{{{}}}href'.format(xlins))
+             self.mimeType = referenceElement.get('mimeType')
+ 
+         # <LiteralOutput>
