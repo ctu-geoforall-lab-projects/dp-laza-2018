@@ -52,6 +52,7 @@ running inside a Docker container. Some bug fixing which is
 mentioned in Sec.\ref{sub:Container_execute} was necessary. Complete
 %% ML: Byly ty upravy zacleneny do OWSlib, pokud ano, tak to zmin
 %% AL: Pull request jsem zatim neresil.
+%% ML: v zaveru ale o pull requestu mluvis
 diff is available in App. \ref{app:owslib}.
 
 \subsection{PyWPS}
@@ -273,6 +274,7 @@ to configure volumes mounted inside the container. The key is the host path and 
 %% ML: zdroj
 %% AL: tohle predpokladam patri k tomu obrazku o par radku vyse
 %% k listingu zdroj snad davat nemusim
+%% ML: je to tak
 \bigskip
 \begin{lstlisting}[basicstyle=\small,caption={\textit{create()} method}]
 self.client.containers.create(cntnr_img, detach=True,
@@ -288,6 +290,7 @@ machine mounted into container directory with data. Therefore, all
 inputs downloaded to process workdir will be available for the
 container and all outputs produced after process execution will be
 %% ML: Shown?
+%% ML: asi nekde zapadlo?
 stored at host machine output directory. Displayed in
 Fig. \ref{fig:Diag_mount}.
 
@@ -315,7 +318,7 @@ updates the process status in the database. Unfortunately, it causes that the pr
 %% pouzivat jako referenci v dalsim textu
 %% AL: zkousel jsem to pomoci \lstset, ale cisla radku se vykreslovala 
 %% na zacatek/konec radku, ale mimo zarovnani a nevypadalo to moc dobre
-
+%% ML: jj, zakladni formatovani vypisuje radky mimo odstavec, to je OK
 %%\lstset{
 %%  numbers=right,
 %%  numbersep=1pt
