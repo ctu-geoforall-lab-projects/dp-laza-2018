@@ -117,7 +117,7 @@ Fig. \ref{fig:DiagServiceParseExecute}). Here the inputs are parsed, in case of 
 The method \textit{execute()} of class \textit{Process} contains crucial if-statement where is decided whether the process will be
 run in asynchronous or synchronous mode. Running in asynchronous mode can be enforced by setting both attributes \textit{status} and \textit{storeExecuteResponse} of the \textit{ResponseDocument} element in the ExecuteRequest XML to True.
 
-\bigskip
+\newpage
 \begin{lstlisting}[basicstyle=\small,caption={ReponseForm element of ExecuteRequest XML},language=XML,label={lst:Execute_ResponseForm}]
 <wps:ResponseForm>
  <wps:ResponseDocument status="true" storeExecuteResponse="true">
@@ -321,7 +321,7 @@ updates the process status in the database. Unfortunately, it causes that the pr
 %%  numbersep=1pt
 %%}
 
-
+\newpage
 \begin{lstlisting}[basicstyle=\small,caption={\textit{Container.create()} method},label={lst:Container_start}]
 def start(self):
     self.cntnr.start()

@@ -107,7 +107,7 @@ Service je standard vydaný a dále rozšiřovaný Open Geospatial Consorciem.
 První část popisuje samotný standard včetně všech základních požadavků \textit{GetCapabilities}, \textit{DescribeProcess} a \textit{Execute}.
 V závěru první části jsou zmíněny některé z implementací WPS standardu.
 
-Druhý část se zaměřuje na \textit{PyWPS}, což je implementace WPS standardu napsaná v programovacím jazyce Python. Čtenáři jsou seznámeni
+Druhá část se zaměřuje na \textit{PyWPS}, což je implementace WPS standardu napsaná v programovacím jazyce Python. Čtenáři jsou seznámeni
 jak se současným stavem PyWPS, tak s projektem \textit{PyWPS-demo}, ukázkovou instancí PyWPS serveru, na kterém je postavena praktická část. 
 Následuje rešerše, která mapuje možné řešení izolace procesů, a nakonec je popsána \textit{Docker} technologie, která slouží pro kontejnerizaci
 a která byla vybrána pro samotnou implementaci izolace.
@@ -161,7 +161,7 @@ his guidance during the work on the thesis, but also that he revealed me the way
 With the huge progress of technologies, our society is becoming more and more digitalized and the amount of various data 
 is getting bigger and bigger. There are data all around us and demand for applications or services based on the data is
 growing. However, the data in its raw form may not be sufficient to make a conclusion. More often the data need to be 
-processed and used as an inputs data for some kind of analyses. With increasing number of gathered data such as
+processed and used as inputs data for some kind of analyses. With increasing number of gathered data such as
 satellite images or remotely sensed data, any manual processing is almost inconceivable. The data processing needs to
 be done in a systematic and fully-automized way.
 
@@ -191,7 +191,7 @@ as a solution for process isolation. Eventually, the Docker technology is chosen
 Docker has been selected as one of the most used technology for containerization. It puts every process into a separate
 container so the isolation is ensured. Moreover, Docker provides a mechanism to pause, stop and start a container so it
 looks like a possible solution for the future WPS 2.0.0 standard implementation which requires this functionality. Using
-Docker it also opens new possibilities, e. g. being able to deploy running job to cloud.
+Docker, it also opens new possibilities, e. g. being able to deploy running job to cloud.
 
 The third part describes the implementation. It explains the Execute operation workflow, a process execution and how the Docker containers are used for the PyWPS process isolation. New \textit{Container} class, which were developed during
 the work on this thesis, is introduced as well as its methods.
@@ -203,11 +203,60 @@ the work on this thesis, is introduced as well as its methods.
 \include{3-implementation}
 
 \newpage
-\necislovana{Závěr}
-\todo[inline]{Dopsat zaver}
+\necislovana{Conclusion}
+The goal of the thesis was to find and implement a solution for process isolation in \textit{PyWPS}. This functionality was 
+demanded by PyWPS developers who would appreciate the possibility to isolate each process execution. With every process 
+fully isolated, a higher level of security is ensured. Moreover, without the isolation the processes have access to a 
+file-system of a hosting OS.
+
+But there are other reasons considered. One of them is a performance. Non-isolated processes share the resources
+of a host machine. In case that a client requests an execution of a process that is poorly designed, its execution
+can consume a lot of resources and thus it may slow down other process executions running in parallel. In the 
+worst-case scenario a process execution can bring down the server.
+
+In the first part, the thesis sets a theoretical background and explain the \textit{WPS} standard. Some project which implement 
+the standard are mentioned. Second part is dedicated to \textit{PyWPS} as a Python implementation of the WPS. There is described 
+the currentstate of the project followed by a research.
+
+The reseach covers various solution for the process isolation. The functionality for the isolation was the main
+criterion, however beside that the selected solution should provide some mechanisms to control the execution of the
+process. These mechanisms will be necessary for implementation of the WPS 2.0.0 standard.
+
+The \textit{Docker} Container Extension has been on the developers whislist for a long time. The container encapsulates the
+process execution and also offers methods to start, pause, stop or kill the container and thus the execution. Moreover
+using Docker opens possibilities of Web Processing Service in a cloud computing infrastructure.
+
+The architecture is based on \textit{pywps-demo} project. It offers a demo server instance of PyWPS. When a process
+execution is requested, a server creates a Docker container with the demo server instance running inside. The request
+is forwarded into the container. The process execution runs inside the container but the container output directory is 
+mounted into the server file-system so the results are available on the server.
 
 \newpage
-\necislovana{Seznam použitých zkratek}
+At the time of submitting, the implementation is not finished. It provides working solution but there are
+several issues to be considered. First of all, the solution does not provide an asynchronous execution. A client
+receives an execute response that the process was accepted, after the execution is already finished.
+
+Another problem is a management of containers. In the current state, a container is stopped and removed after
+a successful process execution, however it is achieved with the \textit{\_dirty\_clean()} method which is
+inappropriate for production environment.
+
+Another problem is cumulation of processes on a server. These pseudo-running processes remain on the server
+and block other processes even though a client has already received the results. There is missing connection
+between a container and a server when a process execution inside the container is done.
+
+All these issues prevents from integration the Docker container extension into the official PyWPS repository.
+Nevertheless, I would like to continue on the development and solve all problems so I can make a pull request
+at least into PyWPS develop branch. During the implementation I have contributed into 
+\textit{pywps}\footnote{My \textit{pywps} GitHub repository: \url{https://github.com/lazaa32/pywps}}, 
+\textit{pywps-demo}\footnote{My \textit{pywps-demo} GitHub repository: \url{https://github.com/lazaa32/pywps-flask}} and 
+\textit{OWSLib}\footnote{My \textit{OWSLib} GitHub repository: \url{https://github.com/lazaa32/OWSLib}}
+ projects. Pull requests into \textit{pywps} and \textit{pywps-demo} wait for the
+PyWPS developers feedback and problems solution mentioned above. The pull request into OWSLib is already waiting
+for approval. 
+
+
+\newpage
+\necislovana{List of abbreviation}
 
 \begin{tabular}{ll}
 \textbf{API}& Application Programming Interface\\
