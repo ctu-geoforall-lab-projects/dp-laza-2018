@@ -12,18 +12,22 @@ to be done in a systematic and fully-automized way.
 Therefore, in order to be able to process data independently of the
 type of acquisition, format or platform, international standard
 interfaces and standardized frameworks are necessary. The Open
-Geospatial Consortium, Inc.  (OGC), an organization oriented toward
+Geospatial Consortium, Inc.  (OGC) - an organization oriented toward
 %% ML: to and tu ma byt? nejak mi ta veta prijde kostrbata...
-open geospatial standards, researches and establishes technical
+%% AL: myslis: ''Geospatial Consortium, Inc.  (OGC), an organization oriented toward??''
+open geospatial standards - researches and establishes technical
 standards for data compatibility and interoperability technical
 standards. Besides quite famous and used standards as WMS and WFS,
 there exists the WPS standard. The WPS standard defines an interface
 that facilitates the publishing of geospatial processes. It provides
-rules how inputs and outputs are handled. The WPS is only a standard
+rules how inputs and outputs are handled. 
 %% ML: ta veta s 'and' opet zni divne, moc mi nedava smysl, co zname 'only'?
-and there are several implementations. This work is primarily focused
+%% AL: chtel jsem rict, ze WPS je jen standard, ze se za samotnym
+%% WPS neni zadny kod. Ale prepsal jsem to
+There are several implementations of WPS standard. This work is primarily focused
 %% ML: chybi kontext na predchozi vetu, pywps je prave jedna z implementaci
-on the \textit{PyWPS} framework.
+%% AL: lepsi?
+on the \textit{PyWPS} - a WPS implementation written in Python.
 
 \bigskip
 The main topic of this thesis is process isolation in PyWPS framework. A process is just some geospatial operation which 
@@ -40,7 +44,8 @@ Nevertheless, this work is dedicated to PyWPS, an implementation in
 Python. In the second part, its current state is described as well as
 \textit{pywps-demo} - a side project providing demo server instance -
 %% ML: and covers? opet divne formulovana veta
-which the practical part is based on. A~research comes after that and
+%% AL: prepsano. To cover - ve vyznamu pojednavat.
+which the practical part is based on. Following research 
 covers various projects and technologies which were considered as a
 solution for process isolation. Eventually, the Docker technology is
 chosen for the implementation part.  Docker has been selected as one
@@ -56,5 +61,6 @@ The third part describes the implementation. It explains the Execute
 operation workflow, a process execution and how the Docker containers
 are used for the PyWPS process isolation. New \textit{Container}
 %% ML: were -> was?
-class, which were developed during the work on this thesis, is
+%% AL: was
+class, which was developed during the work on this thesis, is
 introduced as well as its methods.
