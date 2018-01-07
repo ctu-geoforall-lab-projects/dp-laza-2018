@@ -77,16 +77,24 @@ bottom=35mm]
 
 \selectlanguage{english}
 \begin{abstract}
-\bigskip
-This master thesis is dedicated to a process isolation in PyWPS framework as one of the OGC WPS implementation. OGC WPS is Web Processing Service
-Standard defined by Open Geospatial Consortium.
+  \bigskip
+  %% ML: implementations ?
+  This master thesis is dedicated to a process isolation in PyWPS
+  framework as one of the OGC WPS implementation. OGC WPS is Web
+  Processing Service Standard defined by Open Geospatial Consortium.
 
 The first part describes the standard itself including all three mandatory operations
 \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute}. At the end of the first part some implementations of the standard
 are mentioned.
 
-The second part concentrates on \textit{PyWPS}, one of the WPS implementation written in Python. Readers are introduced to the current
-state of PyWPS as well as to \textit{PyWPS-demo} project, a demo server isntance, which the implementation part is based on. A research about possible solutions of process isolation follows and then \textit{Docker} technology is described as final choice for implementaion.
+The second part concentrates on \textit{PyWPS}, one of the WPS
+%% ML: implementations ?
+implementation written in Python. Readers are introduced to the
+current state of PyWPS as well as to \textit{PyWPS-demo} project, a
+demo server instance, which the implementation part is based on. A
+research about possible solutions of process isolation follows and
+then \textit{Docker} technology is described as final choice for
+implementaion.
 
 The third part covers the implementation of Docker containers for process isolation. The workflow of \textit{Execute} operation is
 described in detail and brand new \textit{Container} class with all its methods is introduced.
@@ -107,10 +115,15 @@ Service je standard vydaný a dále rozšiřovaný Open Geospatial Consorciem.
 První část popisuje samotný standard včetně všech základních požadavků \textit{GetCapabilities}, \textit{DescribeProcess} a \textit{Execute}.
 V závěru první části jsou zmíněny některé z implementací WPS standardu.
 
-Druhá část se zaměřuje na \textit{PyWPS}, což je implementace WPS standardu napsaná v programovacím jazyce Python. Čtenáři jsou seznámeni
-jak se současným stavem PyWPS, tak s projektem \textit{PyWPS-demo}, ukázkovou instancí PyWPS serveru, na kterém je postavena praktická část. 
-Následuje rešerše, která mapuje možné řešení izolace procesů, a nakonec je popsána \textit{Docker} technologie, která slouží pro kontejnerizaci
-a která byla vybrána pro samotnou implementaci izolace.
+Druhá část se zaměřuje na \textit{PyWPS}, což je implementace WPS
+standardu napsaná v programovacím jazyce Python. Čtenáři jsou
+seznámeni jak se současným stavem PyWPS, tak s projektem
+\textit{PyWPS-demo}, ukázkovou instancí PyWPS serveru, na kterém je
+postavena praktická část.  Následuje rešerše, která mapuje možné
+řešení izolace procesů, a nakonec je popsána \textit{Docker}
+%% ML: moc dlouha veta, navrh: ... kontejnerizaci. Ta byla ... (?)
+technologie, která slouží pro kontejnerizaci a která byla vybrána pro
+samotnou implementaci izolace.
 
 Poslední část se zabývá použitím Docker kontejnerů pro izolaci procesů. Detailně je vysvětleno, jak funguje \textit{Execute} operace a následně je popsána nově vytvořená třída \textit{Container} se všemi svými metodami.
 
