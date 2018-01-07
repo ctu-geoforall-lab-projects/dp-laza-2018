@@ -16,11 +16,14 @@ thus it may slow down other process executions running in parallel. In
 the worst-case scenario a process execution can bring down the server.
 
 In the first part, the thesis sets a theoretical background and
+%% ML: explains / is explained
+%% ML: Some/Various projects ...
 explain the \textit{WPS} standard. Some project which implement the
 standard are mentioned. Second part is dedicated to \textit{PyWPS} as
 a Python implementation of the WPS. There is described the
 currentstate of the project followed by a research.
 
+%% ML: solutions?
 The reseach covers various solution for the process isolation. The
 functionality for the isolation was the main criterion, however beside
 that the selected solution should provide some mechanisms to control
@@ -28,6 +31,7 @@ the execution of the process. These mechanisms will be necessary for
 implementation of the WPS 2.0.0 standard.
 
 The \textit{Docker} Container Extension has been on the developers
+%% ML: wishlist ?
 whislist for a long time. The container encapsulates the process
 execution and also offers methods to start, pause, stop or kill the
 container and thus the execution. Moreover using Docker opens
@@ -54,6 +58,8 @@ container is stopped and removed after a successful process execution,
 however it is achieved with the \textit{\_dirty\_clean()} method which
 is inappropriate for production environment.
 
+%% ML: tomu nerozumim, ten proces na server zustane vyset i kdyz uz je
+%% v kontejneru hotov a odbaven k uzivateli ?
 Another problem is cumulation of processes on a server. These
 pseudo-running processes remain on the server and block other
 processes even though a client has already received the results. There
@@ -64,6 +70,9 @@ All these issues prevents from integration the Docker container
 extension into the official PyWPS repository.  Nevertheless, I would
 like to continue on the development and solve all problems so I can
 make a pull request at least into PyWPS develop branch. During the
+%% ML: nejsem si jisty zda uvadet linky na tyto repositare
+%% ML: urcite uved ale odkaz na repositar diplomky, tam budou stejne
+%% vsechny diffy, to tady muzes zminit
 implementation I have contributed into \textit{pywps}\footnote{My
   \textit{pywps} GitHub repository:
   \url{https://github.com/lazaa32/pywps}},
@@ -72,5 +81,6 @@ implementation I have contributed into \textit{pywps}\footnote{My
 \textit{OWSLib}\footnote{My \textit{OWSLib} GitHub repository:
   \url{https://github.com/lazaa32/OWSLib}} projects. Pull requests
 into \textit{pywps} and \textit{pywps-demo} wait for the PyWPS
+%% ML: uved do poznamky pod carou link
 developers feedback and problems solution mentioned above. The pull
 request into OWSLib is already waiting for approval.
