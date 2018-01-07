@@ -15,13 +15,13 @@ September 2005 \cite{WPS_first}. The experiment demonstrated that various client
 could easily access and bind to services which were set up according to the WPS Implementation
 specification.
 
-Currently two major versions of WPS Standard exist. The WPS version 1.0.0 is currently used mostly.
+Currently two major versions of WPS Standard exist. The WPS version 1.0.0 is currently most used.
 If not explicitly said this thesis is dedicated to the version 1.0.0. The WPS version 2.0.0 was
 released in 2015 \cite{WPS_second}.
 
 \subsection{Open Geospatial Consortium}
 The OGC \textit{Open Geospatial Consortium} is an international non-profit organization committed to making quality 
-open standards for the global geospatial community. These standards are made through a consensus process and are freely available for anyone to use to improve sharing of the world's geospatial data. The OGC members come from government, commercial organizations, NGOs, academic and research organizations.\cite{OGC}
+open standards for the global geospatial community. These standards are made through a consensus process and are freely available for anyone to use. The OGC members come from government, commercial organizations, NGOs, academic and research organizations.\cite{OGC}
 
 A predecessor organization, OGF, the Open GRASS Foundation, started in 1992. From 1994 the organization 
 used the name \textit{Open GIS Consortium}, in 2004 the Board changed the name to \textit{Open Geospatial Consortium}.\cite{OGC_history}
@@ -55,7 +55,8 @@ at the server.
 The interface does not specify any specific processes that can be implemented by a WPS nor any specific
 data inputs or outputs. Instead it specifies generic mechanisms to describe any geospatial process and
 data required and produced by the process. The interface does not only provide mechanisms for calculation
-but also to identify required data, initiate the calculation and manage output data so clients can access it. 
+but also mechanisms that identify required data, initiate the calculation and manage output data so clients
+can access it. 
 
 \bigskip
 Web Processing Service as one of the OGC web services specifies three types of requests which can be requested
@@ -65,8 +66,8 @@ by a client and performed by a WPS server. The implementation of these three req
 of the specific server implementation. It also returns the name and abstract of each of the processes that can
 be run on a WPS instance.
 
-\textbf{\textit{DescribeProcess}} - The request returns details about the processes offered by a WPS instance. Describes
-required inputs and produced outputs and their allowable formats.
+\textbf{\textit{DescribeProcess}} - The request returns details about the processes offered by a WPS instance. 
+It describes required inputs and produced outputs and their allowable formats.
 
 \textbf{\textit{Execute}} - The request allows the client to run a specified process with provided parameters and returns
 produced outputs.
@@ -462,11 +463,10 @@ extension.
 The WPS extension is capable of direct reading and writing data from and to GeoServer. Therefore it is possible to create processes
 based on inputs served from GeoServer as well as storing the outputs in the catalog.
 
-Since GeoServer implements WPS standard 1.0.0, it must supports the \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute}
-operations. Apart of these, it implements also \textit{GetExecutionStatus} and \textit{Dismiss} operations. The \textit{Dismiss} operation
-serves for asynchronous requests to get progress report and eventually retrieve the result data. A client send in the GetExecutionStatus
-request a mandatory \textit{executionId} parameter to specify the process. The executionId is mandatory parameter for Dismiss operation
-either. The Dismiss operation cancels an execution of the process of given executionId. As seen in Fig. \ref{fig:geoserver_status},
+Since GeoServer implements WPS standard 1.0.0, it supports the \textit{GetCapabilities}, \textit{DescribeProcess} and \textit{Execute}
+operations. Apart of these, it also implements \textit{GetExecutionStatus} and \textit{Dismiss} operations. The \textit{Dismiss} operation
+serves for asynchronous requests to get progress report and eventually retrieve the result data. A client sends in the GetExecutionStatus
+request a mandatory \textit{executionId} parameter to specify the process. The executionId is also mandatory parameter for Dismiss operation. The Dismiss operation cancels an execution of the process of given executionId. As seen in Fig. \ref{fig:geoserver_status},
 GeoServer offers \textit{Progress status page} where progress of all executions can be reviewed as well as dismissing of each execution
 can be done.
 
@@ -489,7 +489,7 @@ or \textit{CGAL}.
 \item WPS Client - ZOO-client is a client-side Javascript library for interacting with WPS Services.
 \end{itemize}
 
-ZOO-Project is the first and in this time probably only one full implementation of the WPS 2.0.0 standard. Apart from \textit{GetCapabilities},
+ZOO-Project is the first and in this time probably the only one full implementation of the WPS 2.0.0 standard. Apart from \textit{GetCapabilities},
 \textit{DescribeProcess} and \textit{Execute} operations from WPS 1.0.0 standard it also implements \textit{GetStatus}, \textit{GetResult}
 and \textit{Dismiss} operations from WPS 2.0.0.
 

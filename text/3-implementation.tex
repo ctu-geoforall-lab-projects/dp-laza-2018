@@ -108,10 +108,10 @@ Inputs for the method are:
 \end{floatrow}
 \end{figure}
 
-The flowchart of the process execution is displayed at Fig. \ref{fig:DiagServiceExecute}. 
+The flowchart of the process execution is displayed in Fig. \ref{fig:DiagServiceExecute}. 
 At first a deepcopy of the process instance is created so that processes cannot override each other. Then a temporary working directory \textit{workdir} is created and set as a current workdir for the process execution. To the workdir all input files are
 copied as well as all temporary files and outputs are stored here. Then the method \textit{\_parse\_and\_execute()} is called (see
-Fig. \ref{fig:DiagServiceParseExecute}). Here the inputs are parsed, in case of web-referenced input, the data are downloaded to workdir, in case of directly in request sent data, the data are saved into a file in workdir. The process execution afterward runs in \textit{Process.execute()} method. This method returns a \textit{wps\_response} - an instance of \textit{WPSReponse} object.
+Fig. \ref{fig:DiagServiceParseExecute}). Here the inputs are parsed, in case of a web-referenced input the data are downloaded to workdir, in case of data sent within a request the data are saved into a file in workdir. The process execution afterward runs in \textit{Process.execute()} method. This method returns a \textit{wps\_response} - an instance of \textit{WPSReponse} object.
 
 \subsection{Process.execute()}
 The method \textit{execute()} of class \textit{Process} contains crucial if-statement where is decided whether the process will be
@@ -129,7 +129,7 @@ run in asynchronous or synchronous mode. Running in asynchronous mode can be enf
 \end{lstlisting}
 \bigskip 
 
-No matter whether the process runs synchronously or asynchronously always there is a control how many parallel processes are currently
+No matter whether the process runs synchronously or asynchronously there is always a control how many parallel processes are currently
 running. The number of the maximum of concurrently running processes can be configured. If the process is asynchronous and the number of currently running processes exceeds the maximal number, the process is stored and its execution is started lately. In case of the synchronous process the \textit{ServerBusy} exception is raised. If the number of processes is smaller than the maximal number of 
 concurrent processes, the process can be executed. In synchronous mode the \textit{\_run\_process()} is called, in asynchronous mode the method \textit{\_run\_async()} is called. The activity diagram of the \textit{Process.execute()} is displayed in Fig.\ref{fig:Diag_process_execute}.
 
@@ -148,8 +148,8 @@ concurrent processes, the process can be executed. In synchronous mode the \text
 %% AL: asi lepsi operations
 Until now the operations described in this thesis was not
 modified. Requirements which have been considered during the
-implementation of Docker technology were that the source code will not
-be very modified, the process isolation will be easily inserted and
+implementation of Docker technology were that the source code will
+be modified slightly, the process isolation will be easily inserted and
 the project structure will be kept the same. Keeping this in mind
 changes in source code were made only in \textit{processing} module.
 
@@ -251,7 +251,7 @@ The method returns an instance of \textit{Container} class from \textit{docker} 
 \textit{self.client.containers.create()} method. 
 
 The method takes optional parameter \textit{ports}. It is a dictionary
-to define ports to bind inside the container. The keys of the
+that defines ports to bind inside the container. The keys of the
 dictionary are the ports to bind inside the container (port 5000
 inside \textit{Container 1} and \textit{Container 2} at
 Fig. \ref{fig:Diag_port}). The values of the dictionary are the
@@ -303,15 +303,25 @@ Fig. \ref{fig:Diag_mount}.
 %% ML: cela kapitola 9.2 neni uplne ctiva a prehledna (mozna by pomohl
 %% opet nejaky diagram), zkus to jeste jednou projit, na velke upravy
 %% ale neni cas
+
+%% AL: pridal jsem obrazek, ktery snad trochu pomuze
 \subsection{\textit{Container.start()} method}
 When a container is created the \textit{start()} method is called and the container is started.
 In the time of finishing this thesis the method looks like at Lst.\ref{lst:Container_start}. In the current state is used the method
 \textit{\_dirty\_clean()}. It assures that the container is removed after the successful execution, temporary workdir is cleaned and it also 
-updates the process status in the database. Unfortunately, it causes that the process runs synchronously. To solve this problem is one of the
-future goals.
+updates the process status in the database. Unfortunately, it causes that the process runs synchronously. To solve this problem is one of the future goals. The schema of \textit{Container.start()} method is in Fig. \ref{fig:DiagWPSExecute}
 
 %% ML: pokud bys mel ukazku kodu ocislovanou, mohl bys cisla radku
 %% pouzivat jako referenci v dalsim textu
+%% AL: zkousel jsem to pomoci \lstset, ale cisla radku se vykreslovala 
+%% na zacatek/konec radku, ale mimo zarovnani a nevypadalo to moc dobre
+
+%%\lstset{
+%%  numbers=right,
+%%  numbersep=1pt
+%%}
+
+
 \begin{lstlisting}[basicstyle=\small,caption={\textit{Container.create()} method},label={lst:Container_start}]
 def start(self):
     self.cntnr.start()
@@ -335,7 +345,7 @@ to container. For sending request to container \textit{OWSLib}
 library (Sec. \ref{sub:owslib}) is used.
 
 \paragraph{OWSLib} is a Python package for client programming with OGC web services interface standards. However before it was possible
-to use this package there was necessary to fix a bug in the \textit{wps} module. The bug caused outputs in the Execute response, which
+to use this package it was necessary to fix a bug in the \textit{wps} module. The bug caused outputs in the Execute response, which
 were referenced as web-accesible resource, not to be parsed because of wrong handling with \textit{xlink} namespace. The bug-fix diff file 
 is available in App. \ref{app:owslib}. 
 
@@ -373,10 +383,10 @@ Then the \textit{WPSReponse} object is updated by \textit{Job.wps\_response.upda
 It means the \textit{WPSResponse} object at host machine WPS server adopts \textit{statusMessage} and path to \textit{statusLocation}
 from \textit{WPSExecution} object that handles the process execution inside the container. The process execution inside the container
 updates its status into the file that is located in container output directory. This directory is shared with WPS server at host machine
-si it is available even for the client.
+so it is available even for the client.
 
 \subsubsection{\textit{Container.\_dirty\_clean()}}
-The method cares about stopping and removing Docker container, removing job workdir and original status XML. This method prevents to
+The method cares about stopping and removing Docker container, removing job workdir and original status XML. This method prevents from
 accumulation of running Docker containers and temporary files in workdir directory. On the other hand there is missing functionality
 for the process managment in database. In the current state when using Docker, the processes on the server are not ended even though
 the result is already returned from the container. These pseudo-running processes accumulate on the server and some other processes
@@ -398,3 +408,10 @@ def _dirty_clean(self):
 
 \textit{Job.process.clean()} remove the job workdir so the temporary files do not cumulate at the server. \textit{os.remove()} deletes
 the original status XML since the status XML from the container was sent back to the client.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{img/Diag_WPSExecute.png}
+\caption{Schema of \textit{WPSExecution}, source: author}
+\label{fig:DiagWPSExecute}
+\end{figure}

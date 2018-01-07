@@ -1,0 +1,54 @@
+@startuml
+box "Host" #ffc266
+	participant StatusXML
+	participant Job
+	participant Job.Container
+	participant WPSExecution
+end box
+
+box "Docker" #LightBlue
+	participant Container
+end box
+
+activate Job #LightGreen
+Job -> StatusXML: statusLocation
+activate StatusXML #LightGreen
+Job -> Job.Container: Container()
+activate Job.Container #LightGreen
+Job.Container -> Container: create()
+Job.Container -> Container: start()
+activate Container #RoyalBlue
+...time.sleep(0.5)...
+note over Job.Container
+It takes some time to get PyWPS in container ready.
+end note
+Job.Container -> WPSExecution: WPS.execute()
+activate WPSExecution #RoyalBlue
+Job.Container -> Job: get_inputs()
+Job --> WPSExecution: inputs
+Job.Container -> Job: get_outputs()
+Job --> WPSExecution: outputs
+WPSExecution -> Container: <back:white> executeRequest </back>
+WPSExecution<--Container: <back:white> executeResponse </back>
+Job.Container->WPSExecution: parseStatus()
+WPSExecution --> Job.Container: statusLocation
+Job.Container -> StatusXML: os.remove()
+destroy StatusXML
+Job.Container -> StatusXML: statusLocation
+activate StatusXML #RoyalBlue
+Job -> StatusXML: statusLocation
+
+Container --> StatusXML: statusUpdate
+Container --> StatusXML: statusUpdate
+Container --> StatusXML: statusUpdate
+Job.Container -> Container: _dirty_clean()
+...time.sleep(1)...
+note over Job.Container
+1 second is hardcoded. It should be enough for the process
+execution inside the Docker container to finish.
+end note
+Job.Container -> Container: stop()
+deactivate Container
+Job.Container -> Container: remove(
+destroy Container
+@enduml

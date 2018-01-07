@@ -50,7 +50,7 @@ PyWPS-demo is a small side project distributed with PyWPS. It is a simple demo i
 \textit{Flask}\footnote{\url{http://flask.pocoo.org/}}. Flask is a microframework for web applications in Python. 
 Flask provides built-in development server and debugger and RESTful request dispatching. Starting PyWPS-demo server with Flask
 is very simple and can be done with command in Lst. \ref{lst:demo_start}. After starting the PyWPS-demo server the PyWPS homepage can be 
-visited at: \url{http://localhost:5000}
+visited at: \url{http://localhost:5000}.
 
 \bigskip
 \begin{lstlisting}[basicstyle=\small,caption={Starting PyWPS-demo server},label={lst:demo_start}]
@@ -62,7 +62,7 @@ PyWPS-demo comes with several demo processes:
 \item \textit{area.py} - Process calculates area of given polygon.
 \item \textit{bboxinout.py} - Process transforms bounding box to another EPSG.
 \item \textit{buffer.py} - Process returns buffers around the input features, using the GDAL library.
-\item \textit{centroids.py} - Process returns a GeoJSON with centroids of features from  an uploaded GML.
+\item \textit{centroids.py} - Process returns a GeoJSON with centroids of features from an uploaded GML.
 \item \textit{feature\_count.py} - Process counts the number of features in an uploaded GML.
 \item \textit{grassbuffer.py} - Process uses the  GRASS GIS \textit{v.buffer} module to generate buffers around inputs.
 \item \textit{sayhello.py} - Process returns a literal string output with Hello plus the inputed name.
@@ -118,7 +118,7 @@ allow PyWPS to comply with WPS version 2.0.0.
 \subsection{Current state}
 \label{subsec:current_state}
 At the beginning of every process execution its own temporary directory \textit{workdir} is created. During the execution
-temporary files and continuous outputs are stored in this folder. After successful execution final outputs are
+temporary files and continuous outputs are stored in this directory. After successful execution final outputs are
 moved to \textit{outputs} directory. Both directories \textit{outputs} and \textit{workdir} are configurable and user can
 change path to them.
 
@@ -131,7 +131,7 @@ mode=multiprocessing
 Current version of PyWPS offers two solutions for running parallel processes:
 \begin{itemize}
 \item Multiprocessing
-\item Job Scheduler Extension\footnote{Job Scheduler Extension is currently only in develop branch of PyWPS.}
+\item Job Scheduler Extension\footnote{Job Scheduler Extension is currently only in \textit{develop} branch of PyWPS.}
 \end{itemize}
 
 If the execute request is sent asynchronously the type of process constructor is chosen depending on configuration
@@ -142,7 +142,7 @@ to \textit{scheduler}.
 %% AL: smazano
 
 \paragraph{Multiprocessing}
-By default for  processes   running   in   the   background,   the   Python \textit{multiprocessing} module is used – 
+By default for  processes running in the background, the Python \textit{multiprocessing} module is used – 
 this makes it possible to use PyWPS on the Windows operating system too.
 
 \begin{figure}[h!]
@@ -153,19 +153,19 @@ this makes it possible to use PyWPS on the Windows operating system too.
 \end{figure}
 
 The number of processes running in parallel is configirable by parameter \textit{parallelprocesses} of section \textit{server} in 
-configuration file. In the Fig. \ref{fig:Diag_multiprocessing} are shown two running processes. A client sends an Execute request to
+configuration file. In the Fig. \ref{fig:Diag_multiprocessing} two running processes are shown. A client sends an Execute request to
 a server. Server sends back to the client an ExecuteResponse that \textit{Process1} (green in the figure) was accepted and starts its 
 execution. During the execution the process updates its status. The interval of status updates depends on the code of the Process1.
 Process1 must support status update otherwise it cannot be run in asynchronous mode.
 
 During the execution of Process1 server receives another Execution request. It sends back the Execution response and starts the execution
 of \textit{Process2} (blue in the figure). Separated Python \textit{Process}\footnote{Explanation of term Python \textit{Process} and its
-differences to \textit{Thread} is in next paragraph.} is created. Both of the processes run on the host machine but both have own memory
+differences to \textit{Thread} is in next paragraph.} is created. Both of the processes run on the host machine, however both have own memory
 space. Their executions run concurently and client can request their status. In the figure, the Process2 ended first and client can retrieve
-the result from the server. Once the Process1 ends too, the client can retrieve its result from the server as well.
+the result from the server. Once the Process1 ends, the client can retrieve its result from the server as well.
 
-It is important to say that in case of multiprocessing processes run concurently with its own memory space nevertheless they are not isolated.
-They run on the same host machine and share the resources. There are even methods like \textit{Pipe()} that enables communication between 
+It is important to say that in case of multiprocessing, processes run concurently with its own memory space, nevertheless they are not isolated.
+They run on the same host machine and share the resources. There are even methods like \textit{Pipe()} that enable communication between 
 processes.
 
 \paragraph{Process vs Thread} In Python there are two ways to achieve \textit{pararellism}. It is \textit{multiprocessing}
@@ -251,7 +251,7 @@ Finnaly these solutions were considered:
 \end{itemize}
 
 \subsubsection{Celery}
-\textit{Celery} is a task queue system written in Python. It helps distribute work across threads and even machines. Basic term is
+\textit{Celery} is a task queue system written in Python. It helps to distribute work across threads and even machines. Basic term is
 a \textit{task}. A task is a unit of work and it is an input into the task queue. The task queue is constantly monitored for new 
 work to perform.
 
@@ -259,8 +259,8 @@ To communicate between client and workers Celery uses a \textit{broker}. The com
 client adds a message to the queue and the broker then delivers the message to a worker. Multiple workers and brokers can be added
 so there is assured high availability and horizontal scaling.
 
-Celery provide worker remote control client in class
-\textit{celery.app.control.Control}. The class offers these functions:
+Celery provides worker remote control client in class
+\textit{celery.app.control.Control}. The class offers following functions:
 \begin{itemize}
 \item\textbf{revoke} - Tell all (or specific) workers to revoke a task by id. If a task is revoked, the workers will ignore the task and not execute it after all.
 \item\textbf{shutdown} - Shutdown worker(s).
@@ -268,7 +268,7 @@ Celery provide worker remote control client in class
 \end{itemize}
 
 \subsubsection{Docker}
-\textit{Docker} is one of the most used technology regarding containerization. This technology is described in depth in a later chapter.
+\textit{Docker} is one of the most used technology regarding containerization. This technology is described in depth in Sec. \ref{sec:Docker}
 
 \subsubsection{psutil}
 \textit{psutil} is Python library for process and system management. It handles system monitoring, limiting process resources
@@ -291,10 +291,10 @@ process with given pid. The class is bound with a process via its
 PID\footnote{\textit{PID} is a process identifier. It is a number used by operating system to uniquely identify an active process.}. The \textit{Process} class offers these methods for
 starting/pausing:
 \begin{itemize}
-\item suspend() - The method suspends a process using SIGSTOP signal.
-\item resume() - The method resumes a process using SIGCONT signal.
-\item terminate() - The method terminates a process using SIGTERM signal.
-\item kill() - The method kills a process using SIGKILL signal.
+\item suspend() - The method suspends a process using \textit{SIGSTOP} signal.
+\item resume() - The method resumes a process using \textit{SIGCONT} signal.
+\item terminate() - The method terminates a process using \textit{SIGTERM} signal.
+\item kill() - The method kills a process using \textit{SIGKILL} signal.
 \end{itemize}
 
 \subsubsection{Sandboxed Python}
@@ -320,10 +320,12 @@ and afterward decides which commands are allowed.
 facility in Java that supports sandboxing is the \textit{java.lang.SecurityManager}. By default, Java runs without a 
 SecurityManager.
 
-\paragraph{pysandbox} A prove, that it is very difficult to develop some kind of sandbox with all security holes considered, could be a project  \textit{pysandbox}\footnote{\url{https://github.com/vstinner/pysandbox}}. After working on it for 3 years, during which
-the project was used on various production servers by other developers, its author declared that the project is broken by
-design. In his post to the python-dev mailing list \cite{PyDev_ML} the author explained that with every vulnerability founded
-it became more difficult to actually write a real code:
+\paragraph{pysandbox} A prove, that it is very difficult to develop some kind of sandbox with all security holes 
+considered, could be a project  \textit{pysandbox}\footnote{\url{https://github.com/vstinner/pysandbox}}. After working 
+on it for 3 years, during which the project was used on various production servers by other developers, its author 
+declared that the project is broken by
+design. In his post to the python-dev mailing list \cite{PyDev_ML} the author explained that with every vulnerability 
+founded it became more difficult to actually write a real code:
 
 \textit{
 "To protect the untrusted namespace, pysandbox installs a lot of
@@ -344,13 +346,15 @@ in practice. \textit{Vagrant} is a tool for managing and building virtual machin
 machines in an automatized way e.g. using scripts. There also exists a Python package \textit{python-vagrant} that offers 
 Python bindings for interacting with Vagrant.
 
-However in our use-case using Vagrant would mean that for every process execution a separate virtual machine is created. Depending
+However in our use-case using Vagrant would mean that for every process execution a separate virtual machine would
+be created. Depending
 on the process algorithm complexity the process execution can last from milliseconds to hours or days. On the other hand building 
 a virtual machine and booting into it last at least few seconds. That is why it is hard to imagine using virtual machine, which takes
 few seconds to boot up, to isolate process, which execution lasts less than a second.
 
 \newpage
 \section{Docker}
+{sec:Docker}
 \textbf{Containerization} is a lightweight alternative to full machine virtualization. It involves encapsulating an application 
 into a container with its own operating environment. It helps to run a containerized application on any physical machine without any
 worries about dependencies. The origin of containerization lies in the \textit{LinuX Containers {LXC}} format. Containerization
@@ -363,7 +367,7 @@ works only in Linux environments and can run only Linux applications.
 \label{fig:Docker_logo}
 \end{figure}
 
-Docker is not the only one technology for containerization. Other alternatives exist, it is \textit{Kubernets}, \textit{CoreOS rkt}, 
+Docker is not the only technology for containerization. Other alternatives exist, it is \textit{Kubernets}, \textit{CoreOS rkt}, 
 \textit{Open Container Initiative (OCI)}, \textit{Canonical's LXD}, \textit{Apache Mesos and Mesosphere} and many others. 
 However Docker is a leader on the field of containerization and with most public traction is de facto considered as a~container standard.
 That's why the Docker was chosen for this thesis as a~container technology. So from this point on any term \textit{container} refers to
