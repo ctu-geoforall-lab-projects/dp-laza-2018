@@ -17,14 +17,17 @@ the worst-case scenario a process execution can bring down the server.
 
 In the first part, the thesis sets a theoretical background and
 %% ML: explains / is explained
+%% AL: is explained
 %% ML: Some/Various projects ...
-explain the \textit{WPS} standard. Some project which implement the
+%% AL: Various
+the \textit{WPS} standard is explained. Various project which implement the
 standard are mentioned. Second part is dedicated to \textit{PyWPS} as
 a Python implementation of the WPS. There is described the
 currentstate of the project followed by a research.
 
 %% ML: solutions?
-The reseach covers various solution for the process isolation. The
+%% AL: solutions
+The reseach covers various solutions for the process isolation. The
 functionality for the isolation was the main criterion, however beside
 that the selected solution should provide some mechanisms to control
 the execution of the process. These mechanisms will be necessary for
@@ -32,7 +35,8 @@ implementation of the WPS 2.0.0 standard.
 
 The \textit{Docker} Container Extension has been on the developers
 %% ML: wishlist ?
-whislist for a long time. The container encapsulates the process
+%% AL: whislist
+wishlist for a long time. The container encapsulates the process
 execution and also offers methods to start, pause, stop or kill the
 container and thus the execution. Moreover using Docker opens
 possibilities of Web Processing Service in a cloud computing
@@ -60,6 +64,9 @@ is inappropriate for production environment.
 
 %% ML: tomu nerozumim, ten proces na server zustane vyset i kdyz uz je
 %% v kontejneru hotov a odbaven k uzivateli ?
+%% AL: ano, to je problem, ktery budu muset jeste vyresit. Proces
+%% dobehne v kontejneru, uzivatel si muze stahnout vysledky
+%% ale process na lokalnim serveru se neukonci
 Another problem is cumulation of processes on a server. These
 pseudo-running processes remain on the server and block other
 processes even though a client has already received the results. There
@@ -71,16 +78,17 @@ extension into the official PyWPS repository.  Nevertheless, I would
 like to continue on the development and solve all problems so I can
 make a pull request at least into PyWPS develop branch. During the
 %% ML: nejsem si jisty zda uvadet linky na tyto repositare
+%% AL: linky na repositare smazany
 %% ML: urcite uved ale odkaz na repositar diplomky, tam budou stejne
 %% vsechny diffy, to tady muzes zminit
-implementation I have contributed into \textit{pywps}\footnote{My
-  \textit{pywps} GitHub repository:
-  \url{https://github.com/lazaa32/pywps}},
-\textit{pywps-demo}\footnote{My \textit{pywps-demo} GitHub repository:
-  \url{https://github.com/lazaa32/pywps-flask}} and
-\textit{OWSLib}\footnote{My \textit{OWSLib} GitHub repository:
-  \url{https://github.com/lazaa32/OWSLib}} projects. Pull requests
+%% AL: pridan link
+implementation I have contributed into \textit{pywps}, \textit{pywps-demo}
+and \textit{OWSLib} projects. Pull requests
 into \textit{pywps} and \textit{pywps-demo} wait for the PyWPS
 %% ML: uved do poznamky pod carou link
+%% AL: link k cemu?
 developers feedback and problems solution mentioned above. The pull
-request into OWSLib is already waiting for approval.
+request into OWSLib is already waiting for approval. All diff files,
+as well the text of the thesis and its source code,
+are available at GitHub repository of this 
+thesis.\footnote{\url{https://github.com/ctu-geoforall-lab-projects/dp-laza-2018/}}
