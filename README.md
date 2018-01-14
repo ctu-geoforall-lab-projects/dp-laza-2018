@@ -1,6 +1,6 @@
-# Diplomová práce
+# Diploma Thesis
 
-## Název
+## Title
 
 Process isolation in PyWPS framework
 
@@ -8,22 +8,22 @@ Process isolation in PyWPS framework
 
 Bc. Adam Laža
 
-## Vedoucí
+## Supervisor
 
 Ing. Martin Landa, Ph.D.
 
-## Oponent
+## Reader
 
 TODO
 
-## Obhajoba
+## Defence
 
-01/2018
+02/2018
 
 ## Text
 
-TODO
+[adam-laza-dp-2018.pdf](https://github.com/ctu-geoforall-lab-projects/dp-laza-2018/raw/master/text/adam-laza-dp-2018.pdf)
 
-## Pracovní repositář
+## Working repository
 
 https://github.com/lazaa32/pywps
