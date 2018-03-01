@@ -14,7 +14,7 @@ Ing. Martin Landa, Ph.D.
 
 ## Reader
 
-TODO
+Jorge Samuel Mendes de Jesus, Ph. D.
 
 ## Defence
 
